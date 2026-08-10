@@ -1,26 +1,207 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* GapLens brand — carried over verbatim from the original gaplens (26).html */
+  --navy: #0d1220;
+  --teal: #1d9e75;
+  --teal-2: #15c99a;
+  --gold: #e8a020;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-2: rgba(255, 255, 255, 0.08);
+  --border-g: rgba(255, 255, 255, 0.1);
+  /* Opaque (not translucent) surface for modals/popups — the glass
+     tokens above are too transparent for content that sits over other
+     page content and needs to stay legible regardless of what's behind it. */
+  --modal-bg: #161d33;
+  --ink: #e8eaf2;
+  --muted: #8892a4;
+
+  /* Resolution-path semantics (new, added for the Diagnostic Console rebuild) */
+  --healthy: #22c55e;
+  --gap: #e5484d;
+  --diy: #15c99a;
+  --refer: #ff7a59;
+  --auto: #9b6bff;
+
+  --background: var(--navy);
+  --foreground: var(--ink);
 }
 
 @theme inline {
+  --color-navy: var(--navy);
+  --color-teal: var(--teal);
+  --color-teal-2: var(--teal-2);
+  --color-gold: var(--gold);
+  --color-glass: var(--glass);
+  --color-glass-2: var(--glass-2);
+  --color-border-g: var(--border-g);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+
+  --color-healthy: var(--healthy);
+  --color-gap: var(--gap);
+  --color-diy: var(--diy);
+  --color-refer: var(--refer);
+  --color-auto: var(--auto);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-ar: var(--font-cairo);
+  --font-en: var(--font-inter);
+  --font-mono-console: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html[dir="rtl"] {
+  font-family: var(--font-ar);
+}
+
+html[dir="ltr"] {
+  font-family: var(--font-en);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--navy);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Every text-* / spacing utility in Tailwind is rem-based, so a small bump to
+   the root size here scales the whole app proportionally at desktop widths
+   instead of feeling like it was designed for a phone and stretched. */
+@media (min-width: 1280px) {
+  html {
+    font-size: 17.5px;
+  }
+}
+
+/* Numbers must stay LTR inside RTL flow (scores, badges, dates) */
+.ltr-num {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+  font-family: var(--font-mono-console);
+}
+
+@keyframes badge-pop {
+  from {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    r: 14;
+    opacity: 0.9;
+  }
+  50% {
+    r: 20;
+    opacity: 0.2;
+  }
+}
+
+/* Glassmorphism card — blurred glass + soft glow, per design brief */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-g);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradient text treatment matching the app's score/number emphasis style */
+.grad-text {
+  background: linear-gradient(90deg, var(--teal-2), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-15deg);
+  }
+}
+
+.shine-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shine-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(21, 201, 154, 0.35),
+    rgba(232, 160, 32, 0.35),
+    transparent
+  );
+  animation: shine-sweep 1.6s ease-in-out infinite;
+}
+
+@keyframes radar-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes question-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes detect-dot {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  15%,
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes digit-fall {
+  from {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(110%);
+    opacity: 0;
+  }
 }
