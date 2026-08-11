@@ -5,6 +5,7 @@ import { mergeGapOverrides } from "@/lib/roadmap/gap-status";
 import { renderRoadmapHtml } from "@/lib/roadmap/render-html";
 import { renderHtmlToPdf } from "@/lib/roadmap/generate-pdf";
 import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
+import { getPublicOrigin } from "@/lib/http/public-origin";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export async function GET(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return NextResponse.redirect(new URL("/login", request.url));
+  if (!user) return NextResponse.redirect(new URL("/login", getPublicOrigin(request)));
 
   const { data: session } = await supabase
     .from("assessment_sessions")

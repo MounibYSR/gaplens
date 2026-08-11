@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateAndSaveRoadmap } from "@/lib/roadmap/generate-and-save";
+import { getPublicOrigin } from "@/lib/http/public-origin";
 
 export const dynamic = "force-dynamic";
 
@@ -10,16 +11,17 @@ export async function GET(
 ) {
   const { sessionId } = await context.params;
   const supabase = await createClient();
+  const origin = getPublicOrigin(request);
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return NextResponse.redirect(new URL("/login", request.url));
+  if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   const result = await generateAndSaveRoadmap(supabase, sessionId);
   if (!result.ok) {
     return new NextResponse(result.message, { status: result.status });
   }
 
-  return NextResponse.redirect(new URL(`/roadmap/${sessionId}/pdf`, request.url));
+  return NextResponse.redirect(new URL(`/roadmap/${sessionId}/pdf`, origin));
 }
