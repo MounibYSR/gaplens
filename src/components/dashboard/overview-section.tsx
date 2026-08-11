@@ -1,8 +1,10 @@
 import { Gauge } from "@/components/results/gauge";
 import { ScanCostLines } from "@/components/scan/cost-lines";
 import { ConsoleLabel } from "@/components/ui/console-label";
+import { DepartmentRadar } from "@/components/dashboard/department-radar";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
+import type { Department } from "@/lib/supabase/types";
 import { computeSharpenFlags, type TeaserAnswers } from "@/lib/scan/scoring";
 
 function ClockIcon() {
@@ -50,6 +52,7 @@ export function OverviewSection({
   completenessPct,
   trendDelta,
   roundProgressDelta,
+  departmentCoverage,
   onSwitchToChat,
 }: {
   lang: EntryLang;
@@ -58,6 +61,7 @@ export function OverviewSection({
   completenessPct: number;
   trendDelta: number | null;
   roundProgressDelta: number | null;
+  departmentCoverage: { key: Department; pct: number }[];
   onSwitchToChat: () => void;
 }) {
   const t = appDictionary[lang].results;
@@ -144,6 +148,14 @@ export function OverviewSection({
             <ScanCostLines answers={answers} lang={lang} />
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 hidden glass-card rounded-2xl p-6 xl:block" style={{ borderColor: "var(--border-g)" }}>
+        <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          {d.vectorAnalysisTitle}
+        </p>
+        <DepartmentRadar coverage={departmentCoverage} lang={lang} />
+        <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
       </div>
     </div>
   );

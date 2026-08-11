@@ -18,10 +18,12 @@ const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
 
 function GapCard({
   gap,
+  index,
   sessionId,
   lang,
 }: {
   gap: RoadmapGap;
+  index: number;
   sessionId: string;
   lang: EntryLang;
 }) {
@@ -48,11 +50,14 @@ function GapCard({
 
   return (
     <li
-      className="rounded-lg border p-3 text-xs"
-      style={{ borderColor: "var(--border-g)" }}
+      className="rounded-lg border border-s-4 p-3 text-xs"
+      style={{ borderColor: "var(--border-g)", borderInlineStartColor: PRIORITY_COLOR[gap.priority] }}
     >
       <div className="flex items-start justify-between gap-2">
         <span className="flex flex-wrap items-center gap-1.5">
+          <span className="ltr-num shrink-0 text-[10px] font-bold text-muted" dir="ltr">
+            GAP-{String(index + 1).padStart(2, "0")}
+          </span>
           {gap.sub_category === "cross_channel" && (
             <span
               className="rounded-full px-2 py-0.5 text-[10px] font-extrabold text-navy"
@@ -326,8 +331,8 @@ export function RoadmapSection({
           <p className="mt-3 text-xs text-muted">{t.roadmapNoGapsYet}</p>
         ) : (
           <ul className="mt-3 flex flex-col gap-2 xl:grid xl:grid-cols-3 xl:gap-3">
-            {gaps.map((gap) => (
-              <GapCard key={gap.gap_title} gap={gap} sessionId={sessionId} lang={lang} />
+            {gaps.map((gap, index) => (
+              <GapCard key={gap.gap_title} gap={gap} index={index} sessionId={sessionId} lang={lang} />
             ))}
           </ul>
         )}
