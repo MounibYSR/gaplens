@@ -121,7 +121,7 @@ export function FreeformChat({
               {t.thinking}
             </div>
           )}
-          <div ref={bottomRef} />
+          <div ref={bottomRef} style={{ scrollMarginBottom: "180px" }} />
         </div>
 
         {topics.length > 0 && (
@@ -161,7 +161,10 @@ export function FreeformChat({
           </button>
         </div>
 
-        <div className="mt-2 flex flex-col gap-2">
+        <div
+          className="sticky bottom-3 z-10 mt-2 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-md"
+          style={{ background: "var(--modal-bg)", borderColor: "var(--border-g)" }}
+        >
           {errorMsg && (
             <p className="text-xs font-bold" style={{ color: "var(--gap)" }}>
               {errorMsg}

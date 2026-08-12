@@ -116,10 +116,13 @@ export function InviteAnswerChat({
               {m.text}
             </div>
           ))}
-          <div ref={bottomRef} />
+          <div ref={bottomRef} style={{ scrollMarginBottom: "180px" }} />
         </div>
 
-        <div className="mt-4 flex flex-col gap-2">
+        <div
+          className="sticky bottom-3 z-10 mt-4 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-md"
+          style={{ background: "var(--modal-bg)", borderColor: "var(--border-g)" }}
+        >
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
