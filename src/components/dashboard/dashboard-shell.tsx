@@ -194,7 +194,7 @@ function DashboardShellInner({
       >
         <div className="mb-6 flex items-center gap-2 px-1 text-base font-extrabold text-ink">
           <Image src="/gaplens-icon.png" alt="" width={24} height={24} className="h-6 w-6" />
-          GapLens
+          GapLens<span style={{ color: "var(--teal-2)" }}> AI</span>
         </div>
 
         <button
@@ -259,7 +259,7 @@ function DashboardShellInner({
         >
           <div className="flex shrink-0 items-center gap-2 text-sm font-extrabold text-ink">
             <Image src="/gaplens-icon.png" alt="" width={20} height={20} className="h-5 w-5" />
-            GapLens
+            GapLens<span style={{ color: "var(--teal-2)" }}> AI</span>
           </div>
           <div className="flex min-w-0 items-center gap-3">
             <span className="min-w-0 truncate text-end text-xs text-muted">{accountName}</span>
