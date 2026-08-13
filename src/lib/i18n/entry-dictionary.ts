@@ -11,7 +11,7 @@ export const entryDictionary = {
         "The right digital setup means faster service, happier customers, and more revenue. See exactly where you stand — in under 15 minutes.",
       ctaPrimary: "Start Free Diagnosis",
       ctaSecondary: "How It Works?",
-      trust: ["Data Encrypted", "Built for the Gulf", "5 Core Areas"],
+      trust: ["Data Encrypted", "Built for the Gulf", "Security"],
     },
     how: {
       badge: "HOW IT WORKS",
@@ -71,7 +71,7 @@ export const entryDictionary = {
         "الإعداد الرقمي الصحيح يعني خدمة أسرع، عملاء أسعد، وإيرادات أكثر. شوفي وين تقفين بالضبط — بأقل من 15 دقيقة.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
       ctaSecondary: "كيف يعمل؟",
-      trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "5 مجالات رئيسية"],
+      trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "سكيورتي"],
     },
     how: {
       badge: "كيف يعمل",
