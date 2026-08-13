@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useEntryLang } from "@/hooks/use-entry-lang";
 import { LanguageToggle } from "@/components/entry/language-toggle";
 import { ParticleExplainer } from "@/components/landing/particle-explainer";
+import { CredibilitySection } from "@/components/landing/credibility-section";
+import { CompanyLogosStrip } from "@/components/landing/company-logos-strip";
 
 export function LandingPage() {
   const { lang, toggle, t } = useEntryLang();
@@ -80,6 +82,9 @@ export function LandingPage() {
           ))}
         </div>
       </section>
+
+      <CredibilitySection lang={lang} />
+      <CompanyLogosStrip lang={lang} />
 
       <section id="how" className="mx-auto w-full max-w-5xl px-6 py-20">
         <div className="mb-12 text-center">

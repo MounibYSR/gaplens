@@ -20,10 +20,24 @@ type Particle = {
   amp: number;
 };
 
-type ShapeName = "lens" | "nodes" | "arrow";
+type ShapeName = "lens" | "nodes" | "arrow" | "fix";
 
 const N = 260;
 const COLORS = ["#1D9E75", "#15c99a", "#E8A020"];
+
+// Hub + 3 branches (120° apart) — one per GapFix resolution path (DIY,
+// vetted provider, GapLens executes). Deliberately 3 branches instead of
+// the "nodes" step's 5, so the two shapes read as visually distinct.
+const FIX_BRANCH_ANGLES_DEG = [-90, 30, 150];
+function fixBranchCenters(outerR: number): Point3D[] {
+  const centers: Point3D[] = [{ x: 0, y: 0, z: 0 }];
+  FIX_BRANCH_ANGLES_DEG.forEach((deg, k) => {
+    const ang = (deg * Math.PI) / 180;
+    const zz = (k % 2 === 0 ? 1 : -1) * 0.3;
+    centers.push({ x: Math.cos(ang) * outerR, y: Math.sin(ang) * outerR, z: zz });
+  });
+  return centers;
+}
 
 const STEP_CONTENT: { shape: ShapeName; title: Record<EntryLang, string>; copy: Record<EntryLang, string> }[] = [
   {
@@ -48,6 +62,14 @@ const STEP_CONTENT: { shape: ShapeName; title: Record<EntryLang, string>; copy: 
     copy: {
       en: "Findings become a prioritized, step-by-step path to close the gap.",
       ar: "النتائج تتحول لخطوات مرتبة بالأولوية لسد الفجوة.",
+    },
+  },
+  {
+    shape: "fix",
+    title: { en: "GapFix — resolve it your way", ar: "GapFix — عالجها بطريقتك" },
+    copy: {
+      en: "Every gap comes with a resolution path: do it yourself, get matched with a vetted provider, or let GapLens execute it for you.",
+      ar: "كل فجوة تجيك مع مسار حل: تسويها بنفسك، نرشحلك مزود موثوق، أو GapLens تنفذها لك.",
     },
   },
 ];
@@ -123,7 +145,7 @@ function shapePoints3D(name: ShapeName, count: number): Point3D[] {
         });
       }
     });
-  } else {
+  } else if (name === "arrow") {
     const shaftN = Math.floor(count * 0.66);
     const sx1 = -0.6;
     const sy1 = 0.6;
@@ -157,6 +179,35 @@ function shapePoints3D(name: ShapeName, count: number): Point3D[] {
         pts.push({ x: tipX + (wingB.x - tipX) * tt2, y: tipY + (wingB.y - tipY) * tt2, z: tipZ + (wingB.z - tipZ) * tt2 });
       }
     }
+  } else {
+    const centers = fixBranchCenters(0.62);
+
+    const perLine = Math.floor((count * 0.55) / 3);
+    for (let c = 1; c < centers.length; c++) {
+      for (let l = 0; l < perLine; l++) {
+        const t2 = l / perLine;
+        pts.push({
+          x: centers[0].x + (centers[c].x - centers[0].x) * t2,
+          y: centers[0].y + (centers[c].y - centers[0].y) * t2,
+          z: centers[0].z + (centers[c].z - centers[0].z) * t2,
+        });
+      }
+    }
+
+    const remaining = count - pts.length;
+    const perNode = Math.floor(remaining / centers.length);
+    centers.forEach((ctr, idx) => {
+      const rr = idx === 0 ? 0.14 : 0.12;
+      for (let m = 0; m < perNode; m++) {
+        const phi2 = Math.acos(1 - (2 * (m + 0.5)) / perNode);
+        const theta2 = Math.PI * (1 + Math.sqrt(5)) * m;
+        pts.push({
+          x: ctr.x + Math.sin(phi2) * Math.cos(theta2) * rr,
+          y: ctr.y + Math.sin(phi2) * Math.sin(theta2) * rr,
+          z: ctr.z + Math.cos(phi2) * rr,
+        });
+      }
+    });
   }
 
   while (pts.length < count) pts.push(pts[pts.length % Math.max(pts.length, 1)] ?? { x: 0, y: 0, z: 0 });
@@ -196,22 +247,26 @@ function shapeGuideLines(name: ShapeName): Point3D[][] {
     }
     return lines;
   }
-  const sx1 = -0.6;
-  const sy1 = 0.6;
-  const sz1 = -0.4;
-  const sx2 = 0.42;
-  const sy2 = -0.42;
-  const sz2 = 0.4;
-  const shaft: Point3D[] = [];
-  for (let s = 0; s <= 20; s++) {
-    const t3 = s / 20;
-    const bow = Math.sin(t3 * Math.PI) * 0.12;
-    shaft.push({ x: sx1 + (sx2 - sx1) * t3 + bow * 0.3, y: sy1 + (sy2 - sy1) * t3 - bow * 0.3, z: sz1 + (sz2 - sz1) * t3 });
+  if (name === "arrow") {
+    const sx1 = -0.6;
+    const sy1 = 0.6;
+    const sz1 = -0.4;
+    const sx2 = 0.42;
+    const sy2 = -0.42;
+    const sz2 = 0.4;
+    const shaft: Point3D[] = [];
+    for (let s = 0; s <= 20; s++) {
+      const t3 = s / 20;
+      const bow = Math.sin(t3 * Math.PI) * 0.12;
+      shaft.push({ x: sx1 + (sx2 - sx1) * t3 + bow * 0.3, y: sy1 + (sy2 - sy1) * t3 - bow * 0.3, z: sz1 + (sz2 - sz1) * t3 });
+    }
+    const tip = { x: 0.62, y: -0.62, z: 0.46 };
+    const wingA = { x: 0.62 - 0.32, y: -0.62 + 0.04, z: 0.3 };
+    const wingB = { x: 0.62 - 0.04, y: -0.62 + 0.32, z: 0.3 };
+    return [shaft, [wingA, tip], [tip, wingB]];
   }
-  const tip = { x: 0.62, y: -0.62, z: 0.46 };
-  const wingA = { x: 0.62 - 0.32, y: -0.62 + 0.04, z: 0.3 };
-  const wingB = { x: 0.62 - 0.04, y: -0.62 + 0.32, z: 0.3 };
-  return [shaft, [wingA, tip], [tip, wingB]];
+  const fixCenters = fixBranchCenters(0.62);
+  return fixCenters.slice(1).map((tip) => [fixCenters[0], tip]);
 }
 
 function shapeHubPoints(name: ShapeName): Point3D[] {
@@ -226,7 +281,8 @@ function shapeHubPoints(name: ShapeName): Point3D[] {
     }
     return pts;
   }
-  return [{ x: 0.62, y: -0.62, z: 0.46 }];
+  if (name === "arrow") return [{ x: 0.62, y: -0.62, z: 0.46 }];
+  return fixBranchCenters(0.62);
 }
 
 export function ParticleExplainer({ lang }: { lang: EntryLang }) {

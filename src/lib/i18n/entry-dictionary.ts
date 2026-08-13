@@ -5,10 +5,10 @@ export const entryDictionary = {
     nav: { login: "Log In", signUp: "Sign Up" },
     hero: {
       badge: "2026 Edition — AI-powered Digital Gap Diagnostics",
-      titleLine1: "Discover the Gaps",
-      titleLine2: "in Your Digital Business",
+      titleLine1: "Stop Losing Customers",
+      titleLine2: "to a Broken Digital Operation",
       subtitle:
-        "An AI platform that diagnoses digital gaps in your SME and delivers a clear growth roadmap for the Gulf market.",
+        "The right digital setup means faster service, happier customers, and more revenue. See exactly where you stand — in under 15 minutes.",
       ctaPrimary: "Start Free Diagnosis",
       ctaSecondary: "How It Works?",
       trust: ["Data Encrypted", "Built for the Gulf", "5 Core Areas"],
@@ -23,6 +23,16 @@ export const entryDictionary = {
         { num: "03", title: "Get Your Results", body: "A clear gap score revealing where you stand and what to fix" },
         { num: "04", title: "Act On It", body: "Pick how to close each gap: do it yourself, get referred, or automate" },
       ],
+    },
+    credibility: {
+      badge: "BACKED BY",
+      title: "Backed by DIC / MCIT",
+      body: "GapLens is part of Qatar's Digital Incubation Center, Cohort 12, under the Ministry of Communications and Information Technology.",
+      dicLabel: "DIC",
+      mcitLabel: "MCIT",
+    },
+    companies: {
+      badge: "Trusted by businesses like yours",
     },
     auth: {
       continueWithGoogle: "Continue with Google",
@@ -55,10 +65,10 @@ export const entryDictionary = {
     nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب" },
     hero: {
       badge: "نسخة 2026 — تشخيص ذكي للفجوات الرقمية",
-      titleLine1: "اكتشف فجوات",
-      titleLine2: "شركتك الرقمية",
+      titleLine1: "توقفي عن خسارة العملاء",
+      titleLine2: "بسبب عمليات رقمية مكسورة",
       subtitle:
-        "منصة ذكاء اصطناعي تشخّص الفجوات الرقمية في شركتك الصغيرة وتمنحك خارطة طريق واضحة للنمو في السوق الخليجي.",
+        "الإعداد الرقمي الصحيح يعني خدمة أسرع، عملاء أسعد، وإيرادات أكثر. شوفي وين تقفين بالضبط — بأقل من 15 دقيقة.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
       ctaSecondary: "كيف يعمل؟",
       trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "5 مجالات رئيسية"],
@@ -73,6 +83,16 @@ export const entryDictionary = {
         { num: "03", title: "احصل على نتيجتك", body: "نتيجة فجوة واضحة تكشف وضعك وأولوياتك" },
         { num: "04", title: "ابدأ التنفيذ", body: "اختر كيف تعالج كل فجوة: بنفسك، بترشيح، أو أوتوماتيكياً" },
       ],
+    },
+    credibility: {
+      badge: "بدعم من",
+      title: "بدعم من DIC / MCIT",
+      body: "GapLens جزء من مركز قطر لاحتضان الأعمال الرقمية (DIC)، الدفعة 12، تحت مظلة وزارة الاتصالات وتكنولوجيا المعلومات.",
+      dicLabel: "DIC",
+      mcitLabel: "MCIT",
+    },
+    companies: {
+      badge: "موثوق من شركات زي شركتك",
     },
     auth: {
       continueWithGoogle: "المتابعة عبر Google",
