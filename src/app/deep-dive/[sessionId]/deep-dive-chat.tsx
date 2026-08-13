@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
@@ -16,7 +16,7 @@ import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 import { submitDeepDiveAnswer } from "./actions";
 import { startNewRound } from "@/app/dashboard/round-actions";
 
-type ChatMessage = { role: "assistant" | "user"; text: string };
+type AnsweredTurn = { question: string; answer: string };
 
 function firstUnansweredIndex(answered: Department[]) {
   const idx = DEPARTMENTS.findIndex((d) => !answered.includes(d.key));
@@ -34,6 +34,52 @@ function StartNewRoundButton({ label }: { label: string }) {
     >
       {pending ? "…" : label}
     </button>
+  );
+}
+
+function HistoryRow({ question, answer }: AnsweredTurn) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => setExpanded((v) => !v)}
+      className="w-full shrink-0 rounded-lg border px-3 py-1.5 text-start text-xs transition-colors"
+      style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+    >
+      <p className={expanded ? "text-muted" : "truncate text-muted"}>{question}</p>
+      <p className={`font-bold ${expanded ? "" : "truncate"}`} style={{ color: "var(--teal-2)" }}>
+        {answer}
+      </p>
+    </button>
+  );
+}
+
+// Collapsed by default — showing rows by default is exactly what pushed the
+// active question below the fold before. A single toggle chip costs almost
+// no vertical space; the scrollable row list only appears once asked for.
+function HistoryPanel({ turns, toggleLabel }: { turns: AnsweredTurn[]; toggleLabel: (n: number) => string }) {
+  const [open, setOpen] = useState(false);
+  if (turns.length === 0) return null;
+
+  return (
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between rounded-lg border px-3 py-1.5 text-start text-xs font-bold text-muted"
+        style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+      >
+        <span>{toggleLabel(turns.length)}</span>
+        <span>{open ? "▲" : "▼"}</span>
+      </button>
+      {open && (
+        <div className="mt-1.5 flex max-h-32 flex-col gap-1.5 overflow-y-auto pe-1">
+          {turns.map((turn, i) => (
+            <HistoryRow key={i} question={turn.question} answer={turn.answer} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -162,12 +208,11 @@ export function DeepDiveChat({
   const t = appDictionary[lang].deepDive;
   const [deptIndex, setDeptIndex] = useState(() => firstUnansweredIndex(answeredDepartments));
   const [qIndex, setQIndex] = useState(0);
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    const startIndex = firstUnansweredIndex(answeredDepartments);
-    if (startIndex >= DEPARTMENTS.length) return [];
-    const qs = buildDeepDiveQuestions(DEPARTMENTS[startIndex].key, companyTools, lang);
-    return [{ role: "assistant", text: qs[0].prompt[lang] }];
-  });
+  // Only this department's already-answered questions — reset on every
+  // department change so history never piles up across the whole session
+  // and pushes the active question (the only thing the user must reach)
+  // out of view.
+  const [history, setHistory] = useState<AnsweredTurn[]>([]);
   const [questionStartedAt, setQuestionStartedAt] = useState(() => new Date().toISOString());
   const [isPending, setIsPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -175,11 +220,6 @@ export function DeepDiveChat({
   const [showRedoPicker, setShowRedoPicker] = useState(false);
   const [isRedo, setIsRedo] = useState(false);
   const [justRedid, setJustRedid] = useState<DepartmentDef | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, isPending]);
 
   const done = deptIndex >= DEPARTMENTS.length;
   const dept = !done ? DEPARTMENTS[deptIndex] : null;
@@ -191,7 +231,6 @@ export function DeepDiveChat({
     const answerText = selectedLabels.join(", ");
 
     setErrorMsg(null);
-    setMessages((prev) => [...prev, { role: "user", text: answerText }]);
     setIsPending(true);
 
     try {
@@ -206,10 +245,9 @@ export function DeepDiveChat({
 
       const nextQIndex = qIndex + 1;
       if (nextQIndex < questions.length) {
-        const nextQuestion = questions[nextQIndex];
+        setHistory((prev) => [...prev, { question: question.prompt[lang], answer: answerText }]);
         setQIndex(nextQIndex);
         setQuestionStartedAt(new Date().toISOString());
-        setMessages((prev) => [...prev, { role: "assistant", text: nextQuestion.prompt[lang] }]);
         return;
       }
 
@@ -220,6 +258,7 @@ export function DeepDiveChat({
         setIsRedo(false);
         setJustRedid(dept);
         setQIndex(0);
+        setHistory([]);
         setQuestionStartedAt(new Date().toISOString());
         setDeptIndex(DEPARTMENTS.length);
         return;
@@ -229,15 +268,15 @@ export function DeepDiveChat({
         const nextDept = DEPARTMENTS[nextDeptIndex];
         setTransitionDept(nextDept);
         setTimeout(() => {
-          const nextQuestions = buildDeepDiveQuestions(nextDept.key, companyTools, lang);
           setQIndex(0);
+          setHistory([]);
           setQuestionStartedAt(new Date().toISOString());
           setDeptIndex(nextDeptIndex);
-          setMessages((prev) => [...prev, { role: "assistant", text: nextQuestions[0].prompt[lang] }]);
           setTransitionDept(null);
         }, 1400);
       } else {
         setQIndex(0);
+        setHistory([]);
         setQuestionStartedAt(new Date().toISOString());
         setDeptIndex(nextDeptIndex);
       }
@@ -251,14 +290,13 @@ export function DeepDiveChat({
   function startRedo(deptKey: Department) {
     const idx = DEPARTMENTS.findIndex((d) => d.key === deptKey);
     if (idx === -1) return;
-    const qs = buildDeepDiveQuestions(deptKey, companyTools, lang);
     setJustRedid(null);
     setIsRedo(true);
     setShowRedoPicker(false);
     setQIndex(0);
+    setHistory([]);
     setQuestionStartedAt(new Date().toISOString());
     setDeptIndex(idx);
-    setMessages([{ role: "assistant", text: qs[0].prompt[lang] }]);
   }
 
   if (done) {
@@ -384,27 +422,21 @@ export function DeepDiveChat({
           </span>
         </div>
 
+        <HistoryPanel turns={history} toggleLabel={t.previousAnswersToggle} />
+
+        {/* Active question — always rendered in full below the (collapsed-by-default) history, never clipped or scrolled past. */}
         <div className="mt-4 flex flex-col gap-3">
-          {messages.map((m, i) => (
+          {currentQuestion && (
             <div
-              key={i}
               className="max-w-[85%] rounded-xl px-3 py-2 text-sm"
-              style={{
-                alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                background: m.role === "user" ? "var(--teal-2)" : "var(--glass-2)",
-                color: m.role === "user" ? "var(--navy)" : "var(--ink)",
-              }}
+              style={{ background: "var(--glass-2)", color: "var(--ink)" }}
             >
-              {m.text}
+              {currentQuestion.prompt[lang]}
             </div>
-          ))}
-          <div ref={bottomRef} style={{ scrollMarginBottom: "180px" }} />
+          )}
         </div>
 
-        <div
-          className="sticky bottom-3 z-10 mt-4 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-md"
-          style={{ background: "var(--modal-bg)", borderColor: "var(--border-g)" }}
-        >
+        <div className="mt-4 flex flex-col gap-2">
           {errorMsg && (
             <p className="text-xs font-bold" style={{ color: "var(--gap)" }}>
               {errorMsg}
