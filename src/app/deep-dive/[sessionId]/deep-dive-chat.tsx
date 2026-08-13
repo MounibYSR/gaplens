@@ -5,13 +5,15 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import type { DepartmentDef } from "@/lib/assessment/departments";
-import { DEEP_DIVE_OPENERS } from "@/lib/deep-dive/questions";
+import { buildDeepDiveQuestions } from "@/lib/deep-dive/question-bank";
+import type { DeepDiveQuestion } from "@/lib/deep-dive/question-bank";
 import { ProgressDots } from "@/components/assessment/progress-dots";
 import { ConsoleLabel } from "@/components/ui/console-label";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { Department } from "@/lib/supabase/types";
-import { submitDeepDiveAnswer, getFollowUpQuestion } from "./actions";
+import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
+import { submitDeepDiveAnswer } from "./actions";
 import { startNewRound } from "@/app/dashboard/round-actions";
 
 type ChatMessage = { role: "assistant" | "user"; text: string };
@@ -35,30 +37,138 @@ function StartNewRoundButton({ label }: { label: string }) {
   );
 }
 
+function QuestionControls({
+  question,
+  lang,
+  isPending,
+  onAnswer,
+  continueLabel,
+}: {
+  question: DeepDiveQuestion;
+  lang: EntryLang;
+  isPending: boolean;
+  onAnswer: (labels: string[]) => void;
+  continueLabel: string;
+}) {
+  const [multiSelectDraft, setMultiSelectDraft] = useState<string[]>([]);
+
+  if (question.type === "single_select") {
+    return (
+      <div className="flex flex-col gap-2">
+        {question.options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            disabled={isPending}
+            onClick={() => onAnswer([opt.label[lang]])}
+            className="w-full rounded-lg border px-4 py-3 text-start text-sm font-bold text-ink transition-colors disabled:opacity-60"
+            style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+          >
+            {opt.label[lang]}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  if (question.type === "slider") {
+    return (
+      <div className="flex flex-col gap-2">
+        {question.steps.map((step, i) => (
+          <button
+            key={step.value}
+            type="button"
+            disabled={isPending}
+            onClick={() => onAnswer([step.label[lang]])}
+            className="flex items-center gap-3 rounded-lg border px-4 py-3 text-start text-sm font-bold text-ink transition-colors disabled:opacity-60"
+            style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+          >
+            <span
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-navy"
+              style={{ background: "var(--gold)" }}
+            >
+              {i + 1}
+            </span>
+            {step.label[lang]}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  const noneValue = question.noneValue;
+  return (
+    <div className="flex flex-col gap-2">
+      {question.options.map((opt) => {
+        const active = multiSelectDraft.includes(opt.value);
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            disabled={isPending}
+            onClick={() =>
+              setMultiSelectDraft((prev) => {
+                if (opt.value === noneValue) return prev.includes(opt.value) ? [] : [opt.value];
+                const withoutNone = prev.filter((v) => v !== noneValue);
+                return withoutNone.includes(opt.value)
+                  ? withoutNone.filter((v) => v !== opt.value)
+                  : [...withoutNone, opt.value];
+              })
+            }
+            className="flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-start text-sm font-bold transition-colors disabled:opacity-60"
+            style={{
+              background: active ? "var(--teal-2)" : "var(--glass-2)",
+              borderColor: active ? "var(--teal-2)" : "var(--border-g)",
+              color: active ? "var(--navy)" : "var(--ink)",
+            }}
+          >
+            {opt.label[lang]}
+          </button>
+        );
+      })}
+      <button
+        type="button"
+        disabled={isPending || multiSelectDraft.length === 0}
+        onClick={() => {
+          const labels = question.options
+            .filter((opt) => multiSelectDraft.includes(opt.value))
+            .map((opt) => opt.label[lang]);
+          setMultiSelectDraft([]);
+          onAnswer(labels);
+        }}
+        className="mt-1 rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-40"
+      >
+        {continueLabel}
+      </button>
+    </div>
+  );
+}
+
 export function DeepDiveChat({
   sessionId,
   lang,
   onComplete,
   onDepartmentAnswered,
   answeredDepartments = [],
+  companyTools,
 }: {
   sessionId: string;
   lang: EntryLang;
   onComplete?: () => void;
   onDepartmentAnswered?: (department: Department) => void;
   answeredDepartments?: Department[];
+  companyTools: CompanyTool[];
 }) {
   const t = appDictionary[lang].deepDive;
   const [deptIndex, setDeptIndex] = useState(() => firstUnansweredIndex(answeredDepartments));
-  const [turn, setTurn] = useState<"opening" | "followup">("opening");
+  const [qIndex, setQIndex] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     const startIndex = firstUnansweredIndex(answeredDepartments);
-    return startIndex < DEPARTMENTS.length
-      ? [{ role: "assistant", text: DEEP_DIVE_OPENERS[DEPARTMENTS[startIndex].key][lang] }]
-      : [];
+    if (startIndex >= DEPARTMENTS.length) return [];
+    const qs = buildDeepDiveQuestions(DEPARTMENTS[startIndex].key, companyTools, lang);
+    return [{ role: "assistant", text: qs[0].prompt[lang] }];
   });
   const [questionStartedAt, setQuestionStartedAt] = useState(() => new Date().toISOString());
-  const [draft, setDraft] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [transitionDept, setTransitionDept] = useState<DepartmentDef | null>(null);
@@ -73,60 +183,63 @@ export function DeepDiveChat({
 
   const done = deptIndex >= DEPARTMENTS.length;
   const dept = !done ? DEPARTMENTS[deptIndex] : null;
+  const questions = dept ? buildDeepDiveQuestions(dept.key, companyTools, lang) : [];
+  const currentQuestion = questions[qIndex] ?? null;
 
-  async function handleSend() {
-    const answer = draft.trim();
-    if (!answer || !dept || isPending) return;
+  async function handleAnswer(question: DeepDiveQuestion, selectedLabels: string[]) {
+    if (!dept || isPending) return;
+    const answerText = selectedLabels.join(", ");
 
-    setDraft("");
     setErrorMsg(null);
-    setMessages((prev) => [...prev, { role: "user", text: answer }]);
+    setMessages((prev) => [...prev, { role: "user", text: answerText }]);
     setIsPending(true);
 
     try {
       await submitDeepDiveAnswer({
         sessionId,
         department: dept.key,
-        questionKey: turn,
-        answerText: answer,
+        questionKey: question.key,
+        answerText,
         startedAt: questionStartedAt,
+        isFirstQuestionOfRound: qIndex === 0,
       });
 
-      if (turn === "opening") {
-        const previousQuestions = messages.filter((m) => m.role === "assistant").map((m) => m.text);
-        const followUp = await getFollowUpQuestion(sessionId, dept.key, answer, lang, previousQuestions);
-        setMessages((prev) => [...prev, { role: "assistant", text: followUp }]);
-        setTurn("followup");
+      const nextQIndex = qIndex + 1;
+      if (nextQIndex < questions.length) {
+        const nextQuestion = questions[nextQIndex];
+        setQIndex(nextQIndex);
         setQuestionStartedAt(new Date().toISOString());
+        setMessages((prev) => [...prev, { role: "assistant", text: nextQuestion.prompt[lang] }]);
         return;
       }
 
-      const nextIndex = deptIndex + 1;
+      const nextDeptIndex = deptIndex + 1;
       onDepartmentAnswered?.(dept.key);
 
       if (isRedo) {
         setIsRedo(false);
         setJustRedid(dept);
-        setTurn("opening");
+        setQIndex(0);
         setQuestionStartedAt(new Date().toISOString());
         setDeptIndex(DEPARTMENTS.length);
         return;
       }
 
-      if (nextIndex < DEPARTMENTS.length) {
-        const nextDept = DEPARTMENTS[nextIndex];
+      if (nextDeptIndex < DEPARTMENTS.length) {
+        const nextDept = DEPARTMENTS[nextDeptIndex];
         setTransitionDept(nextDept);
         setTimeout(() => {
-          setTurn("opening");
+          const nextQuestions = buildDeepDiveQuestions(nextDept.key, companyTools, lang);
+          setQIndex(0);
           setQuestionStartedAt(new Date().toISOString());
-          setDeptIndex(nextIndex);
-          setMessages((prev) => [...prev, { role: "assistant", text: DEEP_DIVE_OPENERS[nextDept.key][lang] }]);
+          setDeptIndex(nextDeptIndex);
+          setMessages((prev) => [...prev, { role: "assistant", text: nextQuestions[0].prompt[lang] }]);
           setTransitionDept(null);
         }, 1400);
       } else {
-        setTurn("opening");
+        setQIndex(0);
         setQuestionStartedAt(new Date().toISOString());
-        setDeptIndex(nextIndex);
+        setDeptIndex(nextDeptIndex);
       }
     } catch {
       setErrorMsg(t.sendError);
@@ -138,13 +251,14 @@ export function DeepDiveChat({
   function startRedo(deptKey: Department) {
     const idx = DEPARTMENTS.findIndex((d) => d.key === deptKey);
     if (idx === -1) return;
+    const qs = buildDeepDiveQuestions(deptKey, companyTools, lang);
     setJustRedid(null);
     setIsRedo(true);
     setShowRedoPicker(false);
-    setTurn("opening");
+    setQIndex(0);
     setQuestionStartedAt(new Date().toISOString());
     setDeptIndex(idx);
-    setMessages([{ role: "assistant", text: DEEP_DIVE_OPENERS[deptKey][lang] }]);
+    setMessages([{ role: "assistant", text: qs[0].prompt[lang] }]);
   }
 
   if (done) {
@@ -296,29 +410,16 @@ export function DeepDiveChat({
               {errorMsg}
             </p>
           )}
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                void handleSend();
-              }
-            }}
-            placeholder={t.placeholder}
-            rows={3}
-            disabled={isPending}
-            className="w-full resize-none rounded-lg border px-3 py-2 text-sm text-ink outline-none disabled:opacity-60"
-            style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
-          />
-          <button
-            type="button"
-            disabled={isPending || !draft.trim()}
-            onClick={handleSend}
-            className="rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
-          >
-            {t.submit}
-          </button>
+          {currentQuestion && (
+            <QuestionControls
+              key={`${dept!.key}-${currentQuestion.key}`}
+              question={currentQuestion}
+              lang={lang}
+              isPending={isPending}
+              continueLabel={t.continueCta}
+              onAnswer={(labels) => handleAnswer(currentQuestion, labels)}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { Department } from "@/lib/supabase/types";
 import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import type { FreeformChatMessage } from "@/lib/freeform-chat/types";
+import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 
 type Mode = "structured" | "freeform" | "visual_identity";
 
@@ -20,6 +21,7 @@ export function ChatTab({
   onComplete,
   gaps,
   initialFreeformMessages,
+  companyTools,
 }: {
   sessionId: string;
   lang: EntryLang;
@@ -28,6 +30,7 @@ export function ChatTab({
   onComplete: () => void;
   gaps: RoadmapGap[];
   initialFreeformMessages: FreeformChatMessage[];
+  companyTools: CompanyTool[];
 }) {
   const [mode, setMode] = useState<Mode>("structured");
   const t = appDictionary[lang].chatTab;
@@ -70,6 +73,7 @@ export function ChatTab({
             answeredDepartments={answeredDepartments}
             onDepartmentAnswered={onDepartmentAnswered}
             onComplete={onComplete}
+            companyTools={companyTools}
           />
         )}
         {mode === "freeform" && (

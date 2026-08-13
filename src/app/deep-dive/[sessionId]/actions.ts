@@ -35,15 +35,16 @@ async function currentMaxAttempt(
 export async function submitDeepDiveAnswer(params: {
   sessionId: string;
   department: Department;
-  questionKey: "opening" | "followup";
+  questionKey: string;
   answerText: string;
   startedAt: string;
+  isFirstQuestionOfRound: boolean;
 }) {
   const supabase = await createClient();
-  const source: DeepDiveSource = params.questionKey === "opening" ? "seed" : "freeform";
+  const source: DeepDiveSource = "seed";
 
   const existingMax = await currentMaxAttempt(supabase, params.sessionId, params.department);
-  const attempt = params.questionKey === "opening" ? existingMax + 1 : Math.max(existingMax, 1);
+  const attempt = params.isFirstQuestionOfRound ? existingMax + 1 : Math.max(existingMax, 1);
 
   const { error } = await supabase.from("deep_dive_responses").insert({
     session_id: params.sessionId,

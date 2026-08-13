@@ -29,23 +29,8 @@ export function filterToLatestAttempt<T extends { department: Department; attemp
   return responses.filter((r) => (r.attempt ?? 1) === maxAttemptByDept.get(r.department));
 }
 
-const EXPECTED_RESPONSES_PER_DEPARTMENT = 2; // opening + one follow-up
-const RUSHED_SECONDS = 3;
-const QUICK_SECONDS = 8;
-
-function timeScore(startedAt: string, answeredAt: string) {
-  const elapsedSec = (new Date(answeredAt).getTime() - new Date(startedAt).getTime()) / 1000;
-  if (elapsedSec < RUSHED_SECONDS) return 20;
-  if (elapsedSec < QUICK_SECONDS) return 60;
-  return 100;
-}
-
-function depthScore(responseLength: number) {
-  if (responseLength >= 60) return 100;
-  if (responseLength >= 30) return 70;
-  if (responseLength >= 15) return 40;
-  return 10;
-}
+// Tool-Map-aware opener + manual-tasks + change-attitude + data-centralization.
+const EXPECTED_RESPONSES_PER_DEPARTMENT = 4;
 
 // How much of "full credit" each non-deep-dive source contributes at — e.g.
 // 3 mapped tools, or 6 freeform-chat messages (3 exchanges), already counts
@@ -77,33 +62,17 @@ export function computeConfidence(params: {
   const completionRatio =
     deepDiveRatio * 0.4 + toolMapRatio * 0.2 + freeformChatRatio * 0.2 + visualIdentityRatio * 0.2;
 
-  const lowConfidenceDepartments = new Set<Department>();
-  let engagementSum = 0;
-  let depthSum = 0;
-
-  for (const r of responses) {
-    const tScore = timeScore(r.started_at, r.answered_at);
-    const dScore = depthScore(r.response_length);
-    engagementSum += tScore;
-    depthSum += dScore;
-    if ((tScore + dScore) / 2 < 50) lowConfidenceDepartments.add(r.department);
-  }
-
-  const engagementAvg = responses.length ? engagementSum / responses.length : 100;
-  const depthAvg = responses.length ? depthSum / responses.length : 0;
-
-  const overall = Math.round(
-    completionRatio * 100 * 0.4 + engagementAvg * 0.3 + depthAvg * 0.3,
-  );
-
   const coveredDepartments = Array.from(new Set(responses.map((r) => r.department)));
 
   return {
-    overall,
+    overall: Math.round(completionRatio * 100),
     responsesCount: responses.length,
     areasCovered: coveredDepartments.length,
     completionRatio,
-    lowConfidenceDepartments: Array.from(lowConfidenceDepartments),
+    // The deep-dive is now fully tap-to-answer (multiple-choice/slider), so
+    // there's no meaningful "rushed" or "shallow" signal left to flag per
+    // department — every recorded answer is a complete, deliberate pick.
+    lowConfidenceDepartments: [] as Department[],
     coveredDepartments,
   };
 }

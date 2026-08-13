@@ -371,6 +371,7 @@ function DashboardShellInner({
               onComplete={() => setSection("roadmap")}
               gaps={roadmapGaps.gaps}
               initialFreeformMessages={freeformChatHistory}
+              companyTools={companyTools}
             />
           )}
 
