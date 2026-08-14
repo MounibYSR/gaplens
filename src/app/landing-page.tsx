@@ -15,20 +15,14 @@ export function LandingPage() {
 
       <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <span
-          className="ltr-num mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs text-muted"
-          style={{ borderColor: "var(--border-g)" }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold"
+          style={{ borderColor: "var(--gold)", background: "rgba(232, 160, 32, 0.1)", color: "var(--gold)" }}
         >
-          <span
-            className="inline-block h-1.5 w-1.5 rounded-full animate-pulse"
-            style={{ background: "var(--healthy)" }}
-          />
           {t.hero.badge}
         </span>
 
-        <h1 className="text-4xl font-extrabold leading-tight text-ink sm:text-5xl">
-          {t.hero.titleLine1}
-          <br />
-          <span style={{ color: "var(--teal-2)" }}>{t.hero.titleLine2}</span>
+        <h1 className="max-w-2xl text-4xl font-extrabold leading-tight sm:text-5xl" style={{ color: "var(--teal)" }}>
+          {t.hero.title}
         </h1>
 
         <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">

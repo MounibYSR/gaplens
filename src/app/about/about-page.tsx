@@ -21,8 +21,8 @@ export function AboutPage() {
         <p className="mt-3 text-sm text-muted sm:text-base">{a.subtitle}</p>
       </section>
 
-      <TeamSection lang={lang} />
       <CredibilitySection lang={lang} />
+      <TeamSection lang={lang} />
 
       <footer className="py-8 text-center text-xs text-muted">{t.footer}</footer>
     </div>

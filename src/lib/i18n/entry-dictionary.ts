@@ -4,11 +4,9 @@ export const entryDictionary = {
   en: {
     nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing", about: "About" },
     hero: {
-      badge: "2026 Edition — AI-powered Digital Gap Diagnostics",
-      titleLine1: "Stop Losing Customers",
-      titleLine2: "to a Broken Digital Operation",
-      subtitle:
-        "The right digital setup means faster service, happier customers, and more revenue. See exactly where you stand — in under 15 minutes.",
+      badge: "Since 2026, going digital isn't optional",
+      title: "stuck choosing between consultants, research, or developers?",
+      subtitle: "GapLens gives you the answer — fast, clear, and built for your business.",
       ctaPrimary: "Start Free Diagnosis",
       ctaSecondary: "How It Works?",
       trust: ["Data Encrypted", "Built for the Gulf", "Security"],
@@ -132,11 +130,9 @@ export const entryDictionary = {
   ar: {
     nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن" },
     hero: {
-      badge: "نسخة 2026 — تشخيص ذكي للفجوات الرقمية",
-      titleLine1: "توقفي عن خسارة العملاء",
-      titleLine2: "بسبب عمليات رقمية مكسورة",
-      subtitle:
-        "الإعداد الرقمي الصحيح يعني خدمة أسرع، عملاء أسعد، وإيرادات أكثر. شوفي وين تقفين بالضبط — بأقل من 15 دقيقة.",
+      badge: "من سنة 2026، الرقمنة صارت ضرورة مو خيار",
+      title: "محتارة تختارين بين استشاريين، بحث طويل، أو مطورين؟",
+      subtitle: "GapLens تعطيك الجواب — بسرعة، بوضوح، ومصمم لشركتك.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
       ctaSecondary: "كيف يعمل؟",
       trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "سكيورتي"],
