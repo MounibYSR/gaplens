@@ -2,9 +2,9 @@ export type EntryLang = "en" | "ar";
 
 export const entryDictionary = {
   en: {
-    nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing", about: "About" },
+    nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing", about: "About", aiPowered: "AI-Powered" },
     hero: {
-      badge: "Since 2026, going digital isn't optional",
+      badge: "Digital transformation isn't a choice anymore.",
       title: "stuck choosing between consultants, research, or developers?",
       subtitle: "GapLens gives you the answer — fast, clear, and built for your business.",
       ctaPrimary: "Start Free Diagnosis",
@@ -128,9 +128,9 @@ export const entryDictionary = {
     footer: "© 2026 GapLens. All rights reserved. Qatar.",
   },
   ar: {
-    nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن" },
+    nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن", aiPowered: "بالذكاء الاصطناعي" },
     hero: {
-      badge: "من سنة 2026، الرقمنة صارت ضرورة مو خيار",
+      badge: "التحول الرقمي مب اختياري بعد الحين.",
       title: "محتارة تختارين بين استشاريين، بحث طويل، أو مطورين؟",
       subtitle: "GapLens تعطيك الجواب — بسرعة، بوضوح، ومصمم لشركتك.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
