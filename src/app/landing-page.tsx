@@ -20,6 +20,9 @@ export function LandingPage() {
         </div>
         <div className="flex items-center gap-3">
           <LanguageToggle lang={lang} onToggle={toggle} />
+          <Link href="/pricing" className="text-sm font-bold text-ink">
+            {t.nav.pricing}
+          </Link>
           <Link href="/login" className="text-sm font-bold text-ink">
             {t.nav.login}
           </Link>

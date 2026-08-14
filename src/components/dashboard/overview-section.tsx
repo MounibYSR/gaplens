@@ -2,10 +2,25 @@ import { Gauge } from "@/components/results/gauge";
 import { ScanCostLines } from "@/components/scan/cost-lines";
 import { ConsoleLabel } from "@/components/ui/console-label";
 import { DepartmentRadar } from "@/components/dashboard/department-radar";
+import { DEPARTMENTS } from "@/lib/assessment/departments";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { Department } from "@/lib/supabase/types";
+import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import { computeSharpenFlags, type TeaserAnswers } from "@/lib/scan/scoring";
+
+const PRIORITY_RANK: Record<RoadmapGap["priority"], number> = { high: 0, medium: 1, low: 2 };
+const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
+  high: "var(--gap)",
+  medium: "var(--gold)",
+  low: "var(--healthy)",
+};
+
+function topGapForDepartment(gaps: RoadmapGap[], deptTitleEn: string): RoadmapGap | null {
+  const matches = gaps.filter((g) => g.category === deptTitleEn);
+  if (matches.length === 0) return null;
+  return [...matches].sort((a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority])[0];
+}
 
 function ClockIcon() {
   return (
@@ -53,6 +68,7 @@ export function OverviewSection({
   trendDelta,
   roundProgressDelta,
   departmentCoverage,
+  gaps,
   onSwitchToChat,
 }: {
   lang: EntryLang;
@@ -62,6 +78,7 @@ export function OverviewSection({
   trendDelta: number | null;
   roundProgressDelta: number | null;
   departmentCoverage: { key: Department; pct: number }[];
+  gaps: RoadmapGap[];
   onSwitchToChat: () => void;
 }) {
   const t = appDictionary[lang].results;
@@ -156,6 +173,78 @@ export function OverviewSection({
         </p>
         <DepartmentRadar coverage={departmentCoverage} lang={lang} />
         <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
+      </div>
+
+      <div className="mt-6">
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          {d.departmentBreakdownTitle}
+        </p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {DEPARTMENTS.map((dept) => {
+            const coverage = departmentCoverage.find((c) => c.key === dept.key)?.pct ?? 0;
+            const gap = topGapForDepartment(gaps, dept.title.en);
+            const started = coverage > 0;
+
+            let calloutText: string;
+            let calloutColor: string;
+            let calloutLabel: string;
+            if (gap) {
+              calloutLabel = gap.priority === "high" ? d.deptCriticalGap : d.deptGapIdentified;
+              calloutColor = PRIORITY_COLOR[gap.priority];
+              calloutText = gap.gap_title;
+            } else if (started) {
+              calloutLabel = "";
+              calloutColor = "var(--healthy)";
+              calloutText = d.deptNoGaps;
+            } else {
+              calloutLabel = "";
+              calloutColor = "var(--border-g)";
+              calloutText = d.deptNotStarted;
+            }
+
+            return (
+              <div
+                key={dept.key}
+                className="glass-card flex flex-col gap-3 rounded-2xl p-4"
+                style={{ borderColor: "var(--border-g)" }}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className="rounded-full border px-2.5 py-1 text-[10px] font-extrabold tracking-widest"
+                    style={{ borderColor: dept.accent, color: dept.accent }}
+                  >
+                    {dept.title[lang]}
+                  </span>
+                  <span className="ltr-num text-xs font-bold text-muted" dir="ltr">
+                    {coverage}%
+                  </span>
+                </div>
+
+                <div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--glass-2)" }}>
+                    <div
+                      className="h-full rounded-full transition-[width] duration-500"
+                      style={{ width: `${coverage}%`, background: dept.accent }}
+                    />
+                  </div>
+                  <p className="mt-1 text-[10px] text-muted">{d.deptCoverageLabel}</p>
+                </div>
+
+                <div
+                  className="rounded-lg border px-3 py-2 text-xs"
+                  style={{ borderColor: calloutColor, background: "var(--glass-2)" }}
+                >
+                  {calloutLabel && (
+                    <p className="font-extrabold" style={{ color: calloutColor }}>
+                      {calloutLabel}
+                    </p>
+                  )}
+                  <p className="text-ink">{calloutText}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

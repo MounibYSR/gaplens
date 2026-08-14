@@ -356,6 +356,7 @@ function DashboardShellInner({
               trendDelta={overview.trendDelta}
               roundProgressDelta={overview.roundProgressDelta}
               departmentCoverage={departmentCoverage}
+              gaps={roadmapGaps.gaps}
               onSwitchToChat={() => setSection("chat")}
             />
           )}

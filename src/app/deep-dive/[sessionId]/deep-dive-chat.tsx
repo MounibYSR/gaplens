@@ -83,6 +83,75 @@ function HistoryPanel({ turns, toggleLabel }: { turns: AnsweredTurn[]; toggleLab
   );
 }
 
+function AiAvatar() {
+  return (
+    <span
+      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+      style={{ background: "var(--teal-2)", color: "var(--navy)" }}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3v3M12 18v3M4.5 4.5l2.1 2.1M17.4 17.4l2.1 2.1M3 12h3M18 12h3M4.5 19.5l2.1-2.1M17.4 6.6l2.1-2.1" />
+        <circle cx="12" cy="12" r="3.2" />
+      </svg>
+    </span>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" />
+    </svg>
+  );
+}
+
+function CustomAnswerInput({
+  isPending,
+  onAnswer,
+  placeholder,
+}: {
+  isPending: boolean;
+  onAnswer: (text: string) => void;
+  placeholder: string;
+}) {
+  const [draft, setDraft] = useState("");
+
+  function submit() {
+    const trimmed = draft.trim();
+    if (!trimmed || isPending) return;
+    onAnswer(trimmed);
+  }
+
+  return (
+    <div className="mt-1 flex items-center gap-2">
+      <input
+        type="text"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            submit();
+          }
+        }}
+        placeholder={placeholder}
+        disabled={isPending}
+        className="flex-1 rounded-lg border px-3 py-2 text-sm text-ink outline-none disabled:opacity-60"
+        style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+      />
+      <button
+        type="button"
+        disabled={isPending || !draft.trim()}
+        onClick={submit}
+        aria-label="Send"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-2 text-navy disabled:opacity-40"
+      >
+        <SendIcon />
+      </button>
+    </div>
+  );
+}
+
 function QuestionControls({
   question,
   lang,
@@ -427,11 +496,14 @@ export function DeepDiveChat({
         {/* Active question — always rendered in full below the (collapsed-by-default) history, never clipped or scrolled past. */}
         <div className="mt-4 flex flex-col gap-3">
           {currentQuestion && (
-            <div
-              className="max-w-[85%] rounded-xl px-3 py-2 text-sm"
-              style={{ background: "var(--glass-2)", color: "var(--ink)" }}
-            >
-              {currentQuestion.prompt[lang]}
+            <div className="flex max-w-[92%] items-start gap-2">
+              <AiAvatar />
+              <div
+                className="rounded-xl px-3 py-2 text-sm"
+                style={{ background: "var(--glass-2)", color: "var(--ink)" }}
+              >
+                {currentQuestion.prompt[lang]}
+              </div>
             </div>
           )}
         </div>
@@ -450,6 +522,14 @@ export function DeepDiveChat({
               isPending={isPending}
               continueLabel={t.continueCta}
               onAnswer={(labels) => handleAnswer(currentQuestion, labels)}
+            />
+          )}
+          {currentQuestion && (
+            <CustomAnswerInput
+              key={`custom-${dept!.key}-${currentQuestion.key}`}
+              isPending={isPending}
+              placeholder={t.customAnswerPlaceholder}
+              onAnswer={(text) => handleAnswer(currentQuestion, [text])}
             />
           )}
         </div>
