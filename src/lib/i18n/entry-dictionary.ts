@@ -5,7 +5,7 @@ export const entryDictionary = {
     nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing", about: "About", aiPowered: "AI-Powered" },
     hero: {
       badge: "Digital transformation isn't a choice anymore.",
-      title: "stuck choosing between consultants, research, or developers?",
+      title: "stuck between consultants, research, and figuring it out alone?",
       subtitle: "GapLens gives you the answer — fast, clear, and built for your business.",
       ctaPrimary: "Start Free Diagnosis",
       ctaSecondary: "How It Works?",
@@ -131,7 +131,7 @@ export const entryDictionary = {
     nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن", aiPowered: "بالذكاء الاصطناعي" },
     hero: {
       badge: "التحول الرقمي مب اختياري بعد الحين.",
-      title: "محتارة تختارين بين استشاريين، بحث طويل، أو مطورين؟",
+      title: "تايهة بين استشاريين، بحث بلا نهاية، أو تحلينها لحالك؟",
       subtitle: "GapLens تعطيك الجواب — بسرعة، بوضوح، ومصمم لشركتك.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
       ctaSecondary: "كيف يعمل؟",
