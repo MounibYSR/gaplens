@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEntryLang } from "@/hooks/use-entry-lang";
-import { LanguageToggle } from "@/components/entry/language-toggle";
+import { SiteNav } from "@/components/entry/site-nav";
 import { ParticleExplainer } from "@/components/landing/particle-explainer";
-import { CredibilitySection } from "@/components/landing/credibility-section";
 import { CompanyLogosStrip } from "@/components/landing/company-logos-strip";
 
 export function LandingPage() {
@@ -13,27 +11,7 @@ export function LandingPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <nav className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2 text-lg font-extrabold text-ink">
-          <Image src="/gaplens-icon.png" alt="" width={28} height={28} className="h-7 w-7" />
-          GapLens
-        </div>
-        <div className="flex items-center gap-3">
-          <LanguageToggle lang={lang} onToggle={toggle} />
-          <Link href="/pricing" className="text-sm font-bold text-ink">
-            {t.nav.pricing}
-          </Link>
-          <Link href="/login" className="text-sm font-bold text-ink">
-            {t.nav.login}
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-lg bg-teal-2 px-4 py-2 text-sm font-bold text-navy"
-          >
-            {t.nav.signUp}
-          </Link>
-        </div>
-      </nav>
+      <SiteNav lang={lang} toggle={toggle} t={t} />
 
       <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <span
@@ -86,7 +64,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      <CredibilitySection lang={lang} />
       <CompanyLogosStrip lang={lang} />
 
       <section id="how" className="mx-auto w-full max-w-5xl px-6 py-20">

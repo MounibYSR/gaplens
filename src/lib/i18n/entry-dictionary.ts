@@ -2,7 +2,7 @@ export type EntryLang = "en" | "ar";
 
 export const entryDictionary = {
   en: {
-    nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing" },
+    nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing", about: "About" },
     hero: {
       badge: "2026 Edition — AI-powered Digital Gap Diagnostics",
       titleLine1: "Stop Losing Customers",
@@ -93,6 +93,15 @@ export const entryDictionary = {
         { label: "Execution support", free: "—", growth: "—", gapfix: "Hands-on" },
       ],
     },
+    about: {
+      badge: "ABOUT US",
+      title: "The team behind GapLens",
+      subtitle: "Built in Doha, for Gulf SMEs who want clarity without the jargon.",
+      team: [
+        { name: "Yousra Mounib", role: "CEO & CTO" },
+        { name: "Sonia Chebaili", role: "COO" },
+      ],
+    },
     auth: {
       continueWithGoogle: "Continue with Google",
       orDivider: "or",
@@ -121,7 +130,7 @@ export const entryDictionary = {
     footer: "© 2026 GapLens. All rights reserved. Qatar.",
   },
   ar: {
-    nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار" },
+    nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن" },
     hero: {
       badge: "نسخة 2026 — تشخيص ذكي للفجوات الرقمية",
       titleLine1: "توقفي عن خسارة العملاء",
@@ -210,6 +219,15 @@ export const entryDictionary = {
         { label: "وحدة الهوية البصرية", free: "—", growth: "✓", gapfix: "✓" },
         { label: "دعوة الفريق", free: "—", growth: "✓", gapfix: "✓" },
         { label: "دعم التنفيذ", free: "—", growth: "—", gapfix: "تنفيذ عملي" },
+      ],
+    },
+    about: {
+      badge: "من نحن",
+      title: "الفريق وراء GapLens",
+      subtitle: "بُني بالدوحة، لخدمة الشركات الصغيرة والمتوسطة بالخليج اللي تبي وضوح بدون تعقيد.",
+      team: [
+        { name: "يسرى منيب", role: "CEO & CTO" },
+        { name: "سونيا شبيلي", role: "COO" },
       ],
     },
     auth: {

@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useEntryLang } from "@/hooks/use-entry-lang";
-import { LanguageToggle } from "@/components/entry/language-toggle";
+import { SiteNav } from "@/components/entry/site-nav";
 
 export function PricingPage() {
   const { lang, toggle, t } = useEntryLang();
@@ -11,21 +9,7 @@ export function PricingPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <nav className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <Link href="/" className="flex items-center gap-2 text-lg font-extrabold text-ink">
-          <Image src="/gaplens-icon.png" alt="" width={28} height={28} className="h-7 w-7" />
-          GapLens
-        </Link>
-        <div className="flex items-center gap-3">
-          <LanguageToggle lang={lang} onToggle={toggle} />
-          <Link href="/login" className="text-sm font-bold text-ink">
-            {t.nav.login}
-          </Link>
-          <Link href="/signup" className="rounded-lg bg-teal-2 px-4 py-2 text-sm font-bold text-navy">
-            {t.nav.signUp}
-          </Link>
-        </div>
-      </nav>
+      <SiteNav lang={lang} toggle={toggle} t={t} active="pricing" />
 
       <section className="mx-auto w-full max-w-5xl px-6 py-16">
         <div className="mb-12 text-center">
