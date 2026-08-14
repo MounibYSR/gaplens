@@ -97,7 +97,7 @@ export const entryDictionary = {
       subtitle: "Built in Doha, for Gulf SMEs who want clarity without the jargon.",
       team: [
         { name: "Yousra Mounib", role: "CEO & CTO" },
-        { name: "Sonia Chebaili", role: "COO" },
+        { name: "Sonia Chebili", role: "COO" },
       ],
     },
     auth: {

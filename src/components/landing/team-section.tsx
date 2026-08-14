@@ -13,7 +13,13 @@ export function TeamSection({ lang }: { lang: EntryLang }) {
   const t = entryDictionary[lang].about;
 
   return (
-    <section className="mx-auto w-full max-w-3xl px-6 py-14">
+    <section className="mx-auto w-full max-w-3xl px-6 py-14 text-center">
+      <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--gold)" }}>
+        {t.badge}
+      </span>
+      <h2 className="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">{t.title}</h2>
+      <p className="mx-auto mt-2 mb-8 max-w-xl text-sm text-muted">{t.subtitle}</p>
+
       <div className="flex flex-wrap justify-center gap-5">
         {t.team.map((member) => (
           <div
