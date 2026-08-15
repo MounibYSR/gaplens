@@ -150,36 +150,15 @@ export function OverviewSection({
           </div>
         </div>
 
-        <div>
-          <div className="hidden xl:flex xl:flex-col xl:gap-3">
-            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-              {tt.costsTitle}
-            </p>
-            <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
-            <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
-            <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
-            <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
-          </div>
-
-          <div className="xl:hidden">
-            <ScanCostLines answers={answers} lang={lang} />
-          </div>
+        <div className="xl:hidden">
+          <ScanCostLines answers={answers} lang={lang} />
         </div>
-      </div>
 
-      <div className="mt-6 hidden glass-card rounded-2xl p-6 xl:block" style={{ borderColor: "var(--border-g)" }}>
-        <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-          {d.vectorAnalysisTitle}
-        </p>
-        <DepartmentRadar coverage={departmentCoverage} lang={lang} />
-        <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
-      </div>
-
-      <div className="mt-6">
-        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-          {d.departmentBreakdownTitle}
-        </p>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+            {d.departmentBreakdownTitle}
+          </p>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {DEPARTMENTS.map((dept) => {
             const coverage = departmentCoverage.find((c) => c.key === dept.key)?.pct ?? 0;
             const gap = topGapForDepartment(gaps, dept.title.en);
@@ -244,7 +223,26 @@ export function OverviewSection({
               </div>
             );
           })}
+          </div>
         </div>
+      </div>
+
+      <div className="mt-6 hidden glass-card rounded-2xl p-6 xl:block" style={{ borderColor: "var(--border-g)" }}>
+        <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          {d.vectorAnalysisTitle}
+        </p>
+        <DepartmentRadar coverage={departmentCoverage} lang={lang} />
+        <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
+      </div>
+
+      <div className="mt-6 hidden xl:flex xl:flex-col xl:gap-3">
+        <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          {tt.costsTitle}
+        </p>
+        <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
+        <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
+        <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
+        <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
       </div>
     </div>
   );

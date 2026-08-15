@@ -29,7 +29,7 @@ export async function startNewRound() {
 
   const { data: lastSession } = await supabase
     .from("assessment_sessions")
-    .select("team_size, scan_answers, overall_gap")
+    .select("id, team_size, scan_answers, overall_gap")
     .eq("company_id", profile.company_id)
     .order("started_at", { ascending: false })
     .limit(1)
@@ -47,6 +47,19 @@ export async function startNewRound() {
     .single();
 
   if (error || !session) redirect("/dashboard");
+
+  // Invites sent for the previous round that nobody has answered yet would
+  // otherwise silently stop counting toward coverage the moment a new round
+  // starts (the dashboard only reads the newest session's responses) — move
+  // them forward so an answer submitted after this point still lands on the
+  // round the owner is actually looking at.
+  if (lastSession?.id) {
+    await supabase
+      .from("team_invites")
+      .update({ session_id: session.id })
+      .eq("session_id", lastSession.id)
+      .eq("status", "pending");
+  }
 
   redirect("/dashboard?section=chat");
 }

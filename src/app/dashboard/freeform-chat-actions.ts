@@ -4,13 +4,19 @@ import { createClient } from "@/lib/supabase/server";
 import { askOpenAI } from "@/lib/ai/azure-openai";
 import { checkSessionRateLimit } from "@/lib/rate-limit";
 import { splitContext, maybeSummarizeFreeformChat } from "@/lib/freeform-chat/context";
-import { buildFreeformSystemPrompt, buildAiInitiativeSystemPrompt } from "@/lib/freeform-chat/system-prompt";
+import {
+  buildFreeformSystemPrompt,
+  buildAiInitiativeSystemPrompt,
+  formatKnownDeepDiveContext,
+  type DeepDiveAnswerRow,
+} from "@/lib/freeform-chat/system-prompt";
+import { filterToLatestAttempt } from "@/lib/deep-dive/confidence";
 import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 
 type ChatResult = { reply: string } | { error: "rate_limited" | "ai_failed" };
 
-async function loadCompanyContext(sessionId: string) {
+async function loadCompanyContext(sessionId: string, lang: EntryLang) {
   const supabase = await createClient();
 
   const {
@@ -42,11 +48,27 @@ async function loadCompanyContext(sessionId: string) {
   const allGaps = ((latestVersion?.roadmap_json as { gaps?: RoadmapGap[] } | null)?.gaps ?? []) as RoadmapGap[];
   const openGaps = allGaps.filter((g) => g.status !== "resolved");
 
+  // Scoped to just this session, matching the same scoping generate-and-save.ts
+  // and the dashboard use for deep_dive_responses — filterToLatestAttempt
+  // groups by department only, so widening this to every company session
+  // could let a stale attempt number from an older round outrank the
+  // current round's answer for the same department.
+  const { data: deepDiveRaw } = await supabase
+    .from("deep_dive_responses")
+    .select("department, answer_text, attempt")
+    .eq("session_id", sessionId);
+
+  const deepDiveContext = formatKnownDeepDiveContext(
+    filterToLatestAttempt((deepDiveRaw ?? []) as DeepDiveAnswerRow[]),
+    lang,
+  );
+
   return {
     supabase,
     companyId: session.company_id,
     companyName: company?.name ?? "Your Company",
     openGaps,
+    deepDiveContext,
     summary: company?.freeform_chat_summary ?? null,
     summarizedCount: company?.freeform_chat_summarized_count ?? 0,
   };
@@ -57,8 +79,8 @@ export async function sendFreeformMessage(params: {
   text: string;
   lang: EntryLang;
 }): Promise<ChatResult> {
-  const { supabase, companyId, companyName, openGaps, summary, summarizedCount } =
-    await loadCompanyContext(params.sessionId);
+  const { supabase, companyId, companyName, openGaps, deepDiveContext, summary, summarizedCount } =
+    await loadCompanyContext(params.sessionId, params.lang);
 
   const rateLimit = await checkSessionRateLimit({
     sessionId: params.sessionId,
@@ -79,7 +101,7 @@ export async function sendFreeformMessage(params: {
 
   await supabase.from("freeform_chat_messages").insert({ company_id: companyId, role: "user", content: params.text });
 
-  const system = buildFreeformSystemPrompt({ companyName, openGaps, summary, lang: params.lang });
+  const system = buildFreeformSystemPrompt({ companyName, openGaps, summary, deepDiveContext, lang: params.lang });
 
   let reply: string;
   try {
@@ -102,8 +124,8 @@ export async function requestAiInitiative(params: {
   sessionId: string;
   lang: EntryLang;
 }): Promise<ChatResult> {
-  const { supabase, companyId, companyName, openGaps, summary, summarizedCount } =
-    await loadCompanyContext(params.sessionId);
+  const { supabase, companyId, companyName, openGaps, deepDiveContext, summary, summarizedCount } =
+    await loadCompanyContext(params.sessionId, params.lang);
 
   const rateLimit = await checkSessionRateLimit({
     sessionId: params.sessionId,
@@ -121,7 +143,7 @@ export async function requestAiInitiative(params: {
     .order("created_at", { ascending: true });
 
   const { recentMessages } = splitContext(existing ?? [], summarizedCount);
-  const system = buildAiInitiativeSystemPrompt({ companyName, openGaps, summary, lang: params.lang });
+  const system = buildAiInitiativeSystemPrompt({ companyName, openGaps, summary, deepDiveContext, lang: params.lang });
 
   let reply: string;
   try {

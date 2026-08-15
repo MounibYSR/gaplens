@@ -27,6 +27,19 @@ export async function createInviteLink(
   return data.token;
 }
 
+export async function getInviteResponses(inviteId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("deep_dive_responses")
+    .select("question_key, answer_text, answered_at")
+    .eq("invite_id", inviteId)
+    .order("answered_at", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function setGapStatus(sessionId: string, gapTitle: string, status: GapStatus) {
   const supabase = await createClient();
 
