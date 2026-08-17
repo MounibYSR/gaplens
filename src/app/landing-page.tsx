@@ -21,8 +21,20 @@ export function LandingPage() {
           {t.hero.badge}
         </span>
 
-        <h1 className="max-w-2xl text-4xl font-extrabold leading-tight sm:text-5xl" style={{ color: "var(--teal)" }}>
-          {t.hero.title}
+        <h1 className="max-w-2xl text-4xl font-extrabold leading-tight text-ink sm:text-5xl">
+          {(() => {
+            const idx = t.hero.title.indexOf(t.hero.titleEmphasis);
+            if (idx === -1) return t.hero.title;
+            const before = t.hero.title.slice(0, idx);
+            const after = t.hero.title.slice(idx + t.hero.titleEmphasis.length);
+            return (
+              <>
+                {before}
+                <span className="grad-text">{t.hero.titleEmphasis}</span>
+                {after}
+              </>
+            );
+          })()}
         </h1>
 
         <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">

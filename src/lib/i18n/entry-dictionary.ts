@@ -5,8 +5,9 @@ export const entryDictionary = {
     nav: { login: "Log In", signUp: "Sign Up", pricing: "Pricing", about: "About", aiPowered: "AI-Powered" },
     hero: {
       badge: "Digital transformation isn't a choice anymore.",
-      title: "stuck between consultants, research, and figuring it out alone?",
-      subtitle: "GapLens gives you the answer — fast, clear, and built for your business.",
+      title: "Every gap in your digital setup is a moment your customer notices.",
+      titleEmphasis: "your customer notices",
+      subtitle: "See exactly where yours are — it takes less than 2 minutes.",
       ctaPrimary: "Start Free Diagnosis",
       ctaSecondary: "How It Works?",
       trust: ["Data Encrypted", "Built for the Gulf", "Security"],
@@ -94,7 +95,7 @@ export const entryDictionary = {
     about: {
       badge: "ABOUT US",
       title: "The team behind GapLens",
-      subtitle: "Built in Doha, for Gulf SMEs who want clarity without the jargon.",
+      subtitle: "Built in Doha, for Gulf SMEs who want clarity.",
       team: [
         { name: "Yousra Mounib", role: "CEO & CTO" },
         { name: "Sonia Chebili", role: "COO" },
@@ -131,8 +132,9 @@ export const entryDictionary = {
     nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن", aiPowered: "بالذكاء الاصطناعي" },
     hero: {
       badge: "التحول الرقمي مب اختياري بعد الحين.",
-      title: "تايهة بين استشاريين، بحث بلا نهاية، أو تحلينها لحالك؟",
-      subtitle: "GapLens تعطيك الجواب — بسرعة، بوضوح، ومصمم لشركتك.",
+      title: "كل فجوة برقمنة شركتك هي لحظة عميلك يحس فيها.",
+      titleEmphasis: "عميلك يحس فيها",
+      subtitle: "شوفي فجواتك بالضبط — ما تاخذ أكثر من دقيقتين.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
       ctaSecondary: "كيف يعمل؟",
       trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "سكيورتي"],
@@ -220,7 +222,7 @@ export const entryDictionary = {
     about: {
       badge: "من نحن",
       title: "الفريق وراء GapLens",
-      subtitle: "بُني بالدوحة، لخدمة الشركات الصغيرة والمتوسطة بالخليج اللي تبي وضوح بدون تعقيد.",
+      subtitle: "بُني بالدوحة، لخدمة الشركات الصغيرة والمتوسطة بالخليج اللي تبي وضوح.",
       team: [
         { name: "يسرى منيب", role: "CEO & CTO" },
         { name: "سونيا شبيلي", role: "COO" },
