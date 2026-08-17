@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { ChatTab } from "@/components/dashboard/chat-tab";
 import { OverviewSection } from "@/components/dashboard/overview-section";
@@ -160,9 +160,22 @@ function DashboardShellInner({
   freeformChatHistory,
   companyTools,
 }: DashboardShellProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialSection: Section = searchParams.get("section") === "chat" ? "chat" : "overview";
-  const [section, setSection] = useState<Section>(initialSection);
+  const sectionParam = searchParams.get("section");
+  const validSections: Section[] = ["overview", "chat", "team", "roadmap", "gapfix", "toolmap"];
+  const initialSection: Section = validSections.includes(sectionParam as Section)
+    ? (sectionParam as Section)
+    : "overview";
+  const [section, setSectionState] = useState<Section>(initialSection);
+
+  // Keep the URL in sync with the active tab so refreshing or sharing the
+  // link lands back on the same section instead of silently resetting to
+  // Overview.
+  function setSection(next: Section) {
+    setSectionState(next);
+    router.replace(`/dashboard?section=${next}`, { scroll: false });
+  }
   const [answeredDepartments, setAnsweredDepartments] = useState<Department[]>(
     confidence.coveredDepartments,
   );

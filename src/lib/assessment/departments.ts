@@ -21,6 +21,12 @@ export type DepartmentDef = {
   code: string;
   title: LocalizedText;
   accent: string;
+  /** 24x24 viewBox inline SVG path data, stroke=currentColor — a fixed shape
+   * per department so identity doesn't rely on color alone (colorblind
+   * users, or anywhere the accent hues end up close in luminance). Shared
+   * with the roadmap PDF template (src/lib/roadmap/render-html.ts) so the
+   * same icon means the same department everywhere. */
+  icon: string;
   questions: Question[];
   insight: (score: number, lang: EntryLang) => string;
 };
@@ -51,7 +57,8 @@ export const DEPARTMENTS: DepartmentDef[] = [
     key: "digital_marketing",
     code: "DIGITAL_MARKETING.SCAN",
     title: { ar: "التسويق الرقمي", en: "Digital Marketing" },
-    accent: "#15c99a",
+    accent: "#bd97e9",
+    icon: "M3 11v2a2 2 0 0 0 2 2h1l3 4v-6M9 15V7l10-4v18l-10-4",
     questions: [
       {
         id: "channels",
@@ -103,7 +110,8 @@ export const DEPARTMENTS: DepartmentDef[] = [
     key: "tech_operations",
     code: "TECH_OPERATIONS.SCAN",
     title: { ar: "العمليات التقنية وحزمة الأدوات", en: "Tech Operations & Tool Stack" },
-    accent: "#1d9e75",
+    accent: "#6b90e7",
+    icon: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.36.5.6.9.6H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z",
     questions: [
       {
         id: "manual_tasks",
@@ -152,7 +160,8 @@ export const DEPARTMENTS: DepartmentDef[] = [
     key: "customer_experience",
     code: "CUSTOMER_EXPERIENCE.SCAN",
     title: { ar: "تجربة العملاء", en: "Customer Experience" },
-    accent: "#e8a020",
+    accent: "#e1456c",
+    icon: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z",
     questions: [
       {
         id: "response_time",
@@ -200,7 +209,8 @@ export const DEPARTMENTS: DepartmentDef[] = [
     key: "data_decision_making",
     code: "DATA_DECISIONS.SCAN",
     title: { ar: "البيانات واتخاذ القرار", en: "Data & Decision-Making" },
-    accent: "#c9a015",
+    accent: "#f3d08a",
+    icon: "M3 3v18h18M8 17V11M13 17V7M18 17v-4",
     questions: [
       {
         id: "dashboards",
@@ -248,7 +258,8 @@ export const DEPARTMENTS: DepartmentDef[] = [
     key: "team_readiness",
     code: "TEAM_READINESS.SCAN",
     title: { ar: "الفريق والجاهزية الرقمية", en: "Human Resources & Digital Readiness" },
-    accent: "#20c9c2",
+    accent: "#32d3be",
+    icon: "M12 8m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M4 20c0-4 4-6 8-6s8 2 8 6",
     questions: [
       {
         id: "training",

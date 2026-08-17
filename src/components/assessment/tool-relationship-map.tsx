@@ -55,7 +55,12 @@ function StatusDot({ connected, onClick }: { connected: boolean; onClick?: () =>
   );
   if (!onClick) return dot;
   return (
-    <button type="button" onClick={onClick} aria-label="toggle connected status" className="shrink-0">
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="toggle connected status"
+      className="-m-[17px] shrink-0 p-[17px]"
+    >
       {dot}
     </button>
   );
@@ -244,7 +249,7 @@ export function ToolRelationshipMap({
                         <button
                           type="button"
                           onClick={() => void removeTool(tool.id)}
-                          className="text-muted hover:text-ink"
+                          className="flex h-6 w-6 items-center justify-center rounded-md text-sm font-bold text-muted hover:text-ink"
                           aria-label="remove"
                         >
                           ×

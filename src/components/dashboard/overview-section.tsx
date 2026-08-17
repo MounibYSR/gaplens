@@ -1,6 +1,7 @@
 import { Gauge } from "@/components/results/gauge";
 import { ScanCostLines } from "@/components/scan/cost-lines";
 import { ConsoleLabel } from "@/components/ui/console-label";
+import { DepartmentIcon } from "@/components/ui/department-icon";
 import { DepartmentRadar } from "@/components/dashboard/department-radar";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
@@ -189,9 +190,10 @@ export function OverviewSection({
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className="rounded-full border px-2.5 py-1 text-[10px] font-extrabold tracking-widest"
+                    className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-extrabold tracking-widest"
                     style={{ borderColor: dept.accent, color: dept.accent }}
                   >
+                    <DepartmentIcon department={dept} size={12} />
                     {dept.title[lang]}
                   </span>
                   <span className="ltr-num text-xs font-bold text-muted" dir="ltr">

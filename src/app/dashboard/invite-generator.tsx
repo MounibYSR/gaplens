@@ -6,6 +6,7 @@ import { DEEP_DIVE_OPENERS } from "@/lib/deep-dive/questions";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { Department } from "@/lib/supabase/types";
+import { DepartmentIcon } from "@/components/ui/department-icon";
 import { createInviteLink, getInviteResponses } from "./actions";
 
 type ExistingInvite = {
@@ -33,6 +34,20 @@ function StatusPill({ status, t }: { status: string; t: (typeof appDictionary)[E
 function questionLabel(department: Department, questionKey: string, lang: EntryLang, t: (typeof appDictionary)[EntryLang]["dashboard"]) {
   if (questionKey === "opening") return DEEP_DIVE_OPENERS[department][lang];
   return t.inviteFollowUpLabel;
+}
+
+function DepartmentBadge({ department, lang }: { department: Department; lang: EntryLang }) {
+  const dept = DEPARTMENTS.find((d) => d.key === department);
+  if (!dept) return null;
+  return (
+    <span
+      className="flex w-fit items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-bold"
+      style={{ borderColor: dept.accent, color: dept.accent }}
+    >
+      <DepartmentIcon department={dept} size={11} />
+      {dept.title[lang]}
+    </span>
+  );
 }
 
 function AnswersPanel({
@@ -136,11 +151,15 @@ export function InviteGenerator({
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value as Department)}
-              className="w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
-              style={{ background: "var(--navy)", borderColor: "var(--border-g)" }}
+              className="w-full rounded-lg border px-3 py-2 text-sm font-bold outline-none"
+              style={{
+                background: "var(--navy)",
+                borderColor: "var(--border-g)",
+                color: DEPARTMENTS.find((d) => d.key === department)?.accent,
+              }}
             >
               {DEPARTMENTS.map((d) => (
-                <option key={d.key} value={d.key} style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                <option key={d.key} value={d.key} style={{ backgroundColor: "var(--navy)", color: d.accent }}>
                   {d.title[lang]}
                 </option>
               ))}
@@ -194,25 +213,22 @@ export function InviteGenerator({
         ) : (
           <>
             <ul className="flex flex-col gap-2 xl:hidden">
-              {existingInvites.map((invite) => {
-                const dept = DEPARTMENTS.find((d) => d.key === invite.department);
-                return (
-                  <li key={invite.id} className="rounded-lg p-2" style={{ background: "var(--glass-2)" }}>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-ink">
-                        {dept?.title[lang]}
-                        {invite.invitee_name ? ` — ${invite.invitee_name}` : ""}
-                      </span>
-                      <button type="button" onClick={() => copy(invite.token)} className="text-teal-2">
-                        {t.inviteCopy}
-                      </button>
+              {existingInvites.map((invite) => (
+                <li key={invite.id} className="rounded-lg p-2" style={{ background: "var(--glass-2)" }}>
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <DepartmentBadge department={invite.department} lang={lang} />
+                      {invite.invitee_name && <span className="truncate text-ink">{invite.invitee_name}</span>}
                     </div>
-                    <div className="mt-1">
-                      <AnswersPanel invite={invite} lang={lang} t={t} />
-                    </div>
-                  </li>
-                );
-              })}
+                    <button type="button" onClick={() => copy(invite.token)} className="shrink-0 text-teal-2">
+                      {t.inviteCopy}
+                    </button>
+                  </div>
+                  <div className="mt-1">
+                    <AnswersPanel invite={invite} lang={lang} t={t} />
+                  </div>
+                </li>
+              ))}
             </ul>
 
             <div className="hidden xl:flex xl:flex-col xl:gap-2">
@@ -225,24 +241,21 @@ export function InviteGenerator({
                 <span>{t.inviteStatusLabel}</span>
                 <span />
               </div>
-              {existingInvites.map((invite) => {
-                const dept = DEPARTMENTS.find((d) => d.key === invite.department);
-                return (
-                  <div
-                    key={invite.id}
-                    className="grid items-start gap-3 rounded-lg px-3 py-2.5"
-                    style={{ gridTemplateColumns: "1fr 1fr 90px 70px", background: "var(--glass-2)" }}
-                  >
-                    <span className="truncate text-xs font-bold text-ink">{dept?.title[lang]}</span>
-                    <span className="truncate text-xs text-muted">{invite.invitee_name || "—"}</span>
-                    <StatusPill status={invite.status} t={t} />
-                    <button type="button" onClick={() => copy(invite.token)} className="text-xs font-bold text-teal-2">
-                      {t.inviteCopy}
-                    </button>
-                    <AnswersPanel invite={invite} lang={lang} t={t} />
-                  </div>
-                );
-              })}
+              {existingInvites.map((invite) => (
+                <div
+                  key={invite.id}
+                  className="grid items-start gap-3 rounded-lg px-3 py-2.5"
+                  style={{ gridTemplateColumns: "1fr 1fr 90px 70px", background: "var(--glass-2)" }}
+                >
+                  <DepartmentBadge department={invite.department} lang={lang} />
+                  <span className="truncate text-xs text-muted">{invite.invitee_name || "—"}</span>
+                  <StatusPill status={invite.status} t={t} />
+                  <button type="button" onClick={() => copy(invite.token)} className="text-xs font-bold text-teal-2">
+                    {t.inviteCopy}
+                  </button>
+                  <AnswersPanel invite={invite} lang={lang} t={t} />
+                </div>
+              ))}
             </div>
           </>
         )}

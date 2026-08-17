@@ -25,7 +25,7 @@ export async function checkSessionRateLimit(params: {
     .select("company_id")
     .eq("id", params.sessionId)
     .maybeSingle();
-  if (!session) return { allowed: true, count: 0 };
+  if (!session) return { allowed: false, count: 0 };
 
   const { data: companySessions } = await supabase
     .from("assessment_sessions")
