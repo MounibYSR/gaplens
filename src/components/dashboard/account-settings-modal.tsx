@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import { updateAccountSettings } from "@/app/dashboard/account-actions";
+import { logOut } from "@/lib/actions/auth";
 
 export function AccountSettingsModal({
   lang,
@@ -27,6 +28,7 @@ export function AccountSettingsModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loggingOut, startLogOut] = useTransition();
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const picked = e.target.files?.[0];
@@ -134,6 +136,16 @@ export function AccountSettingsModal({
             {saving ? "…" : t.save}
           </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() => startLogOut(() => logOut())}
+          disabled={loggingOut}
+          className="mt-4 w-full border-t pt-4 text-center text-sm font-bold disabled:opacity-60"
+          style={{ borderColor: "var(--border-g)", color: "var(--gap)" }}
+        >
+          {loggingOut ? "…" : t.logOut}
+        </button>
       </div>
     </div>
   );

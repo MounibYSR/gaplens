@@ -207,6 +207,7 @@ export const appDictionary = {
       save: "Save",
       cancel: "Cancel",
       saveError: "Something went wrong saving — please try again.",
+      logOut: "Log Out",
     },
     chatTab: {
       structuredLabel: "Structured Assessment",
@@ -487,6 +488,7 @@ export const appDictionary = {
       save: "حفظ",
       cancel: "إلغاء",
       saveError: "صار خطأ وإحنا نحفظ — حاولي مرة ثانية.",
+      logOut: "تسجيل الخروج",
     },
     chatTab: {
       structuredLabel: "التقييم المنظّم",

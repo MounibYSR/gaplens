@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
 import { getPostAuthDestination } from "@/lib/auth/post-login-destination";
@@ -72,5 +73,9 @@ export async function logIn(_prevState: unknown, formData: FormData) {
 export async function logOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  // Bust the whole cached route tree so a different account logging in
+  // right after on the same browser never gets served a stale RSC payload
+  // (dashboard data, sidebar name/logo, etc.) from this session.
+  revalidatePath("/", "layout");
   redirect("/login");
 }

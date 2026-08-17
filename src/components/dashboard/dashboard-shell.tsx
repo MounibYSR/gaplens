@@ -1,8 +1,10 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { logOut } from "@/lib/actions/auth";
 import { ChatTab } from "@/components/dashboard/chat-tab";
 import { OverviewSection } from "@/components/dashboard/overview-section";
 import { RoadmapSection } from "@/components/dashboard/roadmap-section";
@@ -106,6 +108,93 @@ function CloseIcon() {
   );
 }
 
+function ChevronDownIcon() {
+  return (
+    <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-muted">
+      <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AccountMenu({
+  imageUrl,
+  initial,
+  name,
+  subtitle,
+  accountSettingsLabel,
+  logOutLabel,
+  onOpenSettings,
+}: {
+  imageUrl: string | null;
+  initial: string;
+  name: string;
+  subtitle: string;
+  accountSettingsLabel: string;
+  logOutLabel: string;
+  onOpenSettings: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [loggingOut, startLogOut] = useTransition();
+
+  return (
+    <div className="relative mb-6">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-3 rounded-xl border p-3 text-start transition-opacity hover:opacity-80"
+        style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
+      >
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />
+        ) : (
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-navy"
+            style={{ background: "var(--teal-2)" }}
+          >
+            {initial}
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-bold text-ink">{name}</p>
+          <p className="truncate text-xs text-muted">{subtitle}</p>
+        </div>
+        <ChevronDownIcon />
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div
+            className="absolute start-0 top-full z-50 mt-2 w-full overflow-hidden rounded-xl border shadow-2xl"
+            style={{ borderColor: "var(--border-g)", background: "var(--modal-bg)" }}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                onOpenSettings();
+              }}
+              className="block w-full px-4 py-3 text-start text-sm font-bold text-ink hover:opacity-80"
+            >
+              {accountSettingsLabel}
+            </button>
+            <button
+              type="button"
+              onClick={() => startLogOut(() => logOut())}
+              disabled={loggingOut}
+              className="block w-full border-t px-4 py-3 text-start text-sm font-bold disabled:opacity-60"
+              style={{ borderColor: "var(--border-g)", color: "var(--gap)" }}
+            >
+              {loggingOut ? "…" : logOutLabel}
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 type DashboardShellProps = {
   lang: EntryLang;
   sessionId: string;
@@ -205,41 +294,20 @@ function DashboardShellInner({
         className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-e px-4 py-6 md:flex"
         style={{ borderColor: "var(--border-g)", background: "var(--glass)" }}
       >
-        <div className="mb-6 flex items-center gap-2 px-1 text-base font-extrabold text-ink">
+        <Link href="/" className="mb-6 flex items-center gap-2 px-1 text-base font-extrabold text-ink transition-opacity hover:opacity-80">
           <Image src="/gaplens-icon.png" alt="" width={24} height={24} className="h-6 w-6" />
           GapLens<span style={{ color: "var(--teal-2)" }}> AI</span>
-        </div>
+        </Link>
 
-        <button
-          type="button"
-          onClick={() => setShowSettings(true)}
-          className="mb-6 flex items-center gap-3 rounded-xl border p-3 text-start transition-opacity hover:opacity-80"
-          style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
-        >
-          {sidebarImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={sidebarImageUrl}
-              alt=""
-              className="h-9 w-9 shrink-0 rounded-full object-cover"
-            />
-          ) : (
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-navy"
-              style={{ background: "var(--teal-2)" }}
-            >
-              {initial}
-            </span>
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-ink">{accountName}</p>
-            <p className="truncate text-xs text-muted">{displayName}</p>
-          </div>
-          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-muted">
-            <circle cx="10" cy="10" r="2.3" />
-            <path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.1 4.9l-1.4 1.4M6.3 13.7l-1.4 1.4M15.1 15.1l-1.4-1.4M6.3 6.3 4.9 4.9" strokeLinecap="round" />
-          </svg>
-        </button>
+        <AccountMenu
+          imageUrl={sidebarImageUrl}
+          initial={initial}
+          name={accountName}
+          subtitle={displayName}
+          accountSettingsLabel={appDictionary[lang].accountSettings.title}
+          logOutLabel={appDictionary[lang].accountSettings.logOut}
+          onOpenSettings={() => setShowSettings(true)}
+        />
 
         <nav className="flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => {
@@ -270,10 +338,10 @@ function DashboardShellInner({
           className="flex items-center justify-between border-b px-6 py-4 md:hidden"
           style={{ borderColor: "var(--border-g)" }}
         >
-          <div className="flex shrink-0 items-center gap-2 text-sm font-extrabold text-ink">
+          <Link href="/" className="flex shrink-0 items-center gap-2 text-sm font-extrabold text-ink">
             <Image src="/gaplens-icon.png" alt="" width={20} height={20} className="h-5 w-5" />
             GapLens<span style={{ color: "var(--teal-2)" }}> AI</span>
-          </div>
+          </Link>
           <div className="flex min-w-0 items-center gap-3">
             <span className="min-w-0 truncate text-end text-xs text-muted">{accountName}</span>
             <button
@@ -299,39 +367,18 @@ function DashboardShellInner({
               className="relative z-50 flex flex-col gap-1 border-b px-4 py-3 md:hidden"
               style={{ borderColor: "var(--border-g)", background: "var(--modal-bg)" }}
             >
-              <button
-                type="button"
-                onClick={() => {
+              <AccountMenu
+                imageUrl={sidebarImageUrl}
+                initial={initial}
+                name={accountName}
+                subtitle={displayName}
+                accountSettingsLabel={appDictionary[lang].accountSettings.title}
+                logOutLabel={appDictionary[lang].accountSettings.logOut}
+                onOpenSettings={() => {
                   setShowSettings(true);
                   setShowMobileNav(false);
                 }}
-                className="mb-2 flex items-center gap-3 rounded-xl border p-3 text-start transition-opacity hover:opacity-80"
-                style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
-              >
-                {sidebarImageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={sidebarImageUrl}
-                    alt=""
-                    className="h-9 w-9 shrink-0 rounded-full object-cover"
-                  />
-                ) : (
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-navy"
-                    style={{ background: "var(--teal-2)" }}
-                  >
-                    {initial}
-                  </span>
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-ink">{accountName}</p>
-                  <p className="truncate text-xs text-muted">{displayName}</p>
-                </div>
-                <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-muted">
-                  <circle cx="10" cy="10" r="2.3" />
-                  <path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.1 4.9l-1.4 1.4M6.3 13.7l-1.4 1.4M15.1 15.1l-1.4-1.4M6.3 6.3 4.9 4.9" strokeLinecap="round" />
-                </svg>
-              </button>
+              />
 
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
