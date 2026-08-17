@@ -77,5 +77,5 @@ export async function logOut() {
   // right after on the same browser never gets served a stale RSC payload
   // (dashboard data, sidebar name/logo, etc.) from this session.
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect("/");
 }
