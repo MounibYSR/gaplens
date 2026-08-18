@@ -155,11 +155,22 @@ export function OverviewSection({
           <ScanCostLines answers={answers} lang={lang} />
         </div>
 
-        <div>
+        <div className="hidden xl:block">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-            {d.departmentBreakdownTitle}
+            {d.vectorAnalysisTitle}
           </p>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="glass-card rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
+            <DepartmentRadar coverage={departmentCoverage} lang={lang} />
+            <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          {d.departmentBreakdownTitle}
+        </p>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {DEPARTMENTS.map((dept) => {
             const coverage = departmentCoverage.find((c) => c.key === dept.key)?.pct ?? 0;
             const gap = topGapForDepartment(gaps, dept.title.en);
@@ -225,16 +236,7 @@ export function OverviewSection({
               </div>
             );
           })}
-          </div>
         </div>
-      </div>
-
-      <div className="mt-6 hidden glass-card rounded-2xl p-6 xl:block" style={{ borderColor: "var(--border-g)" }}>
-        <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-          {d.vectorAnalysisTitle}
-        </p>
-        <DepartmentRadar coverage={departmentCoverage} lang={lang} />
-        <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
       </div>
 
       <div className="mt-6 hidden xl:flex xl:flex-col xl:gap-3">
