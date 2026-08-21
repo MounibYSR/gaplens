@@ -6,6 +6,7 @@ import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import { computeConfidence, bucketConfidence } from "@/lib/deep-dive/confidence";
 import { bucketGap } from "@/lib/scan/scoring";
+import { ClockIcon, PersonIcon, InfoIcon, IconBadge } from "@/components/ui/stat-icons";
 
 const RING_SIZE = 112;
 const RING_STROKE = 12;
@@ -104,33 +105,6 @@ function ConfidenceLine({ lang }: { lang: EntryLang }) {
   );
 }
 
-function ClockIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 3" />
-    </svg>
-  );
-}
-
-function PersonIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-    </svg>
-  );
-}
-
-function InfoIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 11v5M12 8h.01" />
-    </svg>
-  );
-}
-
 function ArrowRightIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -141,10 +115,8 @@ function ArrowRightIcon() {
 
 function CostRow({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
-      <span className="shrink-0" style={{ color: "var(--teal-2)" }}>
-        {icon}
-      </span>
+    <div className="flex items-center gap-3 rounded-full py-1.5 pe-4 ps-1.5 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
+      <IconBadge icon={icon} sizeClass="h-7 w-7" />
       <span>{text}</span>
     </div>
   );

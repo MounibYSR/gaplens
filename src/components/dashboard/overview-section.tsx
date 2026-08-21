@@ -2,6 +2,7 @@ import { Gauge } from "@/components/results/gauge";
 import { ScanCostLines } from "@/components/scan/cost-lines";
 import { ConsoleLabel } from "@/components/ui/console-label";
 import { DepartmentIcon } from "@/components/ui/department-icon";
+import { ClockIcon, PersonIcon, InfoIcon, IconBadge } from "@/components/ui/stat-icons";
 import { DepartmentRadar } from "@/components/dashboard/department-radar";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
@@ -23,39 +24,10 @@ function topGapForDepartment(gaps: RoadmapGap[], deptTitleEn: string): RoadmapGa
   return [...matches].sort((a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority])[0];
 }
 
-function ClockIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 3" />
-    </svg>
-  );
-}
-
-function PersonIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-    </svg>
-  );
-}
-
-function InfoIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 11v5M12 8h.01" />
-    </svg>
-  );
-}
-
 function CostRow({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-full px-4 py-2.5 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
-      <span className="shrink-0" style={{ color: "var(--teal-2)" }}>
-        {icon}
-      </span>
+    <div className="flex items-center gap-3 rounded-full py-1.5 pe-4 ps-1.5 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
+      <IconBadge icon={icon} sizeClass="h-7 w-7" />
       <span>{text}</span>
     </div>
   );

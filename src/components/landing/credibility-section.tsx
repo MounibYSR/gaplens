@@ -1,4 +1,5 @@
 import { entryDictionary, type EntryLang } from "@/lib/i18n/entry-dictionary";
+import { CohortIcon, MinistryIcon, LocationIcon, LockIcon, DocumentIcon, IconBadge } from "@/components/ui/stat-icons";
 
 function LogoSlot({ label }: { label: string }) {
   return (
@@ -11,51 +12,7 @@ function LogoSlot({ label }: { label: string }) {
   );
 }
 
-function CohortIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" />
-    </svg>
-  );
-}
-
-function MinistryIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2 3 7v2h18V7l-9-5Z" />
-      <path d="M5 10v9M9 10v9M15 10v9M19 10v9M3 21h18" />
-    </svg>
-  );
-}
-
-function LocationIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </svg>
-  );
-}
-
-function LockIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="10" width="16" height="10" rx="2" />
-      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-    </svg>
-  );
-}
-
 const CARD_ICONS = [CohortIcon, MinistryIcon, LocationIcon, LockIcon];
-
-function DocumentIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
-      <path d="M14 2v6h6" />
-    </svg>
-  );
-}
 
 export function CredibilitySection({ lang }: { lang: EntryLang }) {
   const t = entryDictionary[lang].credibility;
@@ -84,12 +41,7 @@ export function CredibilitySection({ lang }: { lang: EntryLang }) {
               className="glass-card flex items-start gap-3 rounded-xl p-4"
               style={{ borderColor: "var(--border-g)" }}
             >
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: "var(--glass-2)", color: "var(--teal-2)" }}
-              >
-                <Icon />
-              </span>
+              <IconBadge icon={<Icon />} sizeClass="h-9 w-9" />
               <div>
                 <p className="text-sm font-extrabold text-ink">{card.title}</p>
                 <p className="mt-0.5 text-xs text-muted">{card.body}</p>
