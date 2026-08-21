@@ -116,6 +116,18 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
+/* Elevated variant — reserved for the one card per screen that carries the
+   primary action (e.g. "Generate Roadmap"), so it reads as more important
+   than the passive data cards around it instead of every surface looking
+   identical regardless of what it does. */
+.glass-card-elevated {
+  background: var(--glass-2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(21, 201, 154, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(21, 201, 154, 0.08), 0 0 40px rgba(21, 201, 154, 0.12);
+}
+
 /* Gradient text treatment matching the app's score/number emphasis style */
 .grad-text {
   background: linear-gradient(90deg, var(--teal-2), var(--gold));

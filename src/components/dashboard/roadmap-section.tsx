@@ -310,10 +310,7 @@ export function RoadmapSection({
         )}
       </div>
 
-      <div
-        className="glass-card mt-4 rounded-2xl p-6 text-center"
-        style={{ borderColor: "var(--border-g)" }}
-      >
+      <div className="glass-card-elevated mt-4 rounded-2xl p-6 text-center">
         <h2 className="text-sm font-extrabold text-ink">{t.roadmapTitle}</h2>
 
         {confidence.responsesCount > 0 && (
