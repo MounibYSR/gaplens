@@ -15,8 +15,8 @@ export function LandingPage() {
 
       <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <span
-          className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold"
-          style={{ borderColor: "var(--gold)", background: "rgba(232, 160, 32, 0.1)", color: "var(--gold)" }}
+          className="mb-6 text-xs font-bold"
+          style={{ color: "var(--gold)" }}
         >
           {t.hero.badge}
         </span>
