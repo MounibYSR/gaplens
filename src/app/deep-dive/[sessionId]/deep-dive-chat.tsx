@@ -15,6 +15,7 @@ import type { Department } from "@/lib/supabase/types";
 import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 import { submitDeepDiveAnswer } from "./actions";
 import { startNewRound } from "@/app/dashboard/round-actions";
+import { ConstellationIcon } from "@/components/ui/constellation-icon";
 
 type AnsweredTurn = { question: string; answer: string };
 
@@ -89,10 +90,7 @@ function AiAvatar() {
       className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
       style={{ background: "var(--teal-2)", color: "var(--navy)" }}
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3v3M12 18v3M4.5 4.5l2.1 2.1M17.4 17.4l2.1 2.1M3 12h3M18 12h3M4.5 19.5l2.1-2.1M17.4 6.6l2.1-2.1" />
-        <circle cx="12" cy="12" r="3.2" />
-      </svg>
+      <ConstellationIcon size={14} />
     </span>
   );
 }

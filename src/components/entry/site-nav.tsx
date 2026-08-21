@@ -1,17 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/entry/language-toggle";
+import { ConstellationIcon } from "@/components/ui/constellation-icon";
 import type { entryDictionary, EntryLang } from "@/lib/i18n/entry-dictionary";
 
 type NavKey = "about" | "pricing";
-
-function SparkleIcon() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z" />
-    </svg>
-  );
-}
 
 export function SiteNav({
   lang,
@@ -40,7 +33,7 @@ export function SiteNav({
           className="hidden shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold sm:flex"
           style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
         >
-          <SparkleIcon />
+          <ConstellationIcon size={10} />
           {t.nav.aiPowered}
         </span>
       </div>
