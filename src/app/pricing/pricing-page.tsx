@@ -48,6 +48,14 @@ export function PricingPage() {
                   {tier.price}
                   <span className="text-base font-bold text-muted">{tier.period}</span>
                 </p>
+                {tier.freeNote && (
+                  <span
+                    className="mt-2 inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold"
+                    style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
+                  >
+                    {tier.freeNote}
+                  </span>
+                )}
               </div>
 
               <ul className="flex flex-1 flex-col gap-2.5 text-sm text-ink">
