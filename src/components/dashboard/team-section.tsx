@@ -30,7 +30,7 @@ export function TeamSection({
       <ConsoleLabel>{nav.teamBadge}</ConsoleLabel>
       <h1 className="mt-2 mb-4 text-xl font-extrabold text-ink">{nav.team}</h1>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[380px_1fr] xl:items-start">
+      <div className="grid grid-cols-1 gap-6">
         <InviteGenerator
           sessionId={sessionId}
           existingInvites={existingInvites}

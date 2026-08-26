@@ -231,11 +231,24 @@ export function InviteGenerator({
               ))}
             </ul>
 
-            <div className="hidden xl:flex xl:flex-col xl:gap-3">
+            <div className="hidden xl:flex xl:flex-col xl:gap-2">
+              <div
+                className="grid gap-3 px-1 text-xs text-muted"
+                style={{ gridTemplateColumns: "1fr 1fr 90px 70px" }}
+              >
+                <span>{t.inviteAreaLabel}</span>
+                <span>{t.inviteSentToLabel}</span>
+                <span>{t.inviteStatusLabel}</span>
+                <span />
+              </div>
               {existingInvites.map((invite) => (
-                <div key={invite.id} className="flex flex-col items-start gap-1 rounded-lg p-3" style={{ background: "var(--glass-2)" }}>
+                <div
+                  key={invite.id}
+                  className="grid items-start gap-3 rounded-lg px-3 py-3"
+                  style={{ gridTemplateColumns: "1fr 1fr 90px 70px", background: "var(--glass-2)" }}
+                >
                   <DepartmentBadge department={invite.department} lang={lang} />
-                  <span className="text-xs text-muted">{invite.invitee_name || "—"}</span>
+                  <span className="truncate text-xs text-muted">{invite.invitee_name || "—"}</span>
                   <StatusPill status={invite.status} t={t} />
                   <button type="button" onClick={() => copy(invite.token)} className="-m-2 p-2 text-xs font-bold text-teal-2">
                     {t.inviteCopy}
