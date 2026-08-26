@@ -1,11 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { useEntryLang } from "@/hooks/use-entry-lang";
 import { SiteNav } from "@/components/entry/site-nav";
+
+type Currency = "USD" | "QAR";
+const USD_TO_QAR = 3.64; // official peg — exact, not an estimate
+
+function formatPrice(priceUsd: number | null, currency: Currency, customLabel: string): string {
+  if (priceUsd == null) return customLabel;
+  if (currency === "USD") return `$${priceUsd}`;
+  return `QAR ${Math.round(priceUsd * USD_TO_QAR)}`;
+}
 
 export function PricingPage() {
   const { lang, toggle, t } = useEntryLang();
   const p = t.pricing;
+  const [currency, setCurrency] = useState<Currency>("USD");
 
   return (
     <div className="flex flex-1 flex-col">
@@ -20,6 +31,24 @@ export function PricingPage() {
             {p.title} <span style={{ color: "var(--teal-2)" }}>{p.titleAccent}</span>
           </h1>
           <p className="mt-3 text-sm text-muted sm:text-base">{p.subtitle}</p>
+
+          <div className="mt-6 inline-flex rounded-lg border p-1" style={{ borderColor: "var(--border-g)" }}>
+            {(["USD", "QAR"] as const).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCurrency(c)}
+                className="rounded-lg px-4 py-2 text-xs font-bold transition-colors"
+                style={{
+                  background: currency === c ? "var(--teal-2)" : "transparent",
+                  color: currency === c ? "var(--navy)" : "var(--ink)",
+                }}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          {currency === "QAR" && <p className="mt-2 text-xs text-muted">{p.currencyNote}</p>}
         </div>
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:items-start">
@@ -45,8 +74,8 @@ export function PricingPage() {
               <div>
                 <p className="text-xs font-extrabold tracking-widest text-muted">{tier.name}</p>
                 <p className="ltr-num mt-2 text-3xl font-extrabold text-ink" dir="ltr">
-                  {tier.price}
-                  <span className="text-base font-bold text-muted">{tier.period}</span>
+                  {formatPrice(tier.priceUsd, currency, p.customPriceLabel)}
+                  <span className="text-base font-bold text-muted">{tier.priceUsd != null ? tier.period : ""}</span>
                 </p>
                 {tier.freeNote && (
                   <span

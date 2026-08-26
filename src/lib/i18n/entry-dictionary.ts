@@ -50,7 +50,7 @@ export const entryDictionary = {
       tiers: [
         {
           name: "FREE",
-          price: "$0",
+          priceUsd: 0 as number | null,
           period: "/mo",
           recommended: false,
           freeNote: null as string | null,
@@ -60,7 +60,7 @@ export const entryDictionary = {
         },
         {
           name: "GROWTH",
-          price: "$79",
+          priceUsd: 79 as number | null,
           period: "/mo",
           recommended: true,
           freeNote: "Free during early access" as string | null,
@@ -75,7 +75,7 @@ export const entryDictionary = {
         },
         {
           name: "GAPFIX",
-          price: "Custom",
+          priceUsd: null as number | null,
           period: "",
           recommended: false,
           freeNote: null as string | null,
@@ -84,6 +84,8 @@ export const entryDictionary = {
           href: "mailto:hello@gaplens.co",
         },
       ],
+      customPriceLabel: "Custom",
+      currencyNote: "QAR shown at the official peg rate (1 USD = 3.64 QAR).",
       comparisonTitle: "Compare plans",
       comparisonSubtitle: "A quick breakdown of what's included in each plan.",
       comparisonHeaders: { feature: "Feature", free: "Free", growth: "Growth", gapfix: "GapFix" },
@@ -180,7 +182,7 @@ export const entryDictionary = {
       tiers: [
         {
           name: "مجانية",
-          price: "$0",
+          priceUsd: 0 as number | null,
           period: "/شهر",
           recommended: false,
           freeNote: null as string | null,
@@ -190,7 +192,7 @@ export const entryDictionary = {
         },
         {
           name: "Growth",
-          price: "$79",
+          priceUsd: 79 as number | null,
           period: "/شهر",
           recommended: true,
           freeNote: "مجانية خلال فترة الإطلاق المبكر" as string | null,
@@ -205,7 +207,7 @@ export const entryDictionary = {
         },
         {
           name: "GapFix",
-          price: "مخصص",
+          priceUsd: null as number | null,
           period: "",
           recommended: false,
           freeNote: null as string | null,
@@ -214,6 +216,8 @@ export const entryDictionary = {
           href: "mailto:hello@gaplens.co",
         },
       ],
+      customPriceLabel: "مخصص",
+      currencyNote: "الريال القطري معروض بسعر الربط الرسمي (1 دولار = 3.64 ريال).",
       comparisonTitle: "قارني بين الباقات",
       comparisonSubtitle: "ملخص سريع لكل باقة تحتوي على وش.",
       comparisonHeaders: { feature: "الميزة", free: "مجانية", growth: "Growth", gapfix: "GapFix" },
