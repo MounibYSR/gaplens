@@ -142,7 +142,7 @@ export function InviteAnswerChat({
             type="button"
             disabled={isPending || !draft.trim()}
             onClick={handleSend}
-            className="rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
+            className="rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
           >
             {appDictionary[lang].deepDive.submit}
           </button>

@@ -138,12 +138,12 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
               style={{ borderColor: "var(--border-g)" }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.previewUrl} alt="" className="h-12 w-12 shrink-0 rounded-md object-cover" />
+              <img src={img.previewUrl} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
               <select
                 value={img.source}
                 onChange={(e) => setImageSource(img.id, e.target.value as VisualSourceTag)}
                 required
-                className="flex-1 rounded-lg border px-2 py-1.5 text-xs text-ink outline-none"
+                className="flex-1 rounded-lg border px-2 py-2 text-xs text-ink outline-none"
                 style={{
                   background: "var(--navy)",
                   borderColor: img.source ? "var(--border-g)" : "var(--gap)",
@@ -172,14 +172,14 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-lg border py-2.5 text-xs font-bold text-ink"
+            className="rounded-lg border py-3 text-xs font-bold text-ink"
             style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
           >
             + {t.addImages}
           </button>
         </div>
 
-        {images.length > 0 && !allTagged && <p className="mt-2 text-[11px] text-muted">{t.sourceRequiredHint}</p>}
+        {images.length > 0 && !allTagged && <p className="mt-2 text-xs text-muted">{t.sourceRequiredHint}</p>}
 
         {errorMsg && (
           <p className="mt-3 text-xs font-bold" style={{ color: "var(--gap)" }}>
@@ -191,7 +191,7 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
           type="button"
           disabled={!allTagged || isPending}
           onClick={run}
-          className="mt-4 w-full rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
+          className="mt-4 w-full rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
         >
           {isPending ? t.analyzing : t.runAnalysis}
         </button>
@@ -211,10 +211,10 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
                   }}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <span className="flex flex-wrap items-center gap-1.5">
+                    <span className="flex flex-wrap items-center gap-2">
                       {gap.sub_category === "cross_channel" && (
                         <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-extrabold text-navy"
+                          className="rounded-full px-2 py-1 text-xs font-extrabold text-navy"
                           style={{ background: "var(--gold)" }}
                         >
                           {t.crossChannelBadge}
@@ -223,19 +223,19 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
                       <span className="font-bold text-ink">{gap.gap_title}</span>
                     </span>
                     <span
-                      className="ltr-num shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+                      className="ltr-num shrink-0 rounded-full border px-2 py-1 text-xs font-bold"
                       dir="ltr"
                       style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_COLOR[gap.priority] }}
                     >
                       {gap.priority.toUpperCase()}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-muted">{gap.impact}</p>
-                  <p className="mt-1.5 text-ink">{gap.recommended_fix}</p>
+                  <p className="mt-2 text-muted">{gap.impact}</p>
+                  <p className="mt-2 text-ink">{gap.recommended_fix}</p>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-[11px] text-muted">{t.mergedNote}</p>
+            <p className="mt-3 text-xs text-muted">{t.mergedNote}</p>
           </div>
         )}
       </div>

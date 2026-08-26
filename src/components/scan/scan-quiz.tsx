@@ -178,7 +178,7 @@ export function ScanQuiz({
               type="button"
               disabled={presetTools.length === 0}
               onClick={goNextFromPresetTools}
-              className="mt-6 w-full rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-40"
+              className="mt-6 w-full rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-40"
             >
               {t.next}
             </button>
@@ -218,7 +218,7 @@ export function ScanQuiz({
             <button
               type="button"
               onClick={finishPresetConnections}
-              className="mt-6 w-full rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy"
+              className="mt-6 w-full rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy"
             >
               {t.next}
             </button>

@@ -56,7 +56,7 @@ export function GoogleSignInButton({
         type="button"
         onClick={handleClick}
         disabled={isPending}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-bold disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-lg border py-3 text-sm font-bold disabled:opacity-60"
         style={{ background: "#fff", borderColor: "#dadce0", color: "#3c4043" }}
       >
         <GoogleIcon />

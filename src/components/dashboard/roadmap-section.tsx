@@ -55,13 +55,13 @@ function GapCard({
       style={{ borderColor: "var(--border-g)", borderInlineStartColor: PRIORITY_COLOR[gap.priority] }}
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="flex flex-wrap items-center gap-1.5">
-          <span className="ltr-num shrink-0 text-[10px] font-bold text-muted" dir="ltr">
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="ltr-num shrink-0 text-xs font-bold text-muted" dir="ltr">
             GAP-{String(index + 1).padStart(2, "0")}
           </span>
           {gap.sub_category === "cross_channel" && (
             <span
-              className="rounded-full px-2 py-0.5 text-[10px] font-extrabold text-navy"
+              className="rounded-full px-2 py-1 text-xs font-extrabold text-navy"
               style={{ background: "var(--gold)" }}
             >
               {vt.crossChannelBadge}
@@ -70,25 +70,25 @@ function GapCard({
           <span className="font-bold text-ink">{gap.gap_title}</span>
         </span>
         <span
-          className="ltr-num shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+          className="ltr-num shrink-0 rounded-full border px-2 py-1 text-xs font-bold"
           dir="ltr"
           style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_COLOR[gap.priority] }}
         >
           {gap.priority.toUpperCase()}
         </span>
       </div>
-      <p className="mt-1.5 text-muted">{gap.impact}</p>
-      <p className="mt-1.5 text-ink">{gap.recommended_fix}</p>
-      <p className="mt-1.5 text-teal-2">{gapfixLabel}</p>
+      <p className="mt-2 text-muted">{gap.impact}</p>
+      <p className="mt-2 text-ink">{gap.recommended_fix}</p>
+      <p className="mt-2 text-teal-2">{gapfixLabel}</p>
 
-      <div className="mt-2 flex gap-1.5">
+      <div className="mt-2 flex gap-2">
         {STATUS_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             type="button"
             disabled={isPending}
             onClick={() => pick(opt.value)}
-            className="flex-1 rounded-md border py-1 text-[10px] font-bold transition-colors disabled:opacity-60"
+            className="flex-1 rounded-lg border py-2 text-xs font-bold transition-colors disabled:opacity-60"
             style={{
               background: status === opt.value ? "var(--teal-2)" : "var(--glass-2)",
               borderColor: status === opt.value ? "var(--teal-2)" : "var(--border-g)",
@@ -117,14 +117,14 @@ function AccuracyActionRow({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg py-1.5 pe-3 ps-1.5" style={{ background: "var(--glass-2)" }}>
+    <div className="flex items-center gap-3 rounded-lg py-2 pe-3 ps-2" style={{ background: "var(--glass-2)" }}>
       <IconBadge icon={icon} sizeClass="h-8 w-8" />
       <span className="flex-1 text-xs font-bold text-ink">{label}</span>
       <button
         type="button"
         disabled={disabled}
         onClick={onClick}
-        className="shrink-0 rounded-lg bg-teal-2 px-3 py-1.5 text-[11px] font-bold text-navy disabled:opacity-40"
+        className="shrink-0 rounded-lg bg-teal-2 px-3 py-2 text-xs font-bold text-navy disabled:opacity-40"
       >
         {actionLabel}
       </button>
@@ -181,7 +181,7 @@ export function RoadmapSection({
             <button
               type="button"
               onClick={onSwitchToChat}
-              className="mt-4 block w-full rounded-lg bg-teal-2 py-2.5 text-center text-sm font-bold text-navy"
+              className="mt-4 block w-full rounded-lg bg-teal-2 py-3 text-center text-sm font-bold text-navy"
             >
               {t.deepDiveCta}
             </button>
@@ -190,7 +190,7 @@ export function RoadmapSection({
             <button
               type="button"
               onClick={onSwitchToTeam}
-              className="mt-3 block w-full rounded-lg border py-2.5 text-center text-sm font-bold text-ink"
+              className="mt-3 block w-full rounded-lg border py-3 text-center text-sm font-bold text-ink"
               style={{ borderColor: "var(--border-g)" }}
             >
               {t.inviteTitle}
@@ -236,11 +236,11 @@ export function RoadmapSection({
             {missingDepartments.length > 0 ? (
               <div className="mt-3">
                 <p className="text-xs text-muted">{t.roadmapMissingLabel}</p>
-                <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                <ul className="mt-2 flex flex-wrap gap-2">
                   {missingDepartments.map((d) => (
                     <li
                       key={d.key}
-                      className="rounded-full border px-2.5 py-1 text-xs font-bold"
+                      className="rounded-full border px-3 py-1 text-xs font-bold"
                       style={{ borderColor: d.accent, color: d.accent }}
                     >
                       {d.title[lang]}
@@ -317,16 +317,16 @@ export function RoadmapSection({
           <h2 className="text-sm font-extrabold text-ink">{t.costOfInactionTitle}</h2>
           <p className="mt-1 text-xs text-muted">{t.costOfInactionSubtitle}</p>
 
-          <ul className="mt-4 flex flex-col gap-2.5">
+          <ul className="mt-4 flex flex-col gap-3">
             {costOfInaction.line_items.map((item) => (
               <li key={item.area} className="flex items-start justify-between gap-3 text-xs">
                 <div className="min-w-0">
                   <p className="text-ink">{item.area}</p>
-                  {item.note && <p className="mt-0.5 text-[10px] text-muted">{item.note}</p>}
+                  {item.note && <p className="mt-1 text-xs text-muted">{item.note}</p>}
                 </div>
                 <span className="ltr-num shrink-0 text-end font-bold" dir="ltr" style={{ color: "var(--teal-2)" }}>
                   {item.estimated_monthly_amount != null ? `~${item.estimated_monthly_amount} ${item.currency}` : "—"}
-                  <span className="ms-1 rounded-full px-1.5 py-0.5 text-[9px] font-bold" style={{ background: "var(--glass-2)", color: "var(--muted)" }}>
+                  <span className="ms-1 rounded-full px-2 py-1 text-xs font-bold" style={{ background: "var(--glass-2)", color: "var(--muted)" }}>
                     {t.costOfInactionEstimatedTag}
                   </span>
                 </span>
@@ -357,14 +357,14 @@ export function RoadmapSection({
         <p className="mt-2 text-xs text-teal-2">{t.roadmapUnlocked}</p>
         <Link
           href={`/roadmap/${sessionId}`}
-          className="mt-4 block w-full rounded-lg bg-teal-2 py-2.5 text-center text-sm font-bold text-navy"
+          className="mt-4 block w-full rounded-lg bg-teal-2 py-3 text-center text-sm font-bold text-navy xl:inline-block xl:w-auto xl:px-8"
         >
           {t.generateRoadmap}
         </Link>
         {version != null && (
           <a
             href={`/roadmap/${sessionId}/pdf`}
-            className="mt-3 block w-full rounded-lg border py-2.5 text-center text-sm font-bold text-ink"
+            className="mt-3 block w-full rounded-lg border py-3 text-center text-sm font-bold text-ink xl:ms-3 xl:inline-block xl:w-auto xl:px-8"
             style={{ borderColor: "var(--border-g)" }}
           >
             {t.downloadRoadmapPdf}

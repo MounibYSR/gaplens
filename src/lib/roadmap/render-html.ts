@@ -217,7 +217,7 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
   body {
     font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
     color: ${TEXT_DARK};
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.5;
   }
 
@@ -234,17 +234,17 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     text-align: center;
     page-break-after: always;
   }
-  .wordmark { font-size: 46px; font-weight: 800; letter-spacing: 2px; margin: 0; }
-  .cover-subtitle { color: ${TEAL}; font-style: italic; font-size: 17px; margin-top: 10px; }
+  .wordmark { font-size: 48px; font-weight: 800; letter-spacing: 2px; margin: 0; }
+  .cover-subtitle { color: ${TEAL}; font-style: italic; font-size: 16px; margin-top: 12px; }
   .company-logo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-top: 36px; border: 2px solid ${TEAL}; }
-  .cover-company { font-weight: 700; font-size: 22px; margin-top: 10px; }
+  .cover-company { font-weight: 700; font-size: 20px; margin-top: 12px; }
   .cover-company.no-logo { margin-top: 36px; }
   .cover-meta { color: ${MUTED}; font-size: 12px; margin-top: 8px; letter-spacing: 0.3px; }
-  .confidence-label { text-transform: uppercase; letter-spacing: 2px; color: ${MUTED}; font-size: 11px; margin-top: 52px; font-weight: 700; }
-  .ring-wrap { position: relative; width: 160px; height: 160px; margin-top: 18px; }
+  .confidence-label { text-transform: uppercase; letter-spacing: 2px; color: ${MUTED}; font-size: 12px; margin-top: 52px; font-weight: 700; }
+  .ring-wrap { position: relative; width: 160px; height: 160px; margin-top: 16px; }
   .ring-percent { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ring-percent .num { font-size: 38px; font-weight: 800; color: #fff; line-height: 1; }
-  .ring-percent .pct { font-size: 10px; color: ${MUTED}; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .ring-percent .num { font-size: 32px; font-weight: 800; color: #fff; line-height: 1; }
+  .ring-percent .pct { font-size: 12px; color: ${MUTED}; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
   .overview {
     background: #fff;
@@ -273,8 +273,8 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     align-items: center;
     justify-content: center;
   }
-  .badge-label { font-weight: 700; color: ${NAVY}; font-size: 11.5px; line-height: 1.3; max-width: 110px; }
-  .dots { display: flex; gap: 5px; }
+  .badge-label { font-weight: 700; color: ${NAVY}; font-size: 12px; line-height: 1.3; max-width: 110px; }
+  .dots { display: flex; gap: 4px; }
   .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 
   .gaps-section { padding: 8px 32px 32px; }
@@ -282,9 +282,9 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     color: ${TEAL};
     text-transform: uppercase;
     letter-spacing: 2px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
-    padding-bottom: 10px;
+    padding-bottom: 12px;
     border-bottom: 2px solid ${TEAL};
     margin: 20px 0 20px;
   }
@@ -292,14 +292,14 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
   .gap-card {
     display: flex;
     border: 1px solid ${BORDER};
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     margin-bottom: 16px;
     break-inside: avoid;
     page-break-inside: avoid;
   }
   .accent { width: 8px; flex-shrink: 0; }
-  .gap-body { padding: 16px 18px; flex: 1; }
+  .gap-body { padding: 16px; flex: 1; }
   .gap-head { display: flex; align-items: flex-start; gap: 12px; }
   .icon-cell {
     width: 44px;
@@ -310,16 +310,16 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     align-items: center;
     justify-content: center;
   }
-  .gap-eyebrow { color: ${MUTED}; font-size: 10.5px; letter-spacing: 0.5px; font-weight: 700; }
-  .cross-channel-badge { display: inline-block; background: ${GOLD}; color: ${NAVY}; border-radius: 100px; padding: 1px 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px; }
-  .gap-title { color: ${NAVY}; font-weight: 800; font-size: 16px; margin-top: 3px; }
+  .gap-eyebrow { color: ${MUTED}; font-size: 12px; letter-spacing: 0.5px; font-weight: 700; }
+  .cross-channel-badge { display: inline-block; background: ${GOLD}; color: ${NAVY}; border-radius: 100px; padding: 4px 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.3px; }
+  .gap-title { color: ${NAVY}; font-weight: 800; font-size: 16px; margin-top: 4px; }
 
   .meta-row {
     background: ${BG_LIGHT};
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 8px 12px;
     margin: 12px 0;
-    font-size: 11.5px;
+    font-size: 12px;
     color: #555;
     display: flex;
     gap: 8px;
@@ -327,15 +327,15 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
   .meta-row .sep { color: #cbd0d8; }
   .meta-row b { text-transform: capitalize; }
 
-  .label { color: ${TEAL}; text-transform: uppercase; letter-spacing: 0.5px; font-size: 10.5px; font-weight: 800; margin-top: 10px; }
+  .label { color: ${TEAL}; text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px; font-weight: 800; margin-top: 12px; }
   .body-text { color: #4a4f5a; font-size: 12px; margin: 4px 0 0; }
 
   .pill {
     display: inline-block;
-    margin-top: 14px;
-    padding: 6px 14px;
+    margin-top: 12px;
+    padding: 8px 16px;
     border-radius: 100px;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 700;
     color: ${NAVY};
   }
@@ -350,18 +350,18 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     color: ${MUTED};
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 800;
     padding: 8px 12px;
     background: ${BG_LIGHT};
   }
   .coi-table td {
-    padding: 10px 12px;
+    padding: 12px;
     border-bottom: 1px solid ${BORDER};
     color: ${TEXT_DARK};
   }
   .coi-amount { text-align: right; font-weight: 700; color: ${TEAL}; white-space: nowrap; }
-  .coi-note { color: ${MUTED}; font-size: 10.5px; margin-top: 2px; font-weight: 400; }
+  .coi-note { color: ${MUTED}; font-size: 12px; margin-top: 4px; font-weight: 400; }
   .coi-total-row td { font-weight: 800; border-bottom: none; border-top: 2px solid ${TEAL}; }
   .coi-total-row .coi-amount { color: ${TEAL}; }
 
@@ -369,8 +369,8 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     text-align: center;
     color: ${MUTED};
     font-style: italic;
-    font-size: 11px;
-    padding: 12px 40px 30px;
+    font-size: 12px;
+    padding: 12px 40px 32px;
   }
 </style>
 </head>

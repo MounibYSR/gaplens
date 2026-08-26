@@ -494,7 +494,7 @@ export function ParticleExplainer({ lang }: { lang: EntryLang }) {
               <div
                 key={s.shape}
                 onClick={() => setStep(i)}
-                className="mb-2.5 flex cursor-pointer items-start gap-4 rounded-2xl p-4 transition-colors duration-300"
+                className="mb-3 flex cursor-pointer items-start gap-4 rounded-2xl p-4 transition-colors duration-300"
                 style={{
                   background: active ? "rgba(29,158,117,.08)" : "transparent",
                   border: active ? "1px solid rgba(29,158,117,.3)" : "1px solid transparent",

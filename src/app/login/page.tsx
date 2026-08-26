@@ -19,7 +19,7 @@ function LoginForm() {
   const oauthError = searchParams.get("error");
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6">
+    <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
       <div className="mb-4 flex w-full max-w-sm justify-end">
         <LanguageToggle lang={lang} onToggle={toggle} />
       </div>

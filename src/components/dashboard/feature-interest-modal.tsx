@@ -73,7 +73,7 @@ export function FeatureInterestModal({
             <button
               type="button"
               onClick={onClose}
-              className="mt-6 w-full rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy"
+              className="mt-6 w-full rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy"
             >
               {t.close}
             </button>
@@ -159,7 +159,7 @@ export function FeatureInterestModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 rounded-lg border py-2.5 text-sm font-bold text-ink"
+                className="flex-1 rounded-lg border py-3 text-sm font-bold text-ink"
                 style={{ borderColor: "var(--border-g)" }}
               >
                 {t.cancel}
@@ -168,7 +168,7 @@ export function FeatureInterestModal({
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canSubmit || submitting}
-                className="flex-1 rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
+                className="flex-1 rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
               >
                 {submitting ? "…" : t.submit}
               </button>

@@ -16,7 +16,7 @@ export function PricingPage() {
           <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--gold)" }}>
             {p.badge}
           </span>
-          <h1 className="mt-2 text-3xl font-extrabold text-ink sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-extrabold text-ink">
             {p.title} <span style={{ color: "var(--teal-2)" }}>{p.titleAccent}</span>
           </h1>
           <p className="mt-3 text-sm text-muted sm:text-base">{p.subtitle}</p>
@@ -35,7 +35,7 @@ export function PricingPage() {
             >
               {tier.recommended && (
                 <span
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-extrabold tracking-widest text-navy"
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-extrabold tracking-widest text-navy"
                   style={{ background: "var(--teal-2)" }}
                 >
                   {p.recommendedBadge}
@@ -50,7 +50,7 @@ export function PricingPage() {
                 </p>
                 {tier.freeNote && (
                   <span
-                    className="mt-2 inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold"
+                    className="mt-2 inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-bold"
                     style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
                   >
                     {tier.freeNote}
@@ -58,10 +58,10 @@ export function PricingPage() {
                 )}
               </div>
 
-              <ul className="flex flex-1 flex-col gap-2.5 text-sm text-ink">
+              <ul className="flex flex-1 flex-col gap-3 text-sm text-ink">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0" style={{ color: "var(--teal-2)" }}>
+                    <span className="mt-1 shrink-0" style={{ color: "var(--teal-2)" }}>
                       ✓
                     </span>
                     <span>{feature}</span>
@@ -71,7 +71,7 @@ export function PricingPage() {
 
               <a
                 href={tier.href}
-                className="block w-full rounded-lg py-2.5 text-center text-sm font-bold"
+                className="block w-full rounded-lg py-3 text-center text-sm font-bold"
                 style={
                   tier.recommended
                     ? { background: "var(--teal-2)", color: "var(--navy)" }

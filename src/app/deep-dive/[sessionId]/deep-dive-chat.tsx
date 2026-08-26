@@ -30,7 +30,7 @@ function StartNewRoundButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="block w-full rounded-lg border py-2.5 text-center text-sm font-bold text-ink disabled:opacity-60"
+      className="block w-full rounded-lg border py-3 text-center text-sm font-bold text-ink disabled:opacity-60"
       style={{ borderColor: "var(--border-g)" }}
     >
       {pending ? "…" : label}
@@ -44,7 +44,7 @@ function HistoryRow({ question, answer }: AnsweredTurn) {
     <button
       type="button"
       onClick={() => setExpanded((v) => !v)}
-      className="w-full shrink-0 rounded-lg border px-3 py-1.5 text-start text-xs transition-colors"
+      className="w-full shrink-0 rounded-lg border px-3 py-2 text-start text-xs transition-colors"
       style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
     >
       <p className={expanded ? "text-muted" : "truncate text-muted"}>{question}</p>
@@ -67,14 +67,14 @@ function HistoryPanel({ turns, toggleLabel }: { turns: AnsweredTurn[]; toggleLab
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between rounded-lg border px-3 py-1.5 text-start text-xs font-bold text-muted"
+        className="flex w-full items-center justify-between rounded-lg border px-3 py-2 text-start text-xs font-bold text-muted"
         style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
       >
         <span>{toggleLabel(turns.length)}</span>
         <span>{open ? "▲" : "▼"}</span>
       </button>
       {open && (
-        <div className="mt-1.5 flex max-h-32 flex-col gap-1.5 overflow-y-auto pe-1">
+        <div className="mt-2 flex max-h-32 flex-col gap-2 overflow-y-auto pe-1">
           {turns.map((turn, i) => (
             <HistoryRow key={i} question={turn.question} answer={turn.answer} />
           ))}
@@ -197,7 +197,7 @@ function QuestionControls({
             style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
           >
             <span
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-navy"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-navy"
               style={{ background: "var(--gold)" }}
             >
               {i + 1}
@@ -249,7 +249,7 @@ function QuestionControls({
           setMultiSelectDraft([]);
           onAnswer(labels);
         }}
-        className="mt-1 rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-40"
+        className="mt-1 rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-40"
       >
         {continueLabel}
       </button>
@@ -405,14 +405,14 @@ export function DeepDiveChat({
             <button
               type="button"
               onClick={onComplete}
-              className="mt-6 block w-full rounded-lg bg-teal-2 py-2.5 text-center font-bold text-navy"
+              className="mt-6 block w-full rounded-lg bg-teal-2 py-3 text-center font-bold text-navy"
             >
               {t.requestRoadmap}
             </button>
           ) : (
             <Link
               href="/dashboard"
-              className="mt-6 block w-full rounded-lg bg-teal-2 py-2.5 text-center font-bold text-navy"
+              className="mt-6 block w-full rounded-lg bg-teal-2 py-3 text-center font-bold text-navy"
             >
               {t.backToDashboard}
             </Link>
@@ -428,7 +428,7 @@ export function DeepDiveChat({
                 <button
                   type="button"
                   onClick={() => setShowRedoPicker(true)}
-                  className="block w-full rounded-lg border py-2.5 text-center text-sm font-bold text-ink"
+                  className="block w-full rounded-lg border py-3 text-center text-sm font-bold text-ink"
                   style={{ borderColor: "var(--border-g)" }}
                 >
                   {t.redoAreaCta}
@@ -437,7 +437,7 @@ export function DeepDiveChat({
             ) : (
               <div className="text-start">
                 <p className="mb-2 text-xs text-muted">{t.redoAreaPrompt}</p>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-2">
                   {DEPARTMENTS.map((d) => (
                     <button
                       key={d.key}

@@ -51,7 +51,7 @@ export function SiteNav({
             GapLens
           </Link>
           <span
-            className="hidden shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold md:flex"
+            className="hidden shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-xs font-bold md:flex"
             style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
           >
             <ConstellationIcon size={10} />
@@ -66,7 +66,7 @@ export function SiteNav({
               <Link
                 key={link.key}
                 href={link.href}
-                className="border-b-2 pb-0.5 text-sm font-bold transition-colors"
+                className="border-b-2 pb-1 text-sm font-bold transition-colors"
                 style={{
                   color: isActive ? "var(--teal-2)" : "var(--ink)",
                   borderColor: isActive ? "var(--teal-2)" : "transparent",
@@ -89,7 +89,7 @@ export function SiteNav({
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
-          <Link href="/signup" className="rounded-lg bg-teal-2 px-3 py-1.5 text-xs font-bold text-navy">
+          <Link href="/signup" className="rounded-lg bg-teal-2 px-3 py-2 text-xs font-bold text-navy">
             {t.nav.signUp}
           </Link>
           <button
@@ -117,7 +117,7 @@ export function SiteNav({
                 key={link.key}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-bold"
+                className="rounded-lg px-3 py-3 text-sm font-bold"
                 style={{ color: isActive ? "var(--teal-2)" : "var(--ink)" }}
               >
                 {link.label}
@@ -127,14 +127,14 @@ export function SiteNav({
           <Link
             href="/login"
             onClick={() => setMenuOpen(false)}
-            className="rounded-lg px-3 py-2.5 text-sm font-bold text-ink"
+            className="rounded-lg px-3 py-3 text-sm font-bold text-ink"
           >
             {t.nav.login}
           </Link>
 
           <div className="mt-1 flex items-center justify-between border-t px-3 pt-3" style={{ borderColor: "var(--border-g)" }}>
             <span
-              className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+              className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-xs font-bold"
               style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
             >
               <ConstellationIcon size={10} />

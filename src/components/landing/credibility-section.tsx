@@ -38,13 +38,13 @@ export function CredibilitySection({ lang }: { lang: EntryLang }) {
           return (
             <div
               key={card.title}
-              className="glass-card flex items-start gap-3 rounded-xl p-4"
+              className="glass-card flex items-start gap-3 rounded-2xl p-4"
               style={{ borderColor: "var(--border-g)" }}
             >
               <IconBadge icon={<Icon />} sizeClass="h-9 w-9" />
               <div>
                 <p className="text-sm font-extrabold text-ink">{card.title}</p>
-                <p className="mt-0.5 text-xs text-muted">{card.body}</p>
+                <p className="mt-1 text-xs text-muted">{card.body}</p>
               </div>
             </div>
           );
@@ -59,7 +59,7 @@ export function CredibilitySection({ lang }: { lang: EntryLang }) {
           <DocumentIcon />
           {t.letterCta}
         </span>
-        <span className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-extrabold tracking-widest text-muted" style={{ background: "var(--glass-2)" }}>
+        <span className="shrink-0 rounded-full px-3 py-1 text-xs font-extrabold tracking-widest text-muted" style={{ background: "var(--glass-2)" }}>
           {t.letterNote}
         </span>
       </div>

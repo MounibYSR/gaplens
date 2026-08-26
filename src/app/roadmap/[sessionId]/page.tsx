@@ -83,13 +83,13 @@ export default async function RoadmapPage({
         </p>
         <a
           href={`/roadmap/${sessionId}/generate`}
-          className="block w-full rounded-lg bg-teal-2 py-2.5 text-center font-bold text-navy"
+          className="block w-full rounded-lg bg-teal-2 py-3 text-center font-bold text-navy"
         >
           {t.generateRoadmap}
         </a>
         <Link
           href="/dashboard"
-          className="mt-3 block w-full rounded-lg border py-2.5 text-center font-bold text-ink"
+          className="mt-3 block w-full rounded-lg border py-3 text-center font-bold text-ink"
           style={{ borderColor: "var(--border-g)" }}
         >
           {appDictionary[lang].deepDive.backToDashboard}

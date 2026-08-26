@@ -35,7 +35,7 @@ export function TeamSection({ lang }: { lang: EntryLang }) {
             </span>
             <div>
               <p className="text-sm font-extrabold text-ink">{member.name}</p>
-              <p className="mt-0.5 text-xs font-bold" style={{ color: "var(--gold)" }}>
+              <p className="mt-1 text-xs font-bold" style={{ color: "var(--gold)" }}>
                 {member.role}
               </p>
             </div>

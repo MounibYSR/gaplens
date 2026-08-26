@@ -14,7 +14,7 @@ export default async function OnboardingPage() {
   const lang = await getSessionLang();
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6">
+    <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
       <OnboardingForm lang={lang} />
     </div>
   );

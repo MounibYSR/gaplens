@@ -132,7 +132,7 @@ export function FreeformChat({
                 type="button"
                 disabled={isPending}
                 onClick={() => send(topic)}
-                className="rounded-full border px-3 py-1 text-xs font-bold disabled:opacity-60"
+                className="rounded-full border px-3 py-2 text-xs font-bold disabled:opacity-60"
                 style={{ borderColor: "var(--border-g)", color: "var(--ink)", background: "var(--glass-2)" }}
               >
                 {topic}
@@ -190,7 +190,7 @@ export function FreeformChat({
             type="button"
             disabled={isPending || !draft.trim()}
             onClick={() => send(draft)}
-            className="rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
+            className="rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
           >
             {t.send}
           </button>

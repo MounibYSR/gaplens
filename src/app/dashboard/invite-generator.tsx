@@ -23,7 +23,7 @@ function StatusPill({ status, t }: { status: string; t: (typeof appDictionary)[E
   const isAnswered = status === "accepted";
   return (
     <span
-      className="text-[11px] font-bold"
+      className="text-xs font-bold"
       style={{ color: isAnswered ? "var(--teal-2)" : "var(--gold)" }}
     >
       {isAnswered ? t.inviteStatusAnswered : t.inviteStatusPending}
@@ -41,7 +41,7 @@ function DepartmentBadge({ department, lang }: { department: Department; lang: E
   if (!dept) return null;
   return (
     <span
-      className="flex w-fit items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-bold"
+      className="flex w-fit items-center gap-2 rounded-full border px-2 py-1 text-xs font-bold"
       style={{ borderColor: dept.accent, color: dept.accent }}
     >
       <DepartmentIcon department={dept} size={11} />
@@ -81,7 +81,7 @@ function AnswersPanel({
 
   return (
     <div className="col-span-full">
-      <button type="button" onClick={toggle} className="text-[11px] font-bold underline" style={{ color: "var(--teal-2)" }}>
+      <button type="button" onClick={toggle} className="text-xs font-bold underline" style={{ color: "var(--teal-2)" }}>
         {open ? t.hideAnswers : t.viewAnswers}
       </button>
       {open && (
@@ -93,7 +93,7 @@ function AnswersPanel({
           ) : (
             answers.map((a, i) => (
               <div key={i}>
-                <p className="text-[11px] font-bold text-muted">{questionLabel(invite.department, a.question_key, lang, t)}</p>
+                <p className="text-xs font-bold text-muted">{questionLabel(invite.department, a.question_key, lang, t)}</p>
                 <p className="text-xs text-ink">{a.answer_text}</p>
               </div>
             ))
@@ -178,7 +178,7 @@ export function InviteGenerator({
             type="button"
             disabled={isPending}
             onClick={generate}
-            className="rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
+            className="rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
           >
             {t.inviteGenerate}
           </button>
@@ -220,7 +220,7 @@ export function InviteGenerator({
                       <DepartmentBadge department={invite.department} lang={lang} />
                       {invite.invitee_name && <span className="truncate text-ink">{invite.invitee_name}</span>}
                     </div>
-                    <button type="button" onClick={() => copy(invite.token)} className="shrink-0 text-teal-2">
+                    <button type="button" onClick={() => copy(invite.token)} className="-m-2 shrink-0 p-2 text-teal-2">
                       {t.inviteCopy}
                     </button>
                   </div>
@@ -233,7 +233,7 @@ export function InviteGenerator({
 
             <div className="hidden xl:flex xl:flex-col xl:gap-2">
               <div
-                className="grid gap-3 px-1 text-[10.5px] text-muted"
+                className="grid gap-3 px-1 text-xs text-muted"
                 style={{ gridTemplateColumns: "1fr 1fr 90px 70px" }}
               >
                 <span>{t.inviteAreaLabel}</span>
@@ -244,13 +244,13 @@ export function InviteGenerator({
               {existingInvites.map((invite) => (
                 <div
                   key={invite.id}
-                  className="grid items-start gap-3 rounded-lg px-3 py-2.5"
+                  className="grid items-start gap-3 rounded-lg px-3 py-3"
                   style={{ gridTemplateColumns: "1fr 1fr 90px 70px", background: "var(--glass-2)" }}
                 >
                   <DepartmentBadge department={invite.department} lang={lang} />
                   <span className="truncate text-xs text-muted">{invite.invitee_name || "—"}</span>
                   <StatusPill status={invite.status} t={t} />
-                  <button type="button" onClick={() => copy(invite.token)} className="text-xs font-bold text-teal-2">
+                  <button type="button" onClick={() => copy(invite.token)} className="-m-2 p-2 text-xs font-bold text-teal-2">
                     {t.inviteCopy}
                   </button>
                   <AnswersPanel invite={invite} lang={lang} t={t} />

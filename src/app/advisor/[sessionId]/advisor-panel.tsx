@@ -90,7 +90,7 @@ export function AdvisorPanel({
           <button
             type="button"
             onClick={() => setShowStub((v) => !v)}
-            className="rounded-lg border py-2.5 text-sm text-muted"
+            className="rounded-lg border py-3 text-sm text-muted"
             style={{ borderColor: "var(--border-g)" }}
           >
             {t.connectSystems}

@@ -14,7 +14,7 @@ export function LanguageToggle({
       type="button"
       onClick={onToggle}
       suppressHydrationWarning
-      className="rounded-full border px-3 py-1.5 text-xs font-bold text-ink"
+      className="rounded-full border px-3 py-2 text-xs font-bold text-ink"
       style={{ borderColor: "var(--border-g)" }}
     >
       {lang === "en" ? "عربي" : "EN"}

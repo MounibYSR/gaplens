@@ -111,12 +111,12 @@ export function AccountSettingsModal({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="rounded-lg border px-3 py-1.5 text-xs font-bold text-ink"
+              className="rounded-lg border px-3 py-2 text-xs font-bold text-ink"
               style={{ borderColor: "var(--border-g)" }}
             >
               {previewUrl ? t.changeCta : t.uploadCta}
             </button>
-            <p className="mt-1 text-[11px] text-muted">{t.logoHint}</p>
+            <p className="mt-1 text-xs text-muted">{t.logoHint}</p>
           </div>
         </div>
 
@@ -149,7 +149,7 @@ export function AccountSettingsModal({
             />
           </div>
         </div>
-        <p className="mt-1 text-[11px] text-muted">{t.avgHourlyCostHint}</p>
+        <p className="mt-1 text-xs text-muted">{t.avgHourlyCostHint}</p>
 
         {error && (
           <p className="mt-3 text-xs font-bold" style={{ color: "var(--gap)" }}>
@@ -161,7 +161,7 @@ export function AccountSettingsModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg border py-2.5 text-sm font-bold text-ink"
+            className="flex-1 rounded-lg border py-3 text-sm font-bold text-ink"
             style={{ borderColor: "var(--border-g)" }}
           >
             {t.cancel}
@@ -170,7 +170,7 @@ export function AccountSettingsModal({
             type="button"
             onClick={handleSave}
             disabled={saving || !name.trim()}
-            className="flex-1 rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy disabled:opacity-60"
+            className="flex-1 rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
           >
             {saving ? "…" : t.save}
           </button>

@@ -2,7 +2,7 @@ import { ConsoleLabel } from "@/components/ui/console-label";
 
 export default function CheckEmailPage() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+    <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
       <div
         className="w-full max-w-sm rounded-2xl border p-8"
         style={{ background: "var(--glass)", borderColor: "var(--border-g)" }}

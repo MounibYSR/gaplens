@@ -25,6 +25,10 @@
 
   --background: var(--navy);
   --foreground: var(--ink);
+
+  /* Elevated-card border — named so it's a token, not a bare rgba literal
+     at the call site (see .glass-card-elevated below). */
+  --border-elevated: rgba(21, 201, 154, 0.35);
 }
 
 @theme inline {
@@ -50,6 +54,19 @@
   --font-ar: var(--font-cairo);
   --font-en: var(--font-inter);
   --font-mono-console: var(--font-jetbrains-mono);
+
+  /* One real type scale app-wide: 12/14/16/20/24/32/48px (see DESIGN_RULES.md
+     section 6). Tailwind's default text-lg/3xl/4xl (18/30/36px) sit off this
+     scale, so they're remapped here rather than hunted down at every call
+     site — every existing `text-lg`/`text-3xl`/`text-4xl` now resolves to an
+     allowed step automatically. text-lg and text-xl becoming the same size
+     (20px) is intentional, not a bug. */
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.5rem;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 2.5rem;
 }
 
 html[dir="rtl"] {
@@ -124,7 +141,7 @@ body {
   background: var(--glass-2);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(21, 201, 154, 0.35);
+  border: 1px solid var(--border-elevated);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(21, 201, 154, 0.08), 0 0 40px rgba(21, 201, 154, 0.12);
 }
 

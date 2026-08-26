@@ -52,7 +52,7 @@ export default async function DashboardPage() {
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
         <ConsoleLabel>{t.badge}</ConsoleLabel>
         <h1 className="mt-2 mb-4 text-xl font-extrabold text-ink">{t.title}</h1>
-        <Link href="/onboarding" className="rounded-lg bg-teal-2 px-6 py-2.5 font-bold text-navy">
+        <Link href="/onboarding" className="rounded-lg bg-teal-2 px-6 py-3 font-bold text-navy">
           {appDictionary[lang].onboarding.submit}
         </Link>
       </div>

@@ -26,7 +26,7 @@ function topGapForDepartment(gaps: RoadmapGap[], deptTitleEn: string): RoadmapGa
 
 function CostRow({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-full py-1.5 pe-4 ps-1.5 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
+    <div className="flex items-center gap-3 rounded-full py-2 pe-4 ps-2 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
       <IconBadge icon={icon} sizeClass="h-7 w-7" />
       <span>{text}</span>
     </div>
@@ -173,7 +173,7 @@ export function OverviewSection({
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-extrabold tracking-widest"
+                    className="flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-extrabold tracking-widest"
                     style={{ borderColor: dept.accent, color: dept.accent }}
                   >
                     <DepartmentIcon department={dept} size={12} />
@@ -191,7 +191,7 @@ export function OverviewSection({
                       style={{ width: `${coverage}%`, background: dept.accent }}
                     />
                   </div>
-                  <p className="mt-1 text-[10px] text-muted">{d.deptCoverageLabel}</p>
+                  <p className="mt-1 text-xs text-muted">{d.deptCoverageLabel}</p>
                 </div>
 
                 <div

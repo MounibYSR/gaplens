@@ -5,7 +5,7 @@ const PLACEHOLDER_COUNT = 6;
 function LogoPlaceholder({ index }: { index: number }) {
   return (
     <div
-      className="flex h-10 w-24 shrink-0 items-center justify-center rounded-lg border text-[10px] font-bold tracking-widest text-muted opacity-70"
+      className="flex h-10 w-24 shrink-0 items-center justify-center rounded-lg border text-xs font-bold tracking-widest text-muted opacity-70"
       style={{ borderColor: "var(--border-g)", background: "var(--glass)" }}
     >
       LOGO {index}

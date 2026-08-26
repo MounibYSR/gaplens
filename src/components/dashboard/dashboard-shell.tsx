@@ -141,7 +141,7 @@ function AccountMenu({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-3 rounded-xl border p-3 text-start transition-opacity hover:opacity-80"
+        className="flex w-full items-center gap-3 rounded-lg border p-3 text-start transition-opacity hover:opacity-80"
         style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
       >
         {imageUrl ? (
@@ -323,7 +323,7 @@ function DashboardShellInner({
                 key={item.key}
                 type="button"
                 onClick={() => setSection(item.key)}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-start text-sm font-bold transition-colors"
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-start text-sm font-bold transition-colors"
                 style={{
                   background: active ? "var(--teal-2)" : "transparent",
                   color: active ? "var(--navy)" : "var(--ink)",
@@ -396,7 +396,7 @@ function DashboardShellInner({
                       setSection(item.key);
                       setShowMobileNav(false);
                     }}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-start text-sm font-bold transition-colors"
+                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-start text-sm font-bold transition-colors"
                     style={{
                       background: active ? "var(--teal-2)" : "transparent",
                       color: active ? "var(--navy)" : "var(--ink)",

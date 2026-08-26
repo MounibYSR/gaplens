@@ -66,7 +66,7 @@ function GapRing({ gap }: { gap: number }) {
         <span className="ltr-num text-2xl font-extrabold text-ink" dir="ltr">
           {gap}
         </span>
-        <span className="ltr-num text-[10px] text-muted" dir="ltr">
+        <span className="ltr-num text-xs text-muted" dir="ltr">
           /100
         </span>
       </div>
@@ -115,7 +115,7 @@ function ArrowRightIcon() {
 
 function CostRow({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-full py-1.5 pe-4 ps-1.5 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
+    <div className="flex items-center gap-3 rounded-full py-2 pe-4 ps-2 text-xs font-bold text-ink" style={{ background: "var(--glass-2)" }}>
       <IconBadge icon={icon} sizeClass="h-7 w-7" />
       <span>{text}</span>
     </div>
@@ -208,7 +208,7 @@ export function ScanResultCard({
 
       <Link
         href={continueHref}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-teal-2 py-2.5 text-sm font-bold text-navy"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy"
       >
         {continueLabel ?? t.continueCta}
         <ArrowRightIcon />

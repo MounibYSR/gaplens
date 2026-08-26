@@ -21,7 +21,7 @@ export function LandingPage() {
           {t.hero.badge}
         </span>
 
-        <h1 className="max-w-2xl text-3xl font-extrabold leading-tight text-ink sm:text-4xl lg:text-5xl">
+        <h1 className="max-w-2xl text-3xl font-extrabold leading-tight text-ink lg:text-5xl">
           {(() => {
             const idx = t.hero.title.indexOf(t.hero.titleEmphasis);
             if (idx === -1) return t.hero.title;
@@ -61,7 +61,7 @@ export function LandingPage() {
           {t.hero.trust.map((chip) => (
             <span
               key={chip}
-              className="rounded-full border px-3 py-1.5 text-xs text-muted"
+              className="rounded-full border px-3 py-2 text-xs text-muted"
               style={{ background: "var(--glass)", borderColor: "var(--border-g)" }}
             >
               {chip}
