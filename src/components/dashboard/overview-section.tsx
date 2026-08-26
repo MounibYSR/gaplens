@@ -88,49 +88,6 @@ export function OverviewSection({
               {roundProgressText}
             </p>
           )}
-
-          <div className="glass-card rounded-2xl p-4" style={{ borderColor: "var(--border-g)" }}>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted">{d.dataCompleteness}</span>
-              <span className="ltr-num text-xs font-bold text-ink" dir="ltr">
-                {completenessPct}%
-              </span>
-            </div>
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--glass-2)" }}>
-              <div
-                className="h-full rounded-full transition-[width] duration-500"
-                style={{
-                  width: `${completenessPct}%`,
-                  background: "linear-gradient(90deg, var(--teal-2), var(--gold))",
-                }}
-              />
-            </div>
-            {trendText && (
-              <p
-                className="mt-2 text-xs font-bold"
-                style={{ color: trendDelta && trendDelta > 0 ? "var(--teal-2)" : "var(--muted)" }}
-              >
-                {trendText}
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={onSwitchToChat}
-              className="mt-3 w-fit rounded-lg bg-teal-2 px-4 py-2 text-xs font-bold text-navy"
-            >
-              {d.deepenAssessment}
-            </button>
-          </div>
-
-          <div className="hidden xl:block">
-            <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-              {d.vectorAnalysisTitle}
-            </p>
-            <div className="glass-card rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
-              <DepartmentRadar coverage={departmentCoverage} lang={lang} />
-              <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
-            </div>
-          </div>
         </div>
 
         <div className="xl:hidden">
@@ -145,6 +102,49 @@ export function OverviewSection({
           <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
           <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
           <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
+        </div>
+      </div>
+
+      <div className="mt-6 glass-card rounded-2xl p-4" style={{ borderColor: "var(--border-g)" }}>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-muted">{d.dataCompleteness}</span>
+          <span className="ltr-num text-xs font-bold text-ink" dir="ltr">
+            {completenessPct}%
+          </span>
+        </div>
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--glass-2)" }}>
+          <div
+            className="h-full rounded-full transition-[width] duration-500"
+            style={{
+              width: `${completenessPct}%`,
+              background: "linear-gradient(90deg, var(--teal-2), var(--gold))",
+            }}
+          />
+        </div>
+        {trendText && (
+          <p
+            className="mt-2 text-xs font-bold"
+            style={{ color: trendDelta && trendDelta > 0 ? "var(--teal-2)" : "var(--muted)" }}
+          >
+            {trendText}
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={onSwitchToChat}
+          className="mt-3 w-fit rounded-lg bg-teal-2 px-4 py-2 text-xs font-bold text-navy"
+        >
+          {d.deepenAssessment}
+        </button>
+      </div>
+
+      <div className="mt-6 hidden xl:block">
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          {d.vectorAnalysisTitle}
+        </p>
+        <div className="glass-card rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
+          <DepartmentRadar coverage={departmentCoverage} lang={lang} />
+          <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
         </div>
       </div>
 
