@@ -33,6 +33,7 @@ export const appDictionary = {
       monthlyCostLabel: "Monthly cost (optional)",
       monthlyCostHint: "Skip if you're not sure",
       monthlyCostPlaceholder: "e.g. 150",
+      currencyLabel: "Currency",
       dashboardTitle: "Let's connect your tools to work as one unified system",
       dashboardSubtitle:
         "Every disconnected tool is manual work your team repeats. Keep this current and see exactly where you can cut the apps you don't need.",
@@ -326,6 +327,7 @@ export const appDictionary = {
       monthlyCostLabel: "التكلفة الشهرية (اختياري)",
       monthlyCostHint: "تخطيها لو مو متأكدة",
       monthlyCostPlaceholder: "مثلاً: 150",
+      currencyLabel: "العملة",
       dashboardTitle: "خلّي أدواتك تشتغل كنظام واحد متكامل",
       dashboardSubtitle:
         "كل أداة غير متصلة تعني عمل يدوي يكرره فريقك. خلّي هذي الخريطة محدّثة عشان تشوفي بالضبط وين تقدرين توفّرين من التطبيقات اللي ما تحتاجينها.",

@@ -131,7 +131,7 @@ export default async function DashboardPage() {
 
   const { data: companyToolRows } = await supabase
     .from("tools")
-    .select("id, name, catalog_id, importance, is_connected, monthly_cost")
+    .select("id, name, catalog_id, importance, is_connected, monthly_cost, currency")
     .in("session_id", companySessionIds)
     .order("created_at", { ascending: true });
 
@@ -142,6 +142,7 @@ export default async function DashboardPage() {
     importance: t.importance,
     isConnected: t.is_connected,
     monthlyCost: t.monthly_cost,
+    currency: t.currency,
   }));
 
   const toolCount = companyTools.length;

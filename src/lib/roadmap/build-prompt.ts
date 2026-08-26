@@ -149,13 +149,19 @@ function formatPlatformContext(entries: PlatformKbEntry[]): string {
   return `\n\nRecognized platforms in their tool stack — use this so recommendations are specific about what's already built in, instead of generically suggesting a new tool for something the platform already does:\n\n${blocks}`;
 }
 
-export type ToolInventoryEntry = { name: string; importance: number; isConnected: boolean; monthlyCost: number | null };
+export type ToolInventoryEntry = {
+  name: string;
+  importance: number;
+  isConnected: boolean;
+  monthlyCost: number | null;
+  currency: string | null;
+};
 
 function formatToolInventory(tools: ToolInventoryEntry[]): string {
   if (tools.length === 0) return "";
   const lines = tools
     .map((t) => {
-      const costPart = t.monthlyCost != null ? `, ~${t.monthlyCost}/mo` : "";
+      const costPart = t.monthlyCost != null ? `, ~${t.monthlyCost} ${t.currency ?? "USD"}/mo` : "";
       return `- ${t.name} (importance ${t.importance}/10, ${t.isConnected ? "connected to other tools" : "standalone/not connected"}${costPart})`;
     })
     .join("\n");

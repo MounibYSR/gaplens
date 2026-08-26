@@ -462,7 +462,7 @@ function DashboardShellInner({
           )}
 
           {section === "toolmap" && (
-            <ToolMapSection lang={lang} companyId={companyId} initialTools={companyTools} />
+            <ToolMapSection lang={lang} companyId={companyId} initialTools={companyTools} currency={currency} />
           )}
 
           {section === "gapfix" && (

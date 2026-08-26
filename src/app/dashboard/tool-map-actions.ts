@@ -26,6 +26,7 @@ export type CompanyTool = {
   importance: number;
   isConnected: boolean;
   monthlyCost: number | null;
+  currency: string | null;
 };
 
 /**
@@ -42,6 +43,7 @@ export async function addCompanyTool(params: {
   importance: number;
   isConnected: boolean;
   monthlyCost: number | null;
+  currency: string | null;
 }) {
   const supabase = await requireOwnCompany(params.companyId);
 
@@ -56,8 +58,6 @@ export async function addCompanyTool(params: {
   if (sessionError) throw sessionError;
   if (!latestSession) throw new Error("No assessment session found for this company");
 
-  const { data: company } = await supabase.from("companies").select("currency").eq("id", params.companyId).single();
-
   const { data, error } = await supabase
     .from("tools")
     .insert({
@@ -67,9 +67,9 @@ export async function addCompanyTool(params: {
       importance: params.importance,
       is_connected: params.isConnected,
       monthly_cost: params.monthlyCost,
-      currency: params.monthlyCost != null ? (company?.currency ?? "USD") : null,
+      currency: params.currency,
     })
-    .select("id, name, catalog_id, importance, is_connected, monthly_cost")
+    .select("id, name, catalog_id, importance, is_connected, monthly_cost, currency")
     .single();
 
   if (error || !data) throw error ?? new Error("Failed to add tool");
@@ -83,6 +83,7 @@ export async function addCompanyTool(params: {
     importance: data.importance,
     isConnected: data.is_connected,
     monthlyCost: data.monthly_cost,
+    currency: data.currency,
   };
   return tool;
 }

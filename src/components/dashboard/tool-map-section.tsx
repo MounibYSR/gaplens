@@ -10,10 +10,12 @@ export function ToolMapSection({
   lang,
   companyId,
   initialTools,
+  currency,
 }: {
   lang: EntryLang;
   companyId: string;
   initialTools: CompanyTool[];
+  currency: string;
 }) {
   const t = appDictionary[lang].toolMap;
 
@@ -26,6 +28,7 @@ export function ToolMapSection({
       <ToolRelationshipMap
         lang={lang}
         persistent
+        defaultCurrency={currency}
         initialTools={initialTools.map((tool) => ({
           id: tool.id,
           name: tool.name,
@@ -33,6 +36,7 @@ export function ToolMapSection({
           importance: tool.importance,
           isConnected: tool.isConnected,
           monthlyCost: tool.monthlyCost,
+          currency: tool.currency,
         }))}
         onAddTool={(tool) => addCompanyTool({ companyId, ...tool })}
         onUpdateTool={(toolId, updates) => updateCompanyTool({ companyId, toolId, ...updates })}

@@ -48,15 +48,6 @@ export async function saveSessionTools(sessionId: string, tools: SavedTool[]) {
 
   if (tools.length === 0) return;
 
-  let currency: string | null = null;
-  if (tools.some((t) => t.monthlyCost != null)) {
-    const { data: session } = await supabase.from("assessment_sessions").select("company_id").eq("id", sessionId).single();
-    if (session) {
-      const { data: company } = await supabase.from("companies").select("currency").eq("id", session.company_id).single();
-      currency = company?.currency ?? "USD";
-    }
-  }
-
   const { error: insertError } = await supabase.from("tools").insert(
     tools.map((tool) => ({
       session_id: sessionId,
@@ -65,7 +56,7 @@ export async function saveSessionTools(sessionId: string, tools: SavedTool[]) {
       importance: tool.importance,
       is_connected: tool.isConnected,
       monthly_cost: tool.monthlyCost,
-      currency: tool.monthlyCost != null ? currency : null,
+      currency: tool.currency,
     })),
   );
   if (insertError) throw insertError;

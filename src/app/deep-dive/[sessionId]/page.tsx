@@ -33,7 +33,7 @@ export default async function DeepDivePage({
 
   const { data: companyToolRows } = await supabase
     .from("tools")
-    .select("id, name, catalog_id, importance, is_connected, monthly_cost")
+    .select("id, name, catalog_id, importance, is_connected, monthly_cost, currency")
     .in("session_id", companySessionIds);
 
   const companyTools: CompanyTool[] = (companyToolRows ?? []).map((row) => ({
@@ -43,6 +43,7 @@ export default async function DeepDivePage({
     importance: row.importance,
     isConnected: row.is_connected,
     monthlyCost: row.monthly_cost,
+    currency: row.currency,
   }));
 
   const lang = await getSessionLang();

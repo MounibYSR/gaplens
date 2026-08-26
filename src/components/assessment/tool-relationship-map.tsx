@@ -15,6 +15,7 @@ type Tool = {
   importance: number; // 1-10, higher = closer to the hub
   isConnected: boolean;
   monthlyCost: number | null;
+  currency: string | null;
 };
 
 export type SavedTool = {
@@ -23,6 +24,7 @@ export type SavedTool = {
   importance: number;
   isConnected: boolean;
   monthlyCost: number | null;
+  currency: string | null;
 };
 
 type ToolMapDict = (typeof appDictionary)[EntryLang]["toolMap"];
@@ -78,6 +80,7 @@ export function ToolRelationshipMap({
   onUpdateTool,
   onRemoveTool,
   persistent,
+  defaultCurrency,
 }: {
   lang: EntryLang;
   /** Quiz mode only: advances the assessment to the next step. */
@@ -96,6 +99,8 @@ export function ToolRelationshipMap({
   onRemoveTool?: (id: string) => Promise<void>;
   /** Hides the quiz-only progress dots / Next button and saves each action instantly instead. */
   persistent?: boolean;
+  /** Seeds the currency input — the account's own currency setting when known, otherwise USD. Each tool can still be billed in its own currency (e.g. one global SaaS subscription vs. a local tool). */
+  defaultCurrency?: string;
 }) {
   const t = appDictionary[lang].toolMap;
   const [tools, setTools] = useState<Tool[]>(initialTools ?? []);
@@ -104,6 +109,7 @@ export function ToolRelationshipMap({
   const [draftImportance, setDraftImportance] = useState(5);
   const [draftConnected, setDraftConnected] = useState(true);
   const [draftMonthlyCost, setDraftMonthlyCost] = useState("");
+  const [draftCurrency, setDraftCurrency] = useState(defaultCurrency ?? "USD");
   const [note, setNote] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -118,13 +124,15 @@ export function ToolRelationshipMap({
     setErrorMsg(null);
 
     const parsedCost = draftMonthlyCost.trim() === "" ? null : Number(draftMonthlyCost);
+    const hasCost = parsedCost != null && !Number.isNaN(parsedCost);
     const newTool: Tool = {
       id: `${Date.now()}-${tools.length}`,
       name: draftName,
       catalogId: selectedId === OTHER_TOOL_ID ? null : selectedId,
       importance: draftImportance,
       isConnected: draftConnected,
-      monthlyCost: parsedCost != null && !Number.isNaN(parsedCost) ? parsedCost : null,
+      monthlyCost: hasCost ? parsedCost : null,
+      currency: hasCost ? draftCurrency.trim().toUpperCase() || "USD" : null,
     };
 
     setTools((prev) => [...prev, newTool]);
@@ -133,6 +141,7 @@ export function ToolRelationshipMap({
     setDraftImportance(5);
     setDraftConnected(true);
     setDraftMonthlyCost("");
+    setDraftCurrency(defaultCurrency ?? "USD");
 
     if (onAddTool) {
       try {
@@ -142,6 +151,7 @@ export function ToolRelationshipMap({
           importance: newTool.importance,
           isConnected: newTool.isConnected,
           monthlyCost: newTool.monthlyCost,
+          currency: newTool.currency,
         });
         setTools((prev) => prev.map((x) => (x.id === newTool.id ? { ...x, id: saved.id } : x)));
       } catch {
@@ -220,6 +230,7 @@ export function ToolRelationshipMap({
         importance: x.importance,
         isConnected: x.isConnected,
         monthlyCost: x.monthlyCost,
+        currency: x.currency,
       })),
     );
   }
@@ -260,7 +271,7 @@ export function ToolRelationshipMap({
                           {tool.monthlyCost != null && (
                             <span className="ltr-num" dir="ltr">
                               {" "}
-                              · {tool.monthlyCost}/mo
+                              · {tool.currency ?? "USD"} {tool.monthlyCost}/mo
                             </span>
                           )}
                         </p>
@@ -456,18 +467,30 @@ export function ToolRelationshipMap({
                   <span>{t.monthlyCostLabel}</span>
                   <span>{t.monthlyCostHint}</span>
                 </span>
-                <input
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  inputMode="decimal"
-                  value={draftMonthlyCost}
-                  onChange={(e) => setDraftMonthlyCost(e.target.value)}
-                  placeholder={t.monthlyCostPlaceholder}
-                  className="ltr-num w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
-                  dir="ltr"
-                  style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
-                />
+                <div className="flex gap-2">
+                  <input
+                    value={draftCurrency}
+                    onChange={(e) => setDraftCurrency(e.target.value)}
+                    maxLength={3}
+                    placeholder="USD"
+                    aria-label={t.currencyLabel}
+                    className="ltr-num w-16 shrink-0 rounded-lg border px-2 py-2 text-sm uppercase text-ink outline-none"
+                    dir="ltr"
+                    style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    inputMode="decimal"
+                    value={draftMonthlyCost}
+                    onChange={(e) => setDraftMonthlyCost(e.target.value)}
+                    placeholder={t.monthlyCostPlaceholder}
+                    className="ltr-num w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
+                    dir="ltr"
+                    style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+                  />
+                </div>
               </label>
 
               <div className="flex gap-2">

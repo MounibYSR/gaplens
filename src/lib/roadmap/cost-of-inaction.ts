@@ -10,6 +10,19 @@ const HOURS_MIDPOINT_BY_VALUE: Record<string, number> = { under_5: 3, "5_10": 7.
 const HEADCOUNT_MIDPOINT_BY_VALUE: Record<string, number> = { one: 1, two_three: 2.5, four_plus: 5 };
 const WEEKS_PER_MONTH = 4.33;
 const DEFAULT_REGIONAL_HOURLY_COST = 30; // QAR/hr — GapLens's Qatar/GCC target market, used only when no account setting is set.
+const USD_TO_QAR = 3.64; // official peg — exact, not an estimate. The only pair with a hard conversion; any other currency mismatch is left unconverted (see convertCurrency below).
+
+/**
+ * Converts an amount into `to` if it's already `from`-or-`to`-or-convertible
+ * via the USD/QAR peg; returns null for any other currency pair rather than
+ * silently mixing units (e.g. summing a USD tool cost with a QAR one).
+ */
+function convertCurrency(amount: number, from: string, to: string): number | null {
+  if (from === to) return amount;
+  if (from === "USD" && to === "QAR") return amount * USD_TO_QAR;
+  if (from === "QAR" && to === "USD") return amount / USD_TO_QAR;
+  return null;
+}
 
 function buildAnswerToMidpoint(
   options: { value: string; label: { en: string; ar: string } }[],
@@ -50,9 +63,16 @@ export function computeCostOfInaction(params: {
   const { gaps, toolInventory, deepDiveResponses, avgHourlyCost, currency } = params;
   const lineItems: CostOfInactionLineItem[] = [];
 
-  const toolCostByName = new Map(
-    toolInventory.filter((t) => t.monthlyCost != null).map((t) => [t.name.trim().toLowerCase(), t.monthlyCost as number]),
-  );
+  // Convert every tool's cost into the company's own currency up front —
+  // summing raw numbers across different currencies (e.g. a $20 tool + a
+  // QAR 70 tool) would silently produce a meaningless total otherwise.
+  const toolCostByName = new Map<string, number>();
+  for (const t of toolInventory) {
+    if (t.monthlyCost == null) continue;
+    const converted = convertCurrency(t.monthlyCost, t.currency ?? "USD", currency);
+    if (converted == null) continue; // no conversion path — excluded rather than mixed
+    toolCostByName.set(t.name.trim().toLowerCase(), converted);
+  }
 
   for (const gap of gaps) {
     const relatedNames = gap.related_tool_names ?? [];
@@ -74,7 +94,7 @@ export function computeCostOfInaction(params: {
 
     lineItems.push({
       area: gap.gap_title,
-      estimated_monthly_amount: sum,
+      estimated_monthly_amount: Math.round(sum),
       currency,
       estimated: true,
       note: skippedCount > 0 ? `Based on ${matchedCount} of ${relatedNames.length} named tools — the rest had no monthly cost on record.` : undefined,

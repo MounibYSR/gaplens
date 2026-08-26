@@ -77,7 +77,7 @@ export async function generateAndSaveRoadmap(
 
   const { data: sessionTools, error: toolsError } = await supabase
     .from("tools")
-    .select("name, catalog_id, importance, is_connected, monthly_cost")
+    .select("name, catalog_id, importance, is_connected, monthly_cost, currency")
     .in("session_id", companySessionIds);
 
   if (toolsError) {
@@ -178,6 +178,7 @@ export async function generateAndSaveRoadmap(
     importance: t.importance,
     isConnected: t.is_connected,
     monthlyCost: t.monthly_cost,
+    currency: t.currency,
   }));
 
   let result;
