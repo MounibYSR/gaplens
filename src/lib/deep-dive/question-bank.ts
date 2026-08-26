@@ -117,9 +117,44 @@ const CHANGE_ATTITUDE_OPTIONS: QuestionOption[] = [
   { value: "want_explained", label: { en: "I'd want someone to walk me through it first", ar: "أبي حد يشرحلي وياه خطوة خطوة أول" } },
 ];
 
-const NONE_OPTION: QuestionOption = {
+export const NONE_OPTION: QuestionOption = {
   value: "none_automated",
   label: { en: "None of these — it's mostly organized", ar: "ولا وحدة من هذي — الوضع منظم أغلبه" },
+};
+
+/**
+ * Two follow-up questions asked only when at least one real manual task was
+ * flagged in `manual_tasks` — feeds the Cost of Inaction labor-cost
+ * estimate. Deliberately aggregate (not per-task) and never asks for
+ * salary/per-person cost, only hours and headcount.
+ */
+export const MANUAL_HOURS_QUESTION: DeepDiveQuestion = {
+  key: "manual_hours_per_week",
+  type: "single_select",
+  prompt: {
+    en: "Roughly how many hours per week does your team spend on these manual tasks combined?",
+    ar: "تقريباً كم ساعة بالأسبوع يصرف فريقكم على هذي المهام اليدوية مجتمعة؟",
+  },
+  options: [
+    { value: "under_5", label: { en: "Under 5 hours/week", ar: "أقل من 5 ساعات بالأسبوع" } },
+    { value: "5_10", label: { en: "5–10 hours/week", ar: "5–10 ساعات بالأسبوع" } },
+    { value: "10_20", label: { en: "10–20 hours/week", ar: "10–20 ساعة بالأسبوع" } },
+    { value: "20_plus", label: { en: "20+ hours/week", ar: "20 ساعة أو أكثر بالأسبوع" } },
+  ],
+};
+
+export const MANUAL_HEADCOUNT_QUESTION: DeepDiveQuestion = {
+  key: "manual_headcount",
+  type: "single_select",
+  prompt: {
+    en: "How many people are typically involved in this manual work?",
+    ar: "كم شخص عادة يشارك بهذا الشغل اليدوي؟",
+  },
+  options: [
+    { value: "one", label: { en: "1 person", ar: "شخص وحد" } },
+    { value: "two_three", label: { en: "2–3 people", ar: "شخصين لثلاثة" } },
+    { value: "four_plus", label: { en: "4+ people", ar: "4 أشخاص أو أكثر" } },
+  ],
 };
 
 const CENTRALIZATION_STEPS_TEMPLATE = (scatteredLabel: LocalizedText, centralizedLabel: LocalizedText): QuestionOption[] => [
@@ -251,6 +286,20 @@ const DEPARTMENT_QUESTIONS: Record<Department, DeepDiveQuestion[]> = {
         { en: "Scattered — every channel has its own piece of the story", ar: "متفرقة — كل قناة عندها جزء من القصة" },
         { en: "Fully unified — one profile per customer, everything in it", ar: "موحّدة بالكامل — ملف واحد لكل عميل فيه كل شي" },
       ),
+    },
+    {
+      key: "cx_data_tool",
+      type: "single_select",
+      prompt: {
+        en: "What tool (if any) do you currently use to analyze customer data or behavior to improve their experience?",
+        ar: "وش الأداة (إن وجدت) اللي تستخدمينها حالياً لتحليل بيانات أو سلوك العملاء عشان تحسّنين تجربتهم؟",
+      },
+      options: [
+        { value: "dedicated_tool", label: { en: "A dedicated analytics tool", ar: "أداة تحليلات مخصصة" } },
+        { value: "spreadsheets", label: { en: "Spreadsheets / manual review", ar: "شيتات / مراجعة يدوية" } },
+        { value: "nothing_formal", label: { en: "Nothing formal", ar: "ما فيه شي رسمي" } },
+        { value: "not_sure", label: { en: "Not sure", ar: "مو متأكدة" } },
+      ],
     },
   ],
   data_decision_making: [

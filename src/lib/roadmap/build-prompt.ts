@@ -18,6 +18,28 @@ export type RoadmapGap = {
   /** Only set by the Visual Identity module — distinguishes a cross-channel
    * comparison finding from a single-channel one. Absent on every other gap. */
   sub_category?: "single_channel" | "cross_channel" | null;
+  /** Exact names (from the Tool Map) of tools this gap's fix would let the
+   * company consolidate or drop — only set for genuine tool-redundancy
+   * gaps. Used to deterministically sum real monthly_cost figures for the
+   * Cost of Inaction section; the model never invents a dollar amount. */
+  related_tool_names?: string[];
+};
+
+/** One line of the deterministic Cost of Inaction summary — every amount
+ * here is computed in code from real data (tool monthly_cost, or
+ * hours × headcount × hourly rate), never guessed by the model. */
+export type CostOfInactionLineItem = {
+  area: string;
+  estimated_monthly_amount: number | null;
+  currency: string;
+  estimated: true;
+  note?: string;
+};
+
+export type CostOfInaction = {
+  line_items: CostOfInactionLineItem[];
+  total_estimated_recoverable: number | null;
+  currency: string;
 };
 
 export const CATEGORY_NAMES = DEPARTMENTS.map((d) => d.title.en);
@@ -37,6 +59,7 @@ export const GAP_SCHEMA = {
     recommended_fix: { type: "string" },
     gapfix_path: { type: "string", enum: ["diy", "vetted_provider", "gaplens_executes"] },
     status: { type: "string", enum: ["open", "in_progress", "resolved"] },
+    related_tool_names: { type: "array", items: { type: "string" } },
   },
   required: [
     "gap_title",
@@ -47,6 +70,7 @@ export const GAP_SCHEMA = {
     "recommended_fix",
     "gapfix_path",
     "status",
+    "related_tool_names",
   ],
   additionalProperties: false,
 } as const;
@@ -125,12 +149,15 @@ function formatPlatformContext(entries: PlatformKbEntry[]): string {
   return `\n\nRecognized platforms in their tool stack — use this so recommendations are specific about what's already built in, instead of generically suggesting a new tool for something the platform already does:\n\n${blocks}`;
 }
 
-export type ToolInventoryEntry = { name: string; importance: number; isConnected: boolean };
+export type ToolInventoryEntry = { name: string; importance: number; isConnected: boolean; monthlyCost: number | null };
 
 function formatToolInventory(tools: ToolInventoryEntry[]): string {
   if (tools.length === 0) return "";
   const lines = tools
-    .map((t) => `- ${t.name} (importance ${t.importance}/10, ${t.isConnected ? "connected to other tools" : "standalone/not connected"})`)
+    .map((t) => {
+      const costPart = t.monthlyCost != null ? `, ~${t.monthlyCost}/mo` : "";
+      return `- ${t.name} (importance ${t.importance}/10, ${t.isConnected ? "connected to other tools" : "standalone/not connected"}${costPart})`;
+    })
     .join("\n");
   return `\n\nFull Digital Tool Map on record — every tool they've told us they use, not just recognized platforms. When a gap involves tool fragmentation or disconnection, name the actual standalone tool(s) from this list by name instead of only citing an aggregate count like "4 tools, 50% disconnected":\n${lines}`;
 }
@@ -210,6 +237,7 @@ For each gap you identify:
 - recommended_fix: a concrete, specific recommendation (2-3 sentences).
 - gapfix_path: "diy" if the owner/team can reasonably do this themselves, "vetted_provider" if it needs a specialist GapLens can refer them to, "gaplens_executes" if it's a well-defined, automatable fix GapLens can just do.
 - status: "open" for a new gap, or carried forward per the instructions above.
+- related_tool_names: ONLY for a genuine tool-redundancy/consolidation gap — the exact name(s), copied verbatim from the Tool Map list above, of two or more tools this specific fix would let them merge or drop. Leave it an empty array for every other gap. Never invent a dollar figure yourself here or anywhere else — cost estimates are computed separately from the real data, not from your judgment.
 
 Do not invent findings for a business area with no deep-dive responses yet — but the quick-scan answers above are real data, not filler, so use them: tool count/connection speaks to Tech Operations & Tool Stack, data-checking speaks to Data & Decision-Making, missed customer messages speaks to Customer Experience. Ground at least one gap in the quick-scan answers when a business area has no deep-dive data, rather than leaving it generic. Vary your gaps meaningfully based on this company's specific answers — two companies with different scan answers should get visibly different roadmaps, not interchangeable ones.${
     params.platformEntries?.length

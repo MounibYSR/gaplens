@@ -7,7 +7,7 @@ import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { computeConfidence } from "@/lib/deep-dive/confidence";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import type { Department, GapStatus } from "@/lib/supabase/types";
-import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
+import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
 import { setGapStatus } from "@/app/dashboard/actions";
 import { TeamIcon, ClockIcon, MonitorIcon, IconBadge } from "@/components/ui/stat-icons";
 
@@ -140,6 +140,7 @@ export function RoadmapSection({
   version,
   gaps,
   trendDelta,
+  costOfInaction,
   departmentCoverage,
   onSwitchToChat,
   onSwitchToTeam,
@@ -151,6 +152,7 @@ export function RoadmapSection({
   version: number | null;
   gaps: RoadmapGap[];
   trendDelta: number | null;
+  costOfInaction: CostOfInaction | null;
   departmentCoverage: { key: Department; pct: number }[];
   onSwitchToChat: () => void;
   onSwitchToTeam: () => void;
@@ -309,6 +311,39 @@ export function RoadmapSection({
           </ul>
         )}
       </div>
+
+      {costOfInaction && costOfInaction.line_items.length > 0 && (
+        <div className="glass-card mt-4 rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
+          <h2 className="text-sm font-extrabold text-ink">{t.costOfInactionTitle}</h2>
+          <p className="mt-1 text-xs text-muted">{t.costOfInactionSubtitle}</p>
+
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {costOfInaction.line_items.map((item) => (
+              <li key={item.area} className="flex items-start justify-between gap-3 text-xs">
+                <div className="min-w-0">
+                  <p className="text-ink">{item.area}</p>
+                  {item.note && <p className="mt-0.5 text-[10px] text-muted">{item.note}</p>}
+                </div>
+                <span className="ltr-num shrink-0 text-end font-bold" dir="ltr" style={{ color: "var(--teal-2)" }}>
+                  {item.estimated_monthly_amount != null ? `~${item.estimated_monthly_amount} ${item.currency}` : "—"}
+                  <span className="ms-1 rounded-full px-1.5 py-0.5 text-[9px] font-bold" style={{ background: "var(--glass-2)", color: "var(--muted)" }}>
+                    {t.costOfInactionEstimatedTag}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          {costOfInaction.total_estimated_recoverable != null && (
+            <div className="mt-4 flex items-center justify-between border-t pt-3" style={{ borderColor: "var(--border-g)" }}>
+              <span className="text-xs font-extrabold text-ink">{t.costOfInactionTotalLabel}</span>
+              <span className="ltr-num text-sm font-extrabold" dir="ltr" style={{ color: "var(--teal-2)" }}>
+                ~{costOfInaction.total_estimated_recoverable} {costOfInaction.currency}/mo
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="glass-card-elevated mt-4 rounded-2xl p-6 text-center">
         <h2 className="text-sm font-extrabold text-ink">{t.roadmapTitle}</h2>

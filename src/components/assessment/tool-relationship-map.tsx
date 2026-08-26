@@ -14,6 +14,7 @@ type Tool = {
   catalogId: string | null;
   importance: number; // 1-10, higher = closer to the hub
   isConnected: boolean;
+  monthlyCost: number | null;
 };
 
 export type SavedTool = {
@@ -21,6 +22,7 @@ export type SavedTool = {
   catalogId: string | null;
   importance: number;
   isConnected: boolean;
+  monthlyCost: number | null;
 };
 
 type ToolMapDict = (typeof appDictionary)[EntryLang]["toolMap"];
@@ -101,6 +103,7 @@ export function ToolRelationshipMap({
   const [customName, setCustomName] = useState("");
   const [draftImportance, setDraftImportance] = useState(5);
   const [draftConnected, setDraftConnected] = useState(true);
+  const [draftMonthlyCost, setDraftMonthlyCost] = useState("");
   const [note, setNote] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -114,12 +117,14 @@ export function ToolRelationshipMap({
     if (!draftName) return;
     setErrorMsg(null);
 
+    const parsedCost = draftMonthlyCost.trim() === "" ? null : Number(draftMonthlyCost);
     const newTool: Tool = {
       id: `${Date.now()}-${tools.length}`,
       name: draftName,
       catalogId: selectedId === OTHER_TOOL_ID ? null : selectedId,
       importance: draftImportance,
       isConnected: draftConnected,
+      monthlyCost: parsedCost != null && !Number.isNaN(parsedCost) ? parsedCost : null,
     };
 
     setTools((prev) => [...prev, newTool]);
@@ -127,6 +132,7 @@ export function ToolRelationshipMap({
     setCustomName("");
     setDraftImportance(5);
     setDraftConnected(true);
+    setDraftMonthlyCost("");
 
     if (onAddTool) {
       try {
@@ -135,6 +141,7 @@ export function ToolRelationshipMap({
           catalogId: newTool.catalogId,
           importance: newTool.importance,
           isConnected: newTool.isConnected,
+          monthlyCost: newTool.monthlyCost,
         });
         setTools((prev) => prev.map((x) => (x.id === newTool.id ? { ...x, id: saved.id } : x)));
       } catch {
@@ -207,7 +214,13 @@ export function ToolRelationshipMap({
     const isolatedCount = tools.filter((x) => !x.isConnected).length;
     onComplete?.({ count, isolatedRatio: count > 0 ? isolatedCount / count : 0 });
     onSaveTools?.(
-      tools.map((x) => ({ name: x.name, catalogId: x.catalogId, importance: x.importance, isConnected: x.isConnected })),
+      tools.map((x) => ({
+        name: x.name,
+        catalogId: x.catalogId,
+        importance: x.importance,
+        isConnected: x.isConnected,
+        monthlyCost: x.monthlyCost,
+      })),
     );
   }
 
@@ -242,7 +255,15 @@ export function ToolRelationshipMap({
                     <div className="flex items-center justify-between">
                       <div className="min-w-0">
                         <p className="truncate text-sm font-bold text-ink">{tool.name}</p>
-                        <p className="mt-0.5 text-xs text-muted">{importanceLabel(tool.importance, t)}</p>
+                        <p className="mt-0.5 text-xs text-muted">
+                          {importanceLabel(tool.importance, t)}
+                          {tool.monthlyCost != null && (
+                            <span className="ltr-num" dir="ltr">
+                              {" "}
+                              · {tool.monthlyCost}/mo
+                            </span>
+                          )}
+                        </p>
                       </div>
                       <div className="flex shrink-0 items-center gap-2 ps-2">
                         <StatusDot connected={tool.isConnected} onClick={persistent ? () => void toggleConnected(tool.id) : undefined} />
@@ -427,6 +448,25 @@ export function ToolRelationshipMap({
                   value={draftImportance}
                   onChange={(e) => setDraftImportance(Number(e.target.value))}
                   className="w-full"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1 flex items-center justify-between text-xs text-muted">
+                  <span>{t.monthlyCostLabel}</span>
+                  <span>{t.monthlyCostHint}</span>
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  inputMode="decimal"
+                  value={draftMonthlyCost}
+                  onChange={(e) => setDraftMonthlyCost(e.target.value)}
+                  placeholder={t.monthlyCostPlaceholder}
+                  className="ltr-num w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
+                  dir="ltr"
+                  style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
                 />
               </label>
 

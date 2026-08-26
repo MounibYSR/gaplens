@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import type { DepartmentDef } from "@/lib/assessment/departments";
-import { buildDeepDiveQuestions } from "@/lib/deep-dive/question-bank";
+import { buildDeepDiveQuestions, MANUAL_HOURS_QUESTION, MANUAL_HEADCOUNT_QUESTION, NONE_OPTION } from "@/lib/deep-dive/question-bank";
 import type { DeepDiveQuestion } from "@/lib/deep-dive/question-bank";
 import { ProgressDots } from "@/components/assessment/progress-dots";
 import { ConsoleLabel } from "@/components/ui/console-label";
@@ -290,7 +290,9 @@ export function DeepDiveChat({
 
   const done = deptIndex >= DEPARTMENTS.length;
   const dept = !done ? DEPARTMENTS[deptIndex] : null;
-  const questions = dept ? buildDeepDiveQuestions(dept.key, companyTools, lang) : [];
+  const [questions, setQuestions] = useState<DeepDiveQuestion[]>(() =>
+    dept ? buildDeepDiveQuestions(dept.key, companyTools, lang) : [],
+  );
   const currentQuestion = questions[qIndex] ?? null;
 
   async function handleAnswer(question: DeepDiveQuestion, selectedLabels: string[]) {
@@ -310,8 +312,23 @@ export function DeepDiveChat({
         isFirstQuestionOfRound: qIndex === 0,
       });
 
+      // Manual-work follow-up: only asked when real manual tasks were
+      // flagged, so a department with nothing manual never gets asked
+      // "how many hours on nothing."
+      let activeQuestions = questions;
+      if (question.key === "manual_tasks" && !(selectedLabels.length === 1 && selectedLabels[0] === NONE_OPTION.label[lang])) {
+        const insertAt = qIndex + 1;
+        activeQuestions = [
+          ...questions.slice(0, insertAt),
+          MANUAL_HOURS_QUESTION,
+          MANUAL_HEADCOUNT_QUESTION,
+          ...questions.slice(insertAt),
+        ];
+        setQuestions(activeQuestions);
+      }
+
       const nextQIndex = qIndex + 1;
-      if (nextQIndex < questions.length) {
+      if (nextQIndex < activeQuestions.length) {
         setHistory((prev) => [...prev, { question: question.prompt[lang], answer: answerText }]);
         setQIndex(nextQIndex);
         setQuestionStartedAt(new Date().toISOString());
@@ -338,6 +355,7 @@ export function DeepDiveChat({
           setQIndex(0);
           setHistory([]);
           setQuestionStartedAt(new Date().toISOString());
+          setQuestions(buildDeepDiveQuestions(nextDept.key, companyTools, lang));
           setDeptIndex(nextDeptIndex);
           setTransitionDept(null);
         }, 1400);
@@ -363,6 +381,7 @@ export function DeepDiveChat({
     setQIndex(0);
     setHistory([]);
     setQuestionStartedAt(new Date().toISOString());
+    setQuestions(buildDeepDiveQuestions(deptKey, companyTools, lang));
     setDeptIndex(idx);
   }
 

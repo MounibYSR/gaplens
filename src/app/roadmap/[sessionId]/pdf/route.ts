@@ -4,7 +4,7 @@ import { computeConfidence, filterToLatestAttempt } from "@/lib/deep-dive/confid
 import { mergeGapOverrides } from "@/lib/roadmap/gap-status";
 import { renderRoadmapHtml } from "@/lib/roadmap/render-html";
 import { renderHtmlToPdf } from "@/lib/roadmap/generate-pdf";
-import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
+import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
 import { getPublicOrigin } from "@/lib/http/public-origin";
 
 export const dynamic = "force-dynamic";
@@ -125,6 +125,8 @@ export async function GET(
   });
   const rawGaps = ((latestVersion.roadmap_json as { gaps?: RoadmapGap[] } | null)?.gaps ?? []) as RoadmapGap[];
   const gaps = mergeGapOverrides(rawGaps, overrides ?? []);
+  const costOfInaction =
+    (latestVersion.roadmap_json as { cost_of_inaction?: CostOfInaction } | null)?.cost_of_inaction ?? null;
 
   const html = renderRoadmapHtml({
     roadmap_version: latestVersion.version,
@@ -134,6 +136,7 @@ export async function GET(
     confidence_percent: confidence.overall,
     based_on_departments: latestVersion.based_on_departments ?? [],
     gaps,
+    cost_of_inaction: costOfInaction,
   });
 
   let pdf: Buffer;

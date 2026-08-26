@@ -33,6 +33,8 @@ export interface Database {
           freeform_chat_summary: string | null;
           freeform_chat_summarized_count: number;
           onboarding_completed_at: string | null;
+          currency: string;
+          avg_hourly_cost: number | null;
           created_at: string;
         };
         Insert: {
@@ -44,6 +46,8 @@ export interface Database {
           freeform_chat_summary?: string | null;
           freeform_chat_summarized_count?: number;
           onboarding_completed_at?: string | null;
+          currency?: string;
+          avg_hourly_cost?: number | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["companies"]["Insert"]>;
@@ -127,6 +131,8 @@ export interface Database {
           importance: number;
           position_x: number | null;
           position_y: number | null;
+          monthly_cost: number | null;
+          currency: string | null;
           created_at: string;
         };
         Insert: {
@@ -138,6 +144,8 @@ export interface Database {
           importance?: number;
           position_x?: number | null;
           position_y?: number | null;
+          monthly_cost?: number | null;
+          currency?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["tools"]["Insert"]>;

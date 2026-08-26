@@ -11,6 +11,8 @@ export function AccountSettingsModal({
   companyId,
   initialName,
   initialLogoUrl,
+  initialCurrency,
+  initialAvgHourlyCost,
   onClose,
   onSaved,
 }: {
@@ -18,6 +20,8 @@ export function AccountSettingsModal({
   companyId: string;
   initialName: string;
   initialLogoUrl: string | null;
+  initialCurrency: string;
+  initialAvgHourlyCost: number | null;
   onClose: () => void;
   onSaved: (name: string, logoUrl: string | null) => void;
 }) {
@@ -25,6 +29,8 @@ export function AccountSettingsModal({
   const [name, setName] = useState(initialName);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialLogoUrl);
+  const [currency, setCurrency] = useState(initialCurrency);
+  const [avgHourlyCost, setAvgHourlyCost] = useState(initialAvgHourlyCost != null ? String(initialAvgHourlyCost) : "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,6 +52,8 @@ export function AccountSettingsModal({
       const formData = new FormData();
       formData.set("companyId", companyId);
       formData.set("name", trimmed);
+      formData.set("currency", currency.trim().toUpperCase() || "USD");
+      formData.set("avgHourlyCost", avgHourlyCost.trim());
       if (file) formData.set("logo", file);
       const result = await updateAccountSettings(formData);
       onSaved(trimmed, result.logoUrl ?? initialLogoUrl);
@@ -111,6 +119,37 @@ export function AccountSettingsModal({
             <p className="mt-1 text-[11px] text-muted">{t.logoHint}</p>
           </div>
         </div>
+
+        <div className="mt-4 flex gap-3">
+          <div className="w-24 shrink-0">
+            <label className="block text-xs font-bold text-muted">{t.currencyLabel}</label>
+            <input
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              maxLength={3}
+              placeholder="USD"
+              className="ltr-num mt-1 w-full rounded-lg border px-3 py-2 text-sm uppercase text-ink outline-none"
+              dir="ltr"
+              style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-bold text-muted">{t.avgHourlyCostLabel}</label>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              inputMode="decimal"
+              value={avgHourlyCost}
+              onChange={(e) => setAvgHourlyCost(e.target.value)}
+              placeholder={t.avgHourlyCostPlaceholder}
+              className="ltr-num mt-1 w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
+              dir="ltr"
+              style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+            />
+          </div>
+        </div>
+        <p className="mt-1 text-[11px] text-muted">{t.avgHourlyCostHint}</p>
 
         {error && (
           <p className="mt-3 text-xs font-bold" style={{ color: "var(--gap)" }}>

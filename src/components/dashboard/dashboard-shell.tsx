@@ -17,7 +17,7 @@ import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { Department, ResolutionPath } from "@/lib/supabase/types";
 import type { computeConfidence } from "@/lib/deep-dive/confidence";
 import type { TeaserAnswers } from "@/lib/scan/scoring";
-import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
+import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
 import type { FreeformChatMessage } from "@/lib/freeform-chat/types";
 import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 
@@ -201,6 +201,8 @@ type DashboardShellProps = {
   companyId: string;
   companyName: string;
   logoUrl: string | null;
+  currency: string;
+  avgHourlyCost: number | null;
   userName: string | null;
   userEmail: string;
   avatarUrl: string | null;
@@ -224,6 +226,7 @@ type DashboardShellProps = {
     version: number | null;
     gaps: RoadmapGap[];
     trendDelta: number | null;
+    costOfInaction: CostOfInaction | null;
   };
   departmentCoverage: { key: Department; pct: number }[];
   freeformChatHistory: FreeformChatMessage[];
@@ -236,6 +239,8 @@ function DashboardShellInner({
   companyId,
   companyName,
   logoUrl,
+  currency,
+  avgHourlyCost,
   userName,
   userEmail,
   avatarUrl,
@@ -449,6 +454,7 @@ function DashboardShellInner({
               version={roadmapGaps.version}
               gaps={roadmapGaps.gaps}
               trendDelta={roadmapGaps.trendDelta}
+              costOfInaction={roadmapGaps.costOfInaction}
               departmentCoverage={departmentCoverage}
               onSwitchToChat={() => setSection("chat")}
               onSwitchToTeam={() => setSection("team")}
@@ -479,6 +485,8 @@ function DashboardShellInner({
           companyId={companyId}
           initialName={accountName}
           initialLogoUrl={accountLogoUrl}
+          initialCurrency={currency}
+          initialAvgHourlyCost={avgHourlyCost}
           onClose={() => setShowSettings(false)}
           onSaved={(name, newLogoUrl) => {
             setAccountName(name);

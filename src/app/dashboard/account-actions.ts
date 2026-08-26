@@ -29,9 +29,16 @@ export async function updateAccountSettings(
   const nameRaw = formData.get("name");
   const name = typeof nameRaw === "string" ? nameRaw.trim() : "";
   const file = formData.get("logo");
+  const currencyRaw = formData.get("currency");
+  const avgHourlyCostRaw = formData.get("avgHourlyCost");
 
-  const update: { name?: string; logo_url?: string } = {};
+  const update: { name?: string; logo_url?: string; currency?: string; avg_hourly_cost?: number | null } = {};
   if (name) update.name = name;
+  if (typeof currencyRaw === "string" && currencyRaw.trim()) update.currency = currencyRaw.trim().toUpperCase();
+  if (typeof avgHourlyCostRaw === "string") {
+    const parsed = avgHourlyCostRaw.trim() === "" ? null : Number(avgHourlyCostRaw);
+    update.avg_hourly_cost = parsed != null && !Number.isNaN(parsed) ? parsed : null;
+  }
 
   if (file instanceof File && file.size > 0) {
     if (!ALLOWED_LOGO_TYPES.has(file.type)) {

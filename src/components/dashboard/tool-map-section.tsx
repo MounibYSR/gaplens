@@ -32,6 +32,7 @@ export function ToolMapSection({
           catalogId: tool.catalogId,
           importance: tool.importance,
           isConnected: tool.isConnected,
+          monthlyCost: tool.monthlyCost,
         }))}
         onAddTool={(tool) => addCompanyTool({ companyId, ...tool })}
         onUpdateTool={(toolId, updates) => updateCompanyTool({ companyId, toolId, ...updates })}

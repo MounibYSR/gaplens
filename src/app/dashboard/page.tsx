@@ -8,7 +8,7 @@ import { ConsoleLabel } from "@/components/ui/console-label";
 import { computeConfidence, computeDepartmentCoverage, filterToLatestAttempt } from "@/lib/deep-dive/confidence";
 import { parseScanAnswers, pickHeadlineInsightKey } from "@/lib/scan/scoring";
 import { mergeGapOverrides, computeGapTrend } from "@/lib/roadmap/gap-status";
-import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
+import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 
@@ -30,7 +30,7 @@ export default async function DashboardPage() {
 
   const { data: company } = await supabase
     .from("companies")
-    .select("name, logo_url")
+    .select("name, logo_url, currency, avg_hourly_cost")
     .eq("id", profile.company_id)
     .single();
 
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
 
   const { data: companyToolRows } = await supabase
     .from("tools")
-    .select("id, name, catalog_id, importance, is_connected")
+    .select("id, name, catalog_id, importance, is_connected, monthly_cost")
     .in("session_id", companySessionIds)
     .order("created_at", { ascending: true });
 
@@ -141,6 +141,7 @@ export default async function DashboardPage() {
     catalogId: t.catalog_id,
     importance: t.importance,
     isConnected: t.is_connected,
+    monthlyCost: t.monthly_cost,
   }));
 
   const toolCount = companyTools.length;
@@ -161,6 +162,8 @@ export default async function DashboardPage() {
   const previousVersionRow = roadmapVersions?.[1];
   const latestGapsRaw = ((latestVersionRow?.roadmap_json as { gaps?: RoadmapGap[] } | null)?.gaps ?? []) as RoadmapGap[];
   const latestGaps = mergeGapOverrides(latestGapsRaw, gapOverrides);
+  const costOfInaction =
+    (latestVersionRow?.roadmap_json as { cost_of_inaction?: CostOfInaction } | null)?.cost_of_inaction ?? null;
   const latestTrendStat = computeGapTrend(latestGaps);
   const previousGapsRaw = ((previousVersionRow?.roadmap_json as { gaps?: RoadmapGap[] } | null)?.gaps ?? []) as RoadmapGap[];
   const previousTrendStat = previousVersionRow ? computeGapTrend(previousGapsRaw) : null;
@@ -185,6 +188,8 @@ export default async function DashboardPage() {
       companyId={profile.company_id}
       companyName={company?.name || appDictionary[lang].dashboardNav.companyFallback}
       logoUrl={company?.logo_url ?? null}
+      currency={company?.currency ?? "USD"}
+      avgHourlyCost={company?.avg_hourly_cost ?? null}
       userName={profile.name}
       userEmail={user.email ?? ""}
       avatarUrl={(user.user_metadata?.avatar_url as string | undefined) ?? null}
@@ -208,6 +213,7 @@ export default async function DashboardPage() {
         version: latestVersionRow?.version ?? null,
         gaps: latestGaps,
         trendDelta,
+        costOfInaction,
       }}
       departmentCoverage={departmentCoverage}
       freeformChatHistory={freeformMessages ?? []}

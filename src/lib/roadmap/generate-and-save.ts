@@ -8,6 +8,7 @@ import { parseScanAnswers } from "@/lib/scan/scoring";
 import { checkSessionRateLimit } from "@/lib/rate-limit";
 import { findPlatformKbEntry, type PlatformKbEntry } from "@/lib/roadmap/platform-knowledge";
 import { splitContext } from "@/lib/freeform-chat/context";
+import { computeCostOfInaction } from "@/lib/roadmap/cost-of-inaction";
 
 export type GenerateRoadmapResult =
   | { ok: true; version: number }
@@ -45,7 +46,7 @@ export async function generateAndSaveRoadmap(
 
   const { data: company } = await supabase
     .from("companies")
-    .select("name")
+    .select("name, currency, avg_hourly_cost")
     .eq("id", session.company_id)
     .single();
 
@@ -76,7 +77,7 @@ export async function generateAndSaveRoadmap(
 
   const { data: sessionTools, error: toolsError } = await supabase
     .from("tools")
-    .select("name, catalog_id, importance, is_connected")
+    .select("name, catalog_id, importance, is_connected, monthly_cost")
     .in("session_id", companySessionIds);
 
   if (toolsError) {
@@ -176,6 +177,7 @@ export async function generateAndSaveRoadmap(
     name: t.name,
     importance: t.importance,
     isConnected: t.is_connected,
+    monthlyCost: t.monthly_cost,
   }));
 
   let result;
@@ -215,6 +217,14 @@ export async function generateAndSaveRoadmap(
 
   const allGaps = [...result.gaps, ...visualGaps];
 
+  const costOfInaction = computeCostOfInaction({
+    gaps: allGaps,
+    toolInventory,
+    deepDiveResponses,
+    avgHourlyCost: company?.avg_hourly_cost ?? null,
+    currency: company?.currency ?? "USD",
+  });
+
   const nextVersion = (previousVersion?.version ?? 0) + 1;
   const generatedAt = new Date().toISOString();
   const roadmapJson = {
@@ -222,6 +232,7 @@ export async function generateAndSaveRoadmap(
     generated_at: generatedAt,
     based_on_departments: confidence.coveredDepartments,
     gaps: allGaps,
+    cost_of_inaction: costOfInaction,
   };
 
   const { error: insertError } = await supabase.from("roadmap_versions").insert({

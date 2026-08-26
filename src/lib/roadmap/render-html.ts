@@ -1,6 +1,6 @@
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import type { Department, GapFixPath, GapPriority, GapStatus } from "@/lib/supabase/types";
-import type { RoadmapGap } from "./build-prompt";
+import type { CostOfInaction, RoadmapGap } from "./build-prompt";
 
 export type RoadmapPdfData = {
   roadmap_version: number;
@@ -10,6 +10,7 @@ export type RoadmapPdfData = {
   confidence_percent: number;
   based_on_departments: Department[];
   gaps: RoadmapGap[];
+  cost_of_inaction?: CostOfInaction | null;
 };
 
 const NAVY = "#0D1220";
@@ -157,6 +158,37 @@ function gapCard(gap: RoadmapGap, index: number): string {
         <span class="pill" style="background:${gapfixTint}">&rarr; ${escapeHtml(GAPFIX_LABEL[gap.gapfix_path])}</span>
       </div>
     </div>`;
+}
+
+function costOfInactionSection(coi: CostOfInaction | null | undefined): string {
+  if (!coi || coi.line_items.length === 0) return "";
+  const rows = coi.line_items
+    .map(
+      (item) => `
+      <tr>
+        <td>${escapeHtml(item.area)}${item.note ? `<div class="coi-note">${escapeHtml(item.note)}</div>` : ""}</td>
+        <td class="coi-amount">${item.estimated_monthly_amount != null ? `~${item.estimated_monthly_amount} ${escapeHtml(item.currency)}` : "&mdash;"}</td>
+      </tr>`,
+    )
+    .join("");
+  const totalRow =
+    coi.total_estimated_recoverable != null
+      ? `
+      <tr class="coi-total-row">
+        <td>Estimated recoverable with fixes above</td>
+        <td class="coi-amount">~${coi.total_estimated_recoverable} ${escapeHtml(coi.currency)} / month</td>
+      </tr>`
+      : "";
+
+  return `
+  <section class="gaps-section">
+    <div class="section-label">Cost of Inaction</div>
+    <p class="body-text" style="margin-bottom:12px;">Estimated, not exact — based on your own tool costs and manual-work answers.</p>
+    <table class="coi-table">
+      <thead><tr><th>Area</th><th class="coi-amount">Estimated Monthly Cost</th></tr></thead>
+      <tbody>${rows}${totalRow}</tbody>
+    </table>
+  </section>`;
 }
 
 export function renderRoadmapHtml(data: RoadmapPdfData): string {
@@ -308,6 +340,31 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     color: ${NAVY};
   }
 
+  .coi-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .coi-table th {
+    text-align: left;
+    color: ${MUTED};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 8px 12px;
+    background: ${BG_LIGHT};
+  }
+  .coi-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid ${BORDER};
+    color: ${TEXT_DARK};
+  }
+  .coi-amount { text-align: right; font-weight: 700; color: ${TEAL}; white-space: nowrap; }
+  .coi-note { color: ${MUTED}; font-size: 10.5px; margin-top: 2px; font-weight: 400; }
+  .coi-total-row td { font-weight: 800; border-bottom: none; border-top: 2px solid ${TEAL}; }
+  .coi-total-row .coi-amount { color: ${TEAL}; }
+
   .footer {
     text-align: center;
     color: ${MUTED};
@@ -336,6 +393,8 @@ export function renderRoadmapHtml(data: RoadmapPdfData): string {
     <div class="section-label">Your Gaps</div>
     ${gapCards || `<p class="body-text">No gaps identified yet.</p>`}
   </section>
+
+  ${costOfInactionSection(data.cost_of_inaction)}
 
   <p class="footer">GapLens turns fragmented tools and unclear processes into one clear, prioritized roadmap — generated from your Chat with AI deep-dive answers.</p>
 </body>
