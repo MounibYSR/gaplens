@@ -174,7 +174,7 @@ export function OverviewSection({
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className="flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-extrabold tracking-widest"
-                    style={{ borderColor: dept.accent, color: dept.accent }}
+                    style={{ borderColor: "var(--border-g)", color: dept.accent }}
                   >
                     <DepartmentIcon department={dept} size={12} />
                     {dept.title[lang]}
@@ -196,7 +196,7 @@ export function OverviewSection({
 
                 <div
                   className="rounded-lg border px-3 py-2 text-xs"
-                  style={{ borderColor: calloutColor, background: "var(--glass-2)" }}
+                  style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
                 >
                   {calloutLabel && (
                     <p className="font-extrabold" style={{ color: calloutColor }}>
