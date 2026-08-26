@@ -45,7 +45,7 @@ export function ChatTab({
     <div className="w-full">
       <div className="mx-auto mb-4 w-full max-w-md xl:max-w-3xl">
         <div
-          className="flex gap-1 overflow-x-auto rounded-full border p-1"
+          className="flex gap-1 overflow-x-auto rounded-full border p-2"
           style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
         >
           {MODES.map((item) => (
@@ -53,7 +53,7 @@ export function ChatTab({
               key={item.key}
               type="button"
               onClick={() => setMode(item.key)}
-              className="shrink-0 rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-colors"
+              className="shrink-0 rounded-full px-4 py-3 text-xs font-bold whitespace-nowrap transition-colors"
               style={{
                 background: mode === item.key ? "var(--teal-2)" : "transparent",
                 color: mode === item.key ? "var(--navy)" : "var(--ink)",
@@ -74,6 +74,7 @@ export function ChatTab({
             onDepartmentAnswered={onDepartmentAnswered}
             onComplete={onComplete}
             companyTools={companyTools}
+            gaps={gaps}
           />
         )}
         {mode === "freeform" && (
