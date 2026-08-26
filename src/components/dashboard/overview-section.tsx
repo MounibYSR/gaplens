@@ -121,6 +121,16 @@ export function OverviewSection({
               {d.deepenAssessment}
             </button>
           </div>
+
+          <div className="hidden xl:flex xl:flex-col xl:gap-3">
+            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+              {tt.costsTitle}
+            </p>
+            <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
+            <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
+            <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
+            <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
+          </div>
         </div>
 
         <div className="xl:hidden">
@@ -209,16 +219,6 @@ export function OverviewSection({
             );
           })}
         </div>
-      </div>
-
-      <div className="mt-6 hidden xl:flex xl:flex-col xl:gap-3">
-        <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-          {tt.costsTitle}
-        </p>
-        <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
-        <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
-        <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
-        <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
       </div>
     </div>
   );
