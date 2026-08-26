@@ -122,14 +122,14 @@ export function OverviewSection({
             </button>
           </div>
 
-          <div className="hidden xl:flex xl:flex-col xl:gap-3">
-            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-              {tt.costsTitle}
+          <div className="hidden xl:block">
+            <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+              {d.vectorAnalysisTitle}
             </p>
-            <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
-            <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
-            <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
-            <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
+            <div className="glass-card rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
+              <DepartmentRadar coverage={departmentCoverage} lang={lang} />
+              <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
+            </div>
           </div>
         </div>
 
@@ -137,14 +137,14 @@ export function OverviewSection({
           <ScanCostLines answers={answers} lang={lang} />
         </div>
 
-        <div className="hidden xl:block">
-          <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
-            {d.vectorAnalysisTitle}
+        <div className="hidden xl:flex xl:flex-col xl:gap-3">
+          <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+            {tt.costsTitle}
           </p>
-          <div className="glass-card rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
-            <DepartmentRadar coverage={departmentCoverage} lang={lang} />
-            <p className="mt-2 text-center text-xs text-muted">{d.vectorAnalysisNote}</p>
-          </div>
+          <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
+          <CostRow icon={<PersonIcon />} text={sharpen.customers ? tt.costCustomersSharp : tt.costCustomersBase} />
+          <CostRow icon={<InfoIcon />} text={sharpen.time ? tt.costTimeSharp : tt.costTimeBase} />
+          <p className="mt-1 text-xs text-muted">{tt.closingLine}</p>
         </div>
       </div>
 
