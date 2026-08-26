@@ -169,7 +169,7 @@ export function RoadmapSection({
     <div className="w-full max-w-md xl:max-w-5xl">
       <h1 className="mb-6 text-xl font-extrabold text-ink">{nav.roadmap}</h1>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:items-start">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <div
           className="glass-card rounded-2xl p-6"
           style={{ borderColor: "var(--border-g)" }}
