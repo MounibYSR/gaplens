@@ -16,8 +16,40 @@ import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 import { submitDeepDiveAnswer } from "./actions";
 import { startNewRound } from "@/app/dashboard/round-actions";
 import { ConstellationIcon } from "@/components/ui/constellation-icon";
+import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
+import { InfoIcon, IconBadge } from "@/components/ui/stat-icons";
 
 type AnsweredTurn = { question: string; answer: string };
+
+const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
+  high: "var(--gap)",
+  medium: "var(--gold)",
+  low: "var(--healthy)",
+};
+
+function FindingCard({ gap, label }: { gap: RoadmapGap; label: string }) {
+  const accent = PRIORITY_COLOR[gap.priority];
+  return (
+    <div
+      className="w-full rounded-lg border-s-4 p-4 text-start"
+      style={{ borderColor: "var(--border-g)", borderInlineStartColor: accent, background: "var(--glass-2)" }}
+    >
+      <div className="flex items-start gap-3">
+        <IconBadge icon={<InfoIcon />} color={accent} />
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: accent }}>
+            {label}
+          </p>
+          <p className="mt-1 text-sm font-extrabold text-ink">{gap.gap_title}</p>
+          <p className="mt-1 text-xs text-muted">{gap.impact}</p>
+          <p className="ltr-num mt-2 text-xs font-bold text-muted" dir="ltr">
+            {gap.priority.toUpperCase()}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function firstUnansweredIndex(answered: Department[]) {
   const idx = DEPARTMENTS.findIndex((d) => !answered.includes(d.key));
@@ -264,6 +296,7 @@ export function DeepDiveChat({
   onDepartmentAnswered,
   answeredDepartments = [],
   companyTools,
+  gaps = [],
 }: {
   sessionId: string;
   lang: EntryLang;
@@ -271,6 +304,7 @@ export function DeepDiveChat({
   onDepartmentAnswered?: (department: Department) => void;
   answeredDepartments?: Department[];
   companyTools: CompanyTool[];
+  gaps?: RoadmapGap[];
 }) {
   const t = appDictionary[lang].deepDive;
   const [deptIndex, setDeptIndex] = useState(() => firstUnansweredIndex(answeredDepartments));
@@ -284,6 +318,10 @@ export function DeepDiveChat({
   const [isPending, setIsPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [transitionDept, setTransitionDept] = useState<DepartmentDef | null>(null);
+  // The department the user just finished answering — separate from
+  // `transitionDept` (the one they're moving to) so the finding card below
+  // can look up a gap for the area that was actually just discussed.
+  const [justCompletedDept, setJustCompletedDept] = useState<DepartmentDef | null>(null);
   const [showRedoPicker, setShowRedoPicker] = useState(false);
   const [isRedo, setIsRedo] = useState(false);
   const [justRedid, setJustRedid] = useState<DepartmentDef | null>(null);
@@ -351,14 +389,22 @@ export function DeepDiveChat({
       if (nextDeptIndex < DEPARTMENTS.length) {
         const nextDept = DEPARTMENTS[nextDeptIndex];
         setTransitionDept(nextDept);
-        setTimeout(() => {
-          setQIndex(0);
-          setHistory([]);
-          setQuestionStartedAt(new Date().toISOString());
-          setQuestions(buildDeepDiveQuestions(nextDept.key, companyTools, lang));
-          setDeptIndex(nextDeptIndex);
-          setTransitionDept(null);
-        }, 1400);
+        setJustCompletedDept(dept);
+        // Longer pause when there's a finding card to actually read —
+        // the plain "Moving to..." interstitial stays quick.
+        const hasFindingGap = gaps.some((g) => g.category === dept.title.en && g.status !== "resolved");
+        setTimeout(
+          () => {
+            setQIndex(0);
+            setHistory([]);
+            setQuestionStartedAt(new Date().toISOString());
+            setQuestions(buildDeepDiveQuestions(nextDept.key, companyTools, lang));
+            setDeptIndex(nextDeptIndex);
+            setTransitionDept(null);
+            setJustCompletedDept(null);
+          },
+          hasFindingGap ? 3200 : 1400,
+        );
       } else {
         setQIndex(0);
         setHistory([]);
@@ -466,6 +512,10 @@ export function DeepDiveChat({
   }
 
   if (transitionDept) {
+    const matchingGap = justCompletedDept
+      ? gaps.find((g) => g.category === justCompletedDept.title.en && g.status !== "resolved")
+      : null;
+
     return (
       <div className="w-full max-w-md text-center xl:max-w-3xl">
         <ProgressDots currentIndex={deptIndex} />
@@ -473,6 +523,7 @@ export function DeepDiveChat({
           className="glass-card flex flex-col items-center gap-3 rounded-2xl p-10"
           style={{ borderColor: transitionDept.accent, borderWidth: 2 }}
         >
+          {matchingGap && <FindingCard gap={matchingGap} label={t.gapDetectedLabel} />}
           <span
             className="h-2.5 w-2.5 animate-pulse rounded-full"
             style={{ background: transitionDept.accent }}

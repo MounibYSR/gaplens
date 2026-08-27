@@ -291,6 +291,9 @@ function DashboardShellInner({
   const displayName = userName ?? userEmail;
   const initial = (accountName || "G").trim().charAt(0).toUpperCase();
   const sidebarImageUrl = accountLogoUrl ?? avatarUrl;
+  const criticalGapCount = roadmapGaps.gaps.filter(
+    (g) => g.priority === "high" && g.status !== "resolved",
+  ).length;
 
   return (
     <div className="flex flex-1">
@@ -335,6 +338,17 @@ function DashboardShellInner({
             );
           })}
         </nav>
+
+        {criticalGapCount > 0 && (
+          <div className="mt-4 border-t pt-4" style={{ borderColor: "var(--border-g)" }}>
+            <div className="flex items-center gap-2 px-3">
+              <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: "var(--gap)" }} />
+              <span className="text-xs font-bold" style={{ color: "var(--gap)" }}>
+                {nav.criticalGapsLabel(criticalGapCount)}
+              </span>
+            </div>
+          </div>
+        )}
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -407,6 +421,17 @@ function DashboardShellInner({
                   </button>
                 );
               })}
+
+              {criticalGapCount > 0 && (
+                <div className="mt-2 border-t pt-3" style={{ borderColor: "var(--border-g)" }}>
+                  <div className="flex items-center gap-2 px-3 pb-1">
+                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: "var(--gap)" }} />
+                    <span className="text-xs font-bold" style={{ color: "var(--gap)" }}>
+                      {nav.criticalGapsLabel(criticalGapCount)}
+                    </span>
+                  </div>
+                </div>
+              )}
             </nav>
           </>
         )}

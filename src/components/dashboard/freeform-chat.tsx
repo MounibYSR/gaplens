@@ -8,6 +8,11 @@ import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import type { FreeformChatMessage } from "@/lib/freeform-chat/types";
 import { suggestedTopics } from "@/lib/freeform-chat/topics";
 import { sendFreeformMessage, requestAiInitiative } from "@/app/dashboard/freeform-chat-actions";
+import { MonitorIcon, InfoIcon } from "@/components/ui/stat-icons";
+
+function topicIcon(topic: string) {
+  return /tech|tool/i.test(topic) ? <MonitorIcon size={14} /> : <InfoIcon size={14} />;
+}
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -38,6 +43,7 @@ export function FreeformChat({
   }, [messages, isPending]);
 
   const topics = suggestedTopics(gaps, lang, topicOffset, 3);
+  const lastAiMessage = [...messages].reverse().find((m) => m.role === "assistant")?.content ?? null;
 
   function errorText(kind: "rate_limited" | "ai_failed") {
     return kind === "rate_limited" ? t.rateLimited : t.sendError;
@@ -132,9 +138,10 @@ export function FreeformChat({
                 type="button"
                 disabled={isPending}
                 onClick={() => send(topic)}
-                className="rounded-full border px-3 py-2 text-xs font-bold disabled:opacity-60"
+                className="flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold disabled:opacity-60"
                 style={{ borderColor: "var(--border-g)", color: "var(--ink)", background: "var(--glass-2)" }}
               >
+                <span style={{ color: "var(--teal-2)" }}>{topicIcon(topic)}</span>
                 {topic}
               </button>
             ))}
@@ -162,9 +169,18 @@ export function FreeformChat({
         </div>
 
         <div
-          className="sticky bottom-3 z-10 mt-2 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-md"
+          className="sticky bottom-3 z-10 mt-4 flex flex-col gap-3 rounded-2xl border p-6 backdrop-blur-md"
           style={{ background: "var(--modal-bg)", borderColor: "var(--border-g)" }}
         >
+          {lastAiMessage && (
+            <div>
+              <p className="ltr-num text-xs font-bold text-muted" dir="ltr">
+                {t.messageCountLabel(messages.length)}
+              </p>
+              <p className="mt-1 text-sm font-extrabold text-ink">{lastAiMessage}</p>
+            </div>
+          )}
+
           {errorMsg && (
             <p className="text-xs font-bold" style={{ color: "var(--gap)" }}>
               {errorMsg}

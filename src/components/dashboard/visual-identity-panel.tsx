@@ -7,6 +7,7 @@ import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import type { VisualSourceTag } from "@/lib/visual-identity/system-prompt";
 import { runVisualIdentityConsultation, type VisualIdentityError } from "@/app/dashboard/visual-identity-actions";
+import { DocumentIcon } from "@/components/ui/stat-icons";
 
 const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
   high: "var(--gap)",
@@ -36,6 +37,7 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
   const [gaps, setGaps] = useState<RoadmapGap[] | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   function errorText(kind: VisualIdentityError) {
     switch (kind) {
@@ -54,8 +56,8 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
     }
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const picked = Array.from(e.target.files ?? []);
+  function addFiles(files: File[]) {
+    const picked = files.filter((f) => f.type.startsWith("image/"));
     if (picked.length === 0) return;
     setImages((prev) => [
       ...prev,
@@ -68,7 +70,17 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
     ]);
     setGaps(null);
     setErrorMsg(null);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    addFiles(Array.from(e.target.files ?? []));
     e.target.value = "";
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    addFiles(Array.from(e.dataTransfer.files ?? []));
   }
 
   function setImageSource(id: string, source: VisualSourceTag) {
@@ -169,14 +181,31 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
             </div>
           ))}
 
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-lg border py-3 text-xs font-bold text-ink"
-            style={{ borderColor: "var(--border-g)", background: "var(--glass-2)" }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDraggingOver(true);
+            }}
+            onDragLeave={() => setIsDraggingOver(false)}
+            onDrop={handleDrop}
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed px-6 py-12 text-center transition-colors"
+            style={{
+              borderColor: isDraggingOver ? "var(--teal-2)" : "var(--border-g)",
+              background: isDraggingOver ? "var(--glass-2)" : "var(--glass)",
+            }}
           >
-            + {t.addImages}
-          </button>
+            <span style={{ color: "var(--teal-2)" }}>
+              <DocumentIcon size={24} />
+            </span>
+            <p className="text-sm font-extrabold text-ink">+ {t.addImages}</p>
+            <p className="text-xs text-muted">{t.addImagesHint}</p>
+          </div>
         </div>
 
         {images.length > 0 && !allTagged && <p className="mt-2 text-xs text-muted">{t.sourceRequiredHint}</p>}
