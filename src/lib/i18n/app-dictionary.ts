@@ -184,6 +184,14 @@ export const appDictionary = {
       downloadRoadmapPdf: "Download Roadmap PDF",
       confidenceLine: (score: number, count: number, areas: number) =>
         `Roadmap Confidence: ${score}% — based on ${count} responses across ${areas} area${areas === 1 ? "" : "s"}.`,
+      generatingSteps: [
+        "Analyzing your business…",
+        "Reviewing your gaps…",
+        "Calculating cost of inaction…",
+        "Finalizing your roadmap…",
+      ],
+      generateRoadmapError: "Something went wrong generating your roadmap — please try again.",
+      roadmapReadyMessage: "Your roadmap is ready — the download should start automatically.",
     },
     deepDive: {
       badge: "GAPLENS.DEEP_DIVE",
@@ -479,6 +487,14 @@ export const appDictionary = {
       downloadRoadmapPdf: "نزّلي PDF الرودماب",
       confidenceLine: (score: number, count: number, areas: number) =>
         `دقة الرودماب: ${score}٪ — بناءً على ${count} إجابة عبر ${areas} مجال.`,
+      generatingSteps: [
+        "نحلل بزنسك…",
+        "نراجع فجواتك…",
+        "نحسب تكلفة التأخير…",
+        "نخلّص رودمابك…",
+      ],
+      generateRoadmapError: "صار خطأ أثناء توليد الرودماب — حاولي مرة ثانية.",
+      roadmapReadyMessage: "رودمابك جاهز — التحميل لازم يبدأ تلقائياً.",
     },
     deepDive: {
       badge: "GAPLENS.DEEP_DIVE",

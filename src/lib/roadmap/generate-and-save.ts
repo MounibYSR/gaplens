@@ -234,6 +234,10 @@ export async function generateAndSaveRoadmap(
     based_on_departments: confidence.coveredDepartments,
     gaps: allGaps,
     cost_of_inaction: costOfInaction,
+    executive_summary: result.executive_summary,
+    what_we_observed: result.what_we_observed,
+    phased_roadmap: result.phased_roadmap,
+    approach_note: result.approach_note,
   };
 
   const { error: insertError } = await supabase.from("roadmap_versions").insert({

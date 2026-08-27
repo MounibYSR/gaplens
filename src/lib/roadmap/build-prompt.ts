@@ -75,12 +75,31 @@ export const GAP_SCHEMA = {
   additionalProperties: false,
 } as const;
 
+/** One phase of the GapFix roadmap — `items` must reference the real
+ * `gap_title` values from `gaps`, not invented work. `note` is optional
+ * forward-looking commentary (e.g. a trailing "next steps, if validated"
+ * phase with no concrete items yet). */
+export const PHASE_SCHEMA = {
+  type: "object",
+  properties: {
+    phase_label: { type: "string" },
+    items: { type: "array", items: { type: "string" } },
+    note: { type: "string" },
+  },
+  required: ["phase_label", "items", "note"],
+  additionalProperties: false,
+} as const;
+
 export const GAPS_ARRAY_SCHEMA = {
   type: "object",
   properties: {
     gaps: { type: "array", items: GAP_SCHEMA },
+    executive_summary: { type: "string" },
+    what_we_observed: { type: "string" },
+    phased_roadmap: { type: "array", items: PHASE_SCHEMA },
+    approach_note: { type: "array", items: { type: "string" } },
   },
-  required: ["gaps"],
+  required: ["gaps", "executive_summary", "what_we_observed", "phased_roadmap", "approach_note"],
   additionalProperties: false,
 } as const;
 
@@ -257,10 +276,26 @@ Do not invent findings for a business area with no deep-dive responses yet — b
     params.freeformChatContext && (params.freeformChatContext.recentMessages.length > 0 || params.freeformChatContext.summary)
       ? " The open \"Chat with AI\" discussion above is the owner's own words — if it raises a concrete, specific concern that has a digital-transformation angle (a workflow problem, a data blind spot, a tooling gap), reflect that specific concern in a gap or in an existing gap's impact/recommended_fix; don't let it get crowded out by the structured data alone. If it's purely a non-digital concern (e.g. general market competition) with no digital angle, it's fine to leave it out rather than forcing an unrelated gap."
       : ""
-  } This is one roadmap synthesized from every source above, not a deep-dive-only roadmap with a couple of extra lines — make sure specifics from the tool map and chat discussion are visibly reflected somewhere in the output whenever they exist and are relevant, not just the scan answers and deep-dive. Order gaps by priority, most urgent first. Keep the tone confident, direct, and analytical — no filler, no exclamation marks.`;
+  } This is one roadmap synthesized from every source above, not a deep-dive-only roadmap with a couple of extra lines — make sure specifics from the tool map and chat discussion are visibly reflected somewhere in the output whenever they exist and are relevant, not just the scan answers and deep-dive. Order gaps by priority, most urgent first. Keep the tone confident, direct, and analytical — no filler, no exclamation marks.
+
+You are also writing the narrative sections of a client-facing consulting report — the register a senior consultant would use in a deliverable handed directly to a business owner, not internal notes:
+- executive_summary: 1-2 short paragraphs. Name the real business problem being solved, state plainly that the identified gaps are structural/workflow problems (not a lack of intelligence or a reason to build custom AI), and give one concrete "key finding" — the one or two mechanisms that, if fixed, address most of the operational cost.
+- what_we_observed: one narrative paragraph, grounded in the specific deep-dive/scan/chat data above — describe the operational pattern you found as if walking through a real recurring scenario, the way an outside observer would describe what they actually saw, not a generic restatement of the gap list.
+- phased_roadmap: sequence the gaps you just produced into 3-4 phases (e.g. by dependency and urgency, not just priority order). Every string in a phase's "items" must be one of the exact gap_title values from "gaps" above — never invent a work item that isn't one of those gaps. The last phase may instead use "note" for forward-looking commentary (e.g. what becomes possible to evaluate once the earlier phases are live and measured) with "items" left as an empty array — leave "note" as an empty string for every other phase.
+- approach_note: 2-4 short bullet points explaining why this roadmap sequences operational fixes before (or instead of) any deeper AI/custom-model investment — grounded in the actual gaps identified, not generic advice.`;
 
   return { system, userMessage: "Generate the structured roadmap now." };
 }
+
+export type RoadmapPhase = { phase_label: string; items: string[]; note: string };
+
+export type GeneratedRoadmap = {
+  gaps: RoadmapGap[];
+  executive_summary: string;
+  what_we_observed: string;
+  phased_roadmap: RoadmapPhase[];
+  approach_note: string[];
+};
 
 export async function generateRoadmapGaps(params: {
   companyName: string;
@@ -274,16 +309,16 @@ export async function generateRoadmapGaps(params: {
   toolInventory?: ToolInventoryEntry[];
   freeformChatContext?: FreeformChatContext;
   existingVisualGaps?: RoadmapGap[];
-}): Promise<{ gaps: RoadmapGap[] } | { refusal: string }> {
+}): Promise<GeneratedRoadmap | { refusal: string }> {
   const { system, userMessage } = buildRoadmapPrompt(params);
 
-  const response = await askOpenAIStructured<{ gaps: RoadmapGap[] }>({
+  const response = await askOpenAIStructured<GeneratedRoadmap>({
     system,
     messages: [{ role: "user", content: userMessage }],
     toolName: "submit_roadmap",
     toolDescription: "Submit the structured digital-transformation roadmap gaps for this company.",
     inputSchema: GAPS_ARRAY_SCHEMA,
-    maxTokens: 4000,
+    maxTokens: 6000,
   });
 
   return "refusal" in response ? { refusal: response.refusal } : response.result;

@@ -5,6 +5,7 @@ import { computeConfidence, filterToLatestAttempt } from "@/lib/deep-dive/confid
 import { getSessionLang } from "@/lib/i18n/get-lang";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import { ConsoleLabel } from "@/components/ui/console-label";
+import { GenerateRoadmapButton } from "@/components/dashboard/generate-roadmap-button";
 
 export default async function RoadmapPage({
   params,
@@ -81,12 +82,7 @@ export default async function RoadmapPage({
         <p className="ltr-num mb-6 text-xs text-muted" dir="ltr">
           {t.confidenceLine(confidence.overall, confidence.responsesCount, confidence.areasCovered)}
         </p>
-        <a
-          href={`/roadmap/${sessionId}/generate`}
-          className="block w-full rounded-lg bg-teal-2 py-3 text-center font-bold text-navy"
-        >
-          {t.generateRoadmap}
-        </a>
+        <GenerateRoadmapButton sessionId={sessionId} lang={lang} />
         <Link
           href="/dashboard"
           className="mt-3 block w-full rounded-lg border py-3 text-center font-bold text-ink"
