@@ -15,6 +15,20 @@ import { createAdminClient } from "./admin";
  * returning user, e.g. to route Google OAuth sign-ins to onboarding vs. the
  * dashboard.
  */
+/**
+ * Google OAuth sign-in never collects a company name (no signup form), so
+ * there's nothing in user_metadata to fall back on — this turns
+ * "yousra.mounib@gmail.com" into "Yousra Mounib" instead of a generic
+ * placeholder string that would otherwise get saved as the company's
+ * permanent name.
+ */
+function deriveNameFromEmail(email: string): string {
+  const local = email.split("@")[0] ?? "";
+  const words = local.split(/[._-]+/).filter(Boolean);
+  if (words.length === 0) return "Your Company";
+  return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
 export async function ensureProfile(user: User): Promise<boolean> {
   const admin = createAdminClient();
 
@@ -27,7 +41,9 @@ export async function ensureProfile(user: User): Promise<boolean> {
   if (existing) return false;
 
   const companyName =
-    (user.user_metadata?.company_name as string | undefined) || "شركتي";
+    (user.user_metadata?.company_name as string | undefined) ||
+    deriveNameFromEmail(user.email ?? "") ||
+    "Your Company";
   const fullName = (user.user_metadata?.full_name as string | undefined) || "";
 
   const { data: company, error: companyError } = await admin
