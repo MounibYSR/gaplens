@@ -75,7 +75,7 @@ export async function GET(
 
   const { data: overrides, error: overridesError } = await supabase
     .from("gap_status_overrides")
-    .select("gap_title, status")
+    .select("gap_title, status, gapfix_path")
     .eq("session_id", sessionId);
 
   if (overridesError) {

@@ -264,6 +264,7 @@ export interface Database {
           session_id: string;
           gap_title: string;
           status: GapStatus;
+          gapfix_path: GapFixPath | null;
           updated_at: string;
         };
         Insert: {
@@ -271,6 +272,7 @@ export interface Database {
           session_id: string;
           gap_title: string;
           status: GapStatus;
+          gapfix_path?: GapFixPath | null;
           updated_at?: string;
         };
         Update: Partial<

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { Department, GapStatus } from "@/lib/supabase/types";
+import type { Department, GapFixPath, GapStatus } from "@/lib/supabase/types";
 
 export async function createInviteLink(
   sessionId: string,
@@ -47,6 +47,38 @@ export async function setGapStatus(sessionId: string, gapTitle: string, status: 
     .from("gap_status_overrides")
     .upsert(
       { session_id: sessionId, gap_title: gapTitle, status, updated_at: new Date().toISOString() },
+      { onConflict: "session_id,gap_title" },
+    );
+
+  if (error) throw error;
+
+  revalidatePath("/dashboard");
+}
+
+/**
+ * `currentStatus` is only there to satisfy the NOT NULL `status` column on
+ * a first-ever override row for this gap (no prior status override yet) —
+ * on an existing row it's a no-op re-write of the same value, since this
+ * call only ever intends to change gapfix_path.
+ */
+export async function setGapfixPath(
+  sessionId: string,
+  gapTitle: string,
+  gapfixPath: GapFixPath,
+  currentStatus: GapStatus,
+) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("gap_status_overrides")
+    .upsert(
+      {
+        session_id: sessionId,
+        gap_title: gapTitle,
+        status: currentStatus,
+        gapfix_path: gapfixPath,
+        updated_at: new Date().toISOString(),
+      },
       { onConflict: "session_id,gap_title" },
     );
 

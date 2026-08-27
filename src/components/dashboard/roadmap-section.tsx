@@ -5,10 +5,11 @@ import Link from "next/link";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { computeConfidence } from "@/lib/deep-dive/confidence";
-import { DEPARTMENTS } from "@/lib/assessment/departments";
-import type { Department, GapStatus } from "@/lib/supabase/types";
+import { DEPARTMENTS, type DepartmentDef } from "@/lib/assessment/departments";
+import { DepartmentIcon } from "@/components/ui/department-icon";
+import type { Department, GapFixPath, GapStatus } from "@/lib/supabase/types";
 import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
-import { setGapStatus } from "@/app/dashboard/actions";
+import { setGapStatus, setGapfixPath } from "@/app/dashboard/actions";
 import { TeamIcon, ClockIcon, MonitorIcon, IconBadge } from "@/components/ui/stat-icons";
 
 const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
@@ -17,89 +18,276 @@ const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
   low: "var(--healthy)",
 };
 
+const STATUS_ORDER: GapStatus[] = ["open", "in_progress", "resolved"];
+
+function departmentFor(category: string): DepartmentDef | undefined {
+  return DEPARTMENTS.find((d) => d.title.en === category);
+}
+
+/** high+low = fast, high-impact fix; high+high = worth doing but the big lift. No badge otherwise. */
+function quickWinBadge(gap: RoadmapGap): "quick" | "big" | null {
+  if (gap.priority === "high" && gap.effort === "high") return "big";
+  if ((gap.priority === "high" || gap.priority === "medium") && gap.effort === "low") return "quick";
+  return null;
+}
+
 function GapCard({
   gap,
-  index,
   sessionId,
   lang,
+  onStatusChange,
+  onGapfixChange,
 }: {
   gap: RoadmapGap;
-  index: number;
   sessionId: string;
   lang: EntryLang;
+  onStatusChange: (status: GapStatus) => void;
+  onGapfixChange: (path: GapFixPath) => void;
 }) {
   const t = appDictionary[lang].dashboard;
   const vt = appDictionary[lang].visualIdentity;
-  const [status, setStatus] = useState<GapStatus>(gap.status);
+  const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const gapfixLabel =
-    gap.gapfix_path === "diy" ? t.gapfixDiy : gap.gapfix_path === "vetted_provider" ? t.gapfixVettedProvider : t.gapfixGaplensExecutes;
+  const dept = departmentFor(gap.category);
+  const badge = quickWinBadge(gap);
+  const statusIndex = STATUS_ORDER.indexOf(gap.status);
+  const isResolved = gap.status === "resolved";
 
-  const STATUS_OPTIONS: { value: GapStatus; label: string }[] = [
-    { value: "open", label: t.gapStatusOpen },
-    { value: "in_progress", label: t.gapStatusInProgress },
-    { value: "resolved", label: t.gapStatusResolved },
+  const GAPFIX_OPTIONS: { value: GapFixPath; label: string }[] = [
+    { value: "diy", label: t.gapfixDoItMyself },
+    { value: "vetted_provider", label: t.gapfixGetMatched },
+    { value: "gaplens_executes", label: t.gapfixLetGaplensHandle },
   ];
 
-  function pick(value: GapStatus) {
-    setStatus(value);
+  function moveStatus(dir: -1 | 1) {
+    const next = STATUS_ORDER[statusIndex + dir];
+    if (!next) return;
+    onStatusChange(next);
     startTransition(async () => {
-      await setGapStatus(sessionId, gap.gap_title, value);
+      await setGapStatus(sessionId, gap.gap_title, next);
+    });
+  }
+
+  function pickGapfix(path: GapFixPath) {
+    onGapfixChange(path);
+    startTransition(async () => {
+      await setGapfixPath(sessionId, gap.gap_title, path, gap.status);
     });
   }
 
   return (
     <li
-      className="rounded-lg border border-s-4 p-3 text-xs"
-      style={{ borderColor: "var(--border-g)", borderInlineStartColor: PRIORITY_COLOR[gap.priority] }}
+      className="rounded-lg border p-3 text-xs transition-opacity"
+      style={{ borderColor: "var(--border-g)", opacity: isResolved ? 0.65 : 1 }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <span className="flex flex-wrap items-center gap-2">
-          <span className="ltr-num shrink-0 text-xs font-bold text-muted" dir="ltr">
-            GAP-{String(index + 1).padStart(2, "0")}
-          </span>
-          {gap.sub_category === "cross_channel" && (
+      <div className="flex items-start gap-2">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="flex flex-1 items-start gap-2 text-start"
+        >
+          {dept && (
             <span
-              className="rounded-full px-2 py-1 text-xs font-extrabold text-navy"
-              style={{ background: "var(--gold)" }}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+              style={{ background: "var(--glass-2)", color: dept.accent }}
             >
-              {vt.crossChannelBadge}
+              <DepartmentIcon department={dept} size={16} />
             </span>
           )}
-          <span className="font-bold text-ink">{gap.gap_title}</span>
-        </span>
-        <span
-          className="ltr-num shrink-0 rounded-full border px-2 py-1 text-xs font-bold"
-          dir="ltr"
-          style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_COLOR[gap.priority] }}
-        >
-          {gap.priority.toUpperCase()}
-        </span>
-      </div>
-      <p className="mt-2 text-muted">{gap.impact}</p>
-      <p className="mt-2 text-ink">{gap.recommended_fix}</p>
-      <p className="mt-2 text-teal-2">{gapfixLabel}</p>
+          <span className="min-w-0 flex-1">
+            {dept && <p className="text-xs text-muted">{dept.title[lang]}</p>}
+            <p className={`font-bold text-ink ${isResolved ? "line-through" : ""}`}>{gap.gap_title}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <span
+                className="ltr-num rounded-full border px-2 py-1 text-xs font-bold"
+                dir="ltr"
+                style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_COLOR[gap.priority] }}
+              >
+                {gap.priority.toUpperCase()}
+              </span>
+              {badge === "quick" && (
+                <span className="rounded-full px-2 py-1 text-xs font-extrabold text-navy" style={{ background: "var(--gold)" }}>
+                  {t.quickWinBadge}
+                </span>
+              )}
+              {badge === "big" && (
+                <span className="rounded-full px-2 py-1 text-xs font-extrabold text-navy" style={{ background: "var(--teal-2)" }}>
+                  {t.bigWinBadge}
+                </span>
+              )}
+              {gap.sub_category === "cross_channel" && (
+                <span className="rounded-full px-2 py-1 text-xs font-extrabold text-navy" style={{ background: "var(--gold)" }}>
+                  {vt.crossChannelBadge}
+                </span>
+              )}
+            </div>
+          </span>
+        </button>
 
-      <div className="mt-2 flex gap-2">
-        {STATUS_OPTIONS.map((opt) => (
+        <div className="flex shrink-0 flex-col gap-1">
           <button
-            key={opt.value}
             type="button"
-            disabled={isPending}
-            onClick={() => pick(opt.value)}
-            className="flex-1 rounded-lg border py-2 text-xs font-bold transition-colors disabled:opacity-60"
-            style={{
-              background: status === opt.value ? "var(--teal-2)" : "var(--glass-2)",
-              borderColor: status === opt.value ? "var(--teal-2)" : "var(--border-g)",
-              color: status === opt.value ? "var(--navy)" : "var(--ink)",
-            }}
+            disabled={isPending || statusIndex === 0}
+            onClick={() => moveStatus(-1)}
+            aria-label={t.gapStatusOpen}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border disabled:opacity-30"
+            style={{ borderColor: "var(--border-g)", color: "var(--ink)" }}
           >
-            {opt.label}
+            ‹
+          </button>
+          <button
+            type="button"
+            disabled={isPending || statusIndex === STATUS_ORDER.length - 1}
+            onClick={() => moveStatus(1)}
+            aria-label={t.gapStatusResolved}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border disabled:opacity-30"
+            style={{ borderColor: "var(--border-g)", color: "var(--ink)" }}
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="mt-3 border-t pt-3" style={{ borderColor: "var(--border-g)" }}>
+          <p className="text-muted">{gap.impact}</p>
+          <p className="mt-2 text-ink">{gap.recommended_fix}</p>
+
+          <div className="mt-3 flex flex-col gap-2">
+            {GAPFIX_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                disabled={isPending}
+                onClick={() => pickGapfix(opt.value)}
+                className="rounded-lg border py-2 text-xs font-bold transition-colors disabled:opacity-60"
+                style={{
+                  background: gap.gapfix_path === opt.value ? "var(--teal-2)" : "var(--glass-2)",
+                  borderColor: gap.gapfix_path === opt.value ? "var(--teal-2)" : "var(--border-g)",
+                  color: gap.gapfix_path === opt.value ? "var(--navy)" : "var(--ink)",
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </li>
+  );
+}
+
+type BoardFilter = "all" | "quick_wins" | string;
+
+function GapBoard({ gaps: initialGaps, sessionId, lang }: { gaps: RoadmapGap[]; sessionId: string; lang: EntryLang }) {
+  const t = appDictionary[lang].dashboard;
+  const [gaps, setGaps] = useState(initialGaps);
+  const [filter, setFilter] = useState<BoardFilter>("all");
+
+  function updateGap(title: string, patch: Partial<Pick<RoadmapGap, "status" | "gapfix_path">>) {
+    setGaps((prev) => prev.map((g) => (g.gap_title === title ? { ...g, ...patch } : g)));
+  }
+
+  const resolvedCount = gaps.filter((g) => g.status === "resolved").length;
+  const totalCount = gaps.length;
+  const progressPct = totalCount > 0 ? Math.round((resolvedCount / totalCount) * 100) : 0;
+
+  const departmentsPresent = Array.from(new Set(gaps.map((g) => g.category)))
+    .map((category) => departmentFor(category))
+    .filter((d): d is DepartmentDef => Boolean(d));
+
+  const filteredGaps = gaps.filter((g) => {
+    if (filter === "all") return true;
+    if (filter === "quick_wins") return quickWinBadge(g) === "quick";
+    return g.category === filter;
+  });
+
+  const columns: { status: GapStatus; label: string }[] = [
+    { status: "open", label: t.gapStatusOpen },
+    { status: "in_progress", label: t.gapStatusInProgress },
+    { status: "resolved", label: t.gapStatusResolved },
+  ];
+
+  function chipStyle(active: boolean) {
+    return {
+      borderColor: active ? "var(--teal-2)" : "var(--border-g)",
+      background: active ? "var(--teal-2)" : "var(--glass-2)",
+      color: active ? "var(--navy)" : "var(--ink)",
+    };
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="font-bold text-ink">{t.gapsResolvedProgress(resolvedCount, totalCount)}</span>
+      </div>
+      <div className="mt-2 h-2 w-full overflow-hidden rounded-full" style={{ background: "var(--glass-2)" }}>
+        <div
+          className="h-full rounded-full transition-[width] duration-500"
+          style={{ width: `${progressPct}%`, background: "var(--teal-2)" }}
+        />
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setFilter("all")}
+          className="rounded-full border px-3 py-1 text-xs font-bold"
+          style={chipStyle(filter === "all")}
+        >
+          {t.filterAll}
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilter("quick_wins")}
+          className="rounded-full border px-3 py-1 text-xs font-bold"
+          style={chipStyle(filter === "quick_wins")}
+        >
+          {t.filterQuickWinsOnly}
+        </button>
+        {departmentsPresent.map((d) => (
+          <button
+            key={d.key}
+            type="button"
+            onClick={() => setFilter(d.title.en)}
+            className="rounded-full border px-3 py-1 text-xs font-bold"
+            style={chipStyle(filter === d.title.en)}
+          >
+            {d.title[lang]}
           </button>
         ))}
       </div>
-    </li>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+        {columns.map((col) => {
+          const colGaps = filteredGaps.filter((g) => g.status === col.status);
+          return (
+            <div key={col.status}>
+              <p className="mb-2 text-xs font-extrabold uppercase tracking-widest text-muted">
+                {col.label}{" "}
+                <span className="ltr-num" dir="ltr">
+                  ({colGaps.length})
+                </span>
+              </p>
+              <ul className="flex flex-col gap-2">
+                {colGaps.map((gap) => (
+                  <GapCard
+                    key={gap.gap_title}
+                    gap={gap}
+                    sessionId={sessionId}
+                    lang={lang}
+                    onStatusChange={(status) => updateGap(gap.gap_title, { status })}
+                    onGapfixChange={(path) => updateGap(gap.gap_title, { gapfix_path: path })}
+                  />
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -304,11 +492,9 @@ export function RoadmapSection({
         {gaps.length === 0 ? (
           <p className="mt-3 text-xs text-muted">{t.roadmapNoGapsYet}</p>
         ) : (
-          <ul className="mt-3 flex flex-col gap-2 xl:grid xl:grid-cols-3 xl:gap-3">
-            {gaps.map((gap, index) => (
-              <GapCard key={gap.gap_title} gap={gap} index={index} sessionId={sessionId} lang={lang} />
-            ))}
-          </ul>
+          <div className="mt-3">
+            <GapBoard gaps={gaps} sessionId={sessionId} lang={lang} />
+          </div>
         )}
       </div>
 

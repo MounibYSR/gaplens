@@ -146,7 +146,7 @@ export async function generateAndSaveRoadmap(
 
   const { data: overrideRows, error: overridesError } = await supabase
     .from("gap_status_overrides")
-    .select("gap_title, status, updated_at")
+    .select("gap_title, status, gapfix_path, updated_at")
     .in("session_id", companySessionIds)
     .order("updated_at", { ascending: true });
 
