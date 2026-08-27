@@ -84,15 +84,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Every text-* / spacing utility in Tailwind is rem-based, so a small bump to
-   the root size here scales the whole app proportionally at desktop widths
-   instead of feeling like it was designed for a phone and stretched. */
-@media (min-width: 1280px) {
-  html {
-    font-size: 17.5px;
-  }
-}
-
 /* Numbers must stay LTR inside RTL flow (scores, badges, dates) */
 .ltr-num {
   direction: ltr;
