@@ -10,8 +10,8 @@ import { suggestedTopics } from "@/lib/freeform-chat/topics";
 import { sendFreeformMessage, requestAiInitiative } from "@/app/dashboard/freeform-chat-actions";
 import { MonitorIcon, InfoIcon } from "@/components/ui/stat-icons";
 
-function topicIcon(topic: string) {
-  return /tech|tool/i.test(topic) ? <MonitorIcon size={14} /> : <InfoIcon size={14} />;
+function topicIcon(label: string) {
+  return /tech|tool/i.test(label) ? <MonitorIcon size={14} /> : <InfoIcon size={14} />;
 }
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -43,7 +43,6 @@ export function FreeformChat({
   }, [messages, isPending]);
 
   const topics = suggestedTopics(gaps, lang, topicOffset, 3);
-  const lastAiMessage = [...messages].reverse().find((m) => m.role === "assistant")?.content ?? null;
 
   function errorText(kind: "rate_limited" | "ai_failed") {
     return kind === "rate_limited" ? t.rateLimited : t.sendError;
@@ -105,7 +104,6 @@ export function FreeformChat({
         <p className="mt-2 text-xs text-muted">{t.subtitle}</p>
 
         <div className="mt-4 flex flex-col gap-3">
-          {messages.length === 0 && <p className="text-xs text-muted">{t.emptyState}</p>}
           {messages.map((m, i) => (
             <div
               key={i}
@@ -130,24 +128,6 @@ export function FreeformChat({
           <div ref={bottomRef} style={{ scrollMarginBottom: "180px" }} />
         </div>
 
-        {topics.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {topics.map((topic, i) => (
-              <button
-                key={i}
-                type="button"
-                disabled={isPending}
-                onClick={() => send(topic)}
-                className="flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold disabled:opacity-60"
-                style={{ borderColor: "var(--border-g)", color: "var(--ink)", background: "var(--glass-2)" }}
-              >
-                <span style={{ color: "var(--teal-2)" }}>{topicIcon(topic)}</span>
-                {topic}
-              </button>
-            ))}
-          </div>
-        )}
-
         <div className="mt-4 flex gap-2">
           <button
             type="button"
@@ -168,21 +148,33 @@ export function FreeformChat({
           </button>
         </div>
 
+        {topics.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {topics.map((topic, i) => (
+              <button
+                key={i}
+                type="button"
+                disabled={isPending}
+                onClick={() => send(topic.message)}
+                className="flex items-center gap-2 rounded-full border px-3 py-2 text-xs disabled:opacity-60"
+                style={{ borderColor: "var(--border-g)", color: "var(--muted)", background: "var(--glass)" }}
+              >
+                <span style={{ color: "var(--teal-2)" }}>{topicIcon(topic.label)}</span>
+                <span className="max-w-40 truncate">{topic.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
         <div
           className="sticky bottom-3 z-10 mt-4 flex flex-col gap-3 rounded-2xl border p-6 backdrop-blur-md"
           style={{ background: "var(--modal-bg)", borderColor: "var(--border-g)" }}
         >
-          {lastAiMessage && (
-            <div>
-              <p className="ltr-num text-xs font-bold text-muted" dir="ltr">
-                {t.messageCountLabel(messages.length)}
-              </p>
-              <p className="mt-1 text-sm font-extrabold text-ink">{lastAiMessage}</p>
-            </div>
-          )}
-
           {errorMsg && (
-            <p className="text-xs font-bold" style={{ color: "var(--gap)" }}>
+            <p
+              className="rounded-lg border px-3 py-2 text-xs font-bold"
+              style={{ color: "var(--gap)", borderColor: "var(--gap)", background: "rgba(229, 72, 77, 0.1)" }}
+            >
               {errorMsg}
             </p>
           )}

@@ -283,11 +283,9 @@ export const appDictionary = {
       send: "Send",
       youAskMe: "You ask me",
       askMeSomething: "Ask me something",
-      emptyState: "Start the conversation — ask a question, or tap \"Ask me something\" to let GapLens open with one.",
       sendError: "Something went wrong — please try again.",
       rateLimited: "You've reached the hourly limit for this conversation — try again shortly.",
       thinking: "Thinking…",
-      messageCountLabel: (n: number) => `MESSAGE ${n} / ONGOING`,
     },
     inviteAnswer: {
       badge: "GAPLENS.INPUT_REQUEST",
@@ -580,11 +578,9 @@ export const appDictionary = {
       send: "إرسال",
       youAskMe: "اسأليني",
       askMeSomething: "اسأليني سؤال",
-      emptyState: "ابدئي المحادثة — اسألي سؤال، أو اضغطي \"اسأليني سؤال\" عشان GapLens يبدأ بوحد.",
       sendError: "صار خطأ — حاولي مرة ثانية.",
       rateLimited: "وصلتي الحد الأقصى بالساعة لهذي المحادثة — حاولي بعد شوي.",
       thinking: "أفكر…",
-      messageCountLabel: (n: number) => `الرسالة ${n} / مستمرة`,
     },
     inviteAnswer: {
       badge: "GAPLENS.INPUT_REQUEST",
