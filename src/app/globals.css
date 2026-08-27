@@ -77,6 +77,10 @@ html[dir="ltr"] {
   font-family: var(--font-en);
 }
 
+html {
+  font-size: 12.8px;
+}
+
 body {
   background: var(--navy);
   color: var(--ink);
