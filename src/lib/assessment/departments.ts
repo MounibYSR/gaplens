@@ -64,7 +64,7 @@ export const DEPARTMENTS: DepartmentDef[] = [
         id: "channels",
         type: "percentage",
         text: {
-          ar: "وش نسبة اعتمادكم على قنوات رقمية لجذب عملاء جدد؟",
+          ar: "ما نسبة اعتمادكم على قنوات رقمية لجذب عملاء جدد؟",
           en: "What share of new customer acquisition relies on digital channels?",
         },
         lowLabel: { ar: "شبه معدوم", en: "Almost none" },
@@ -117,7 +117,7 @@ export const DEPARTMENTS: DepartmentDef[] = [
         id: "manual_tasks",
         type: "percentage",
         text: {
-          ar: "وش نسبة اعتمادكم على أدوات يدوية بدل الأتمتة؟",
+          ar: "ما نسبة اعتمادكم على أدوات يدوية بدلاً من الأتمتة؟",
           en: "What share of your operations still relies on manual tools instead of automation?",
         },
         lowLabel: { ar: "أتمتة كاملة", en: "Fully automated" },
@@ -127,7 +127,7 @@ export const DEPARTMENTS: DepartmentDef[] = [
       {
         id: "tool_integration",
         type: "scale",
-        text: { ar: "هل الأدوات التقنية عندكم مرتبطة ببعض؟", en: "Are your tools connected to each other?" },
+        text: { ar: "هل الأدوات التقنية لديكم مرتبطة ببعضها؟", en: "Are your tools connected to each other?" },
         options: FREQ,
       },
       {
@@ -173,7 +173,7 @@ export const DEPARTMENTS: DepartmentDef[] = [
         id: "history_access",
         type: "binary",
         text: {
-          ar: "هل يقدر فريقك يشوف سجل العميل كامل بسرعة؟",
+          ar: "هل يستطيع فريقك الاطلاع على سجل العميل كاملاً بسرعة؟",
           en: "Can your team see a customer's full history quickly?",
         },
         yes: { label: { ar: "نعم، بضغطة واحدة", en: "Yes, one click away" }, value: 90 },
@@ -183,10 +183,10 @@ export const DEPARTMENTS: DepartmentDef[] = [
         id: "feedback_loop",
         type: "percentage",
         text: {
-          ar: "وش نسبة العملاء اللي تجمعون ملاحظاتهم بشكل منظم؟",
+          ar: "ما نسبة العملاء الذين تجمعون ملاحظاتهم بشكل منظم؟",
           en: "What share of customers do you systematically collect feedback from?",
         },
-        lowLabel: { ar: "لا نجمع شي", en: "We collect none" },
+        lowLabel: { ar: "لا نجمع شيئًا", en: "We collect none" },
         highLabel: { ar: "نجمع من الكل", en: "We collect from all" },
       },
     ],
@@ -220,13 +220,13 @@ export const DEPARTMENTS: DepartmentDef[] = [
           en: "Do you have a numbers dashboard you review regularly?",
         },
         yes: { label: { ar: "نعم، لوحة واضحة", en: "Yes, a clear dashboard" }, value: 90 },
-        no: { label: { ar: "لا، ما فيه لوحة", en: "No dashboard" }, value: 15 },
+        no: { label: { ar: "لا، لا توجد لوحة", en: "No dashboard" }, value: 15 },
       },
       {
         id: "decisions_on_data",
         type: "percentage",
         text: {
-          ar: "وش نسبة القرارات المبنية على بيانات فعلية مقابل الحدس؟",
+          ar: "ما نسبة القرارات المبنية على بيانات فعلية مقابل الحدس؟",
           en: "What share of decisions are based on real data versus gut feeling?",
         },
         lowLabel: { ar: "حدس بالكامل", en: "Entirely gut feeling" },
@@ -284,7 +284,7 @@ export const DEPARTMENTS: DepartmentDef[] = [
         id: "resistance",
         type: "percentage",
         text: {
-          ar: "وش نسبة مقاومة الفريق لتبني أدوات جديدة؟",
+          ar: "ما نسبة مقاومة الفريق لتبني أدوات جديدة؟",
           en: "How much does your team resist adopting new tools?",
         },
         lowLabel: { ar: "متقبلين تمامًا", en: "Fully receptive" },

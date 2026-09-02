@@ -1,8 +1,8 @@
 import { DEPARTMENTS } from "@/lib/assessment/departments";
-import type { Department } from "@/lib/supabase/types";
+import type { Department, DeepDiveDepartmentKey } from "@/lib/supabase/types";
 
 export type DeepDiveResponseRow = {
-  department: Department;
+  department: DeepDiveDepartmentKey;
   question_key?: string;
   answer_text?: string;
   response_length: number;
@@ -15,12 +15,14 @@ export type DeepDiveResponseRow = {
  * A department can be redone without erasing the old attempt (see
  * deep_dive_responses.attempt) — for scoring, coverage, and roadmap context,
  * only the latest attempt per department should count as "current"; older
- * attempts stay in the database purely for history/comparison.
+ * attempts stay in the database purely for history/comparison. Business
+ * Context rows just form their own attempt-tracking group here — no
+ * special-casing needed, this only groups by whatever `department` holds.
  */
-export function filterToLatestAttempt<T extends { department: Department; attempt?: number }>(
+export function filterToLatestAttempt<T extends { department: DeepDiveDepartmentKey; attempt?: number }>(
   responses: T[],
 ): T[] {
-  const maxAttemptByDept = new Map<Department, number>();
+  const maxAttemptByDept = new Map<DeepDiveDepartmentKey, number>();
   for (const r of responses) {
     const attempt = r.attempt ?? 1;
     const current = maxAttemptByDept.get(r.department) ?? 0;
@@ -29,8 +31,9 @@ export function filterToLatestAttempt<T extends { department: Department; attemp
   return responses.filter((r) => (r.attempt ?? 1) === maxAttemptByDept.get(r.department));
 }
 
-// Tool-Map-aware opener + manual-tasks + change-attitude + data-centralization.
-const EXPECTED_RESPONSES_PER_DEPARTMENT = 4;
+// Just the Tool-Map-aware opener now — manual-tasks / change-attitude /
+// data-centralization moved to Open Discussion (see question-bank.ts).
+const EXPECTED_RESPONSES_PER_DEPARTMENT = 1;
 
 // How much of "full credit" each non-deep-dive source contributes at — e.g.
 // 3 mapped tools, or 6 freeform-chat messages (3 exchanges), already counts
@@ -52,7 +55,12 @@ export function computeConfidence(params: {
   freeformMessageCount: number;
   visualConsultationCount: number;
 }) {
-  const responses = params.deepDiveResponses;
+  // Business Context answers are real, useful data but not a department —
+  // excluded here so they can't inflate "deep-dive completeness" or show up
+  // as a phantom 6th covered area before any real department is touched.
+  const responses = params.deepDiveResponses.filter(
+    (r): r is DeepDiveResponseRow & { department: Department } => r.department !== "business_context",
+  );
   const totalExpected = DEPARTMENTS.length * EXPECTED_RESPONSES_PER_DEPARTMENT;
   const deepDiveRatio = Math.min(1, responses.length / totalExpected);
   const toolMapRatio = Math.min(1, params.toolCount / TOOL_MAP_FULL_CREDIT);

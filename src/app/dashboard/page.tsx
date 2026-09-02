@@ -158,6 +158,8 @@ export default async function DashboardPage() {
     freeformMessageCount: freeformMessages?.length ?? 0,
     visualConsultationCount: visualConsultationCount ?? 0,
   });
+  const businessContextAnswered = deepDiveResponses.some((r) => r.department === "business_context");
+  const hasVisualIdentityData = (visualConsultationCount ?? 0) > 0;
 
   const latestVersionRow = roadmapVersions?.[0];
   const previousVersionRow = roadmapVersions?.[1];
@@ -219,6 +221,8 @@ export default async function DashboardPage() {
       departmentCoverage={departmentCoverage}
       freeformChatHistory={freeformMessages ?? []}
       companyTools={companyTools}
+      businessContextAnswered={businessContextAnswered}
+      hasVisualIdentityData={hasVisualIdentityData}
     />
   );
 }

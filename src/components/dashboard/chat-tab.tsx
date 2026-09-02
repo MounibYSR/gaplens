@@ -22,6 +22,9 @@ export function ChatTab({
   gaps,
   initialFreeformMessages,
   companyTools,
+  businessContextAnswered,
+  onBusinessContextAnswered,
+  hasVisualIdentityData,
 }: {
   sessionId: string;
   lang: EntryLang;
@@ -31,6 +34,9 @@ export function ChatTab({
   gaps: RoadmapGap[];
   initialFreeformMessages: FreeformChatMessage[];
   companyTools: CompanyTool[];
+  businessContextAnswered: boolean;
+  onBusinessContextAnswered: () => void;
+  hasVisualIdentityData: boolean;
 }) {
   const [mode, setMode] = useState<Mode>("structured");
   const t = appDictionary[lang].chatTab;
@@ -75,10 +81,20 @@ export function ChatTab({
             onComplete={onComplete}
             companyTools={companyTools}
             gaps={gaps}
+            businessContextAnswered={businessContextAnswered}
+            onBusinessContextAnswered={onBusinessContextAnswered}
+            onSwitchToOpenDiscussion={() => setMode("freeform")}
           />
         )}
         {mode === "freeform" && (
-          <FreeformChat sessionId={sessionId} lang={lang} gaps={gaps} initialMessages={initialFreeformMessages} />
+          <FreeformChat
+            sessionId={sessionId}
+            lang={lang}
+            gaps={gaps}
+            initialMessages={initialFreeformMessages}
+            hasVisualIdentityData={hasVisualIdentityData}
+            onSwitchToVisualIdentity={() => setMode("visual_identity")}
+          />
         )}
         {mode === "visual_identity" && <VisualIdentityPanel sessionId={sessionId} lang={lang} />}
       </div>

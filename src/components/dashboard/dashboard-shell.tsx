@@ -231,6 +231,8 @@ type DashboardShellProps = {
   departmentCoverage: { key: Department; pct: number }[];
   freeformChatHistory: FreeformChatMessage[];
   companyTools: CompanyTool[];
+  businessContextAnswered: boolean;
+  hasVisualIdentityData: boolean;
 };
 
 function DashboardShellInner({
@@ -253,6 +255,8 @@ function DashboardShellInner({
   departmentCoverage,
   freeformChatHistory,
   companyTools,
+  businessContextAnswered,
+  hasVisualIdentityData,
 }: DashboardShellProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -273,6 +277,11 @@ function DashboardShellInner({
   const [answeredDepartments, setAnsweredDepartments] = useState<Department[]>(
     confidence.coveredDepartments,
   );
+  // Lifted the same way as answeredDepartments above — DeepDiveChat unmounts
+  // whenever the user switches to another Chat with AI tab and back, so its
+  // own internal phase state doesn't survive that; without this, finishing
+  // Business Context then switching tabs would restart it from question 1.
+  const [businessContextDone, setBusinessContextDone] = useState(businessContextAnswered);
   const [accountName, setAccountName] = useState(companyName);
   const [accountLogoUrl, setAccountLogoUrl] = useState(logoUrl);
   const [showSettings, setShowSettings] = useState(false);
@@ -463,6 +472,9 @@ function DashboardShellInner({
               gaps={roadmapGaps.gaps}
               initialFreeformMessages={freeformChatHistory}
               companyTools={companyTools}
+              businessContextAnswered={businessContextDone}
+              onBusinessContextAnswered={() => setBusinessContextDone(true)}
+              hasVisualIdentityData={hasVisualIdentityData}
             />
           )}
 

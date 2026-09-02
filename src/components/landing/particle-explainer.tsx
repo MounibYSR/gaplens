@@ -45,7 +45,7 @@ const STEP_CONTENT: { shape: ShapeName; title: Record<EntryLang, string>; copy: 
     title: { en: "Diagnose the gap", ar: "شخّص الفجوة" },
     copy: {
       en: "GapLens compares your business against category benchmarks and pinpoints exactly where the gap sits.",
-      ar: "GapLens تقارن عملك بمعايير القطاع وتحدد بالضبط وين تقع الفجوة.",
+      ar: "يقارن GapLens عملك بمعايير القطاع ويحدد بالضبط أين تقع الفجوة.",
     },
   },
   {
@@ -53,7 +53,7 @@ const STEP_CONTENT: { shape: ShapeName; title: Record<EntryLang, string>; copy: 
     title: { en: "Audit your tools", ar: "افحص أدواتك" },
     copy: {
       en: "It maps the systems already in place across your business areas and finds where they disconnect.",
-      ar: "يرسم خارطة للأنظمة الموجودة عبر مجالات عملك ويكتشف وين تنقطع عن بعض.",
+      ar: "يرسم خريطة للأنظمة الموجودة عبر مجالات عملك ويكتشف أين تنقطع عن بعضها.",
     },
   },
   {
@@ -69,7 +69,7 @@ const STEP_CONTENT: { shape: ShapeName; title: Record<EntryLang, string>; copy: 
     title: { en: "GapFix — resolve it your way", ar: "GapFix — عالجها بطريقتك" },
     copy: {
       en: "Every gap comes with a resolution path: do it yourself, get matched with a vetted provider, or let GapLens execute it for you.",
-      ar: "كل فجوة تجيك مع مسار حل: تسويها بنفسك، نرشحلك مزود موثوق، أو GapLens تنفذها لك.",
+      ar: "كل فجوة تأتي مع مسار حل: تنفّذها بنفسك، نرشّح لك مزودًا موثوقًا، أو ينفّذها GapLens نيابةً عنك.",
     },
   },
 ];

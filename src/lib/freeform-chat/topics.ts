@@ -8,8 +8,8 @@ const GENERIC_EN: Topic[] = [
   { label: "Quick wins", message: "Show me quick wins I could tackle now" },
 ];
 const GENERIC_AR: Topic[] = [
-  { label: "أولويتك الأولى", message: "وش الأولوية اللي أبدأ فيها؟" },
-  { label: "مكاسب سريعة", message: "وريني مكاسب سريعة أقدر أبدأ فيها الحين" },
+  { label: "أولويتك الأولى", message: "ما الأولوية التي يجب أن أبدأ بها؟" },
+  { label: "مكاسب سريعة", message: "أرني مكاسب سريعة يمكنني البدء بها الآن" },
 ];
 
 /**
@@ -32,7 +32,7 @@ export function suggestedTopics(
     label: g.gap_title,
     message:
       lang === "ar"
-        ? `اسأليني عن فجوة ${g.category}: ${g.gap_title}`
+        ? `اسألني عن فجوة ${g.category}: ${g.gap_title}`
         : `Ask about your ${g.category} gap: ${g.gap_title}`,
   }));
   const generic = lang === "ar" ? GENERIC_AR : GENERIC_EN;

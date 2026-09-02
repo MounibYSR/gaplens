@@ -136,13 +136,13 @@ export const entryDictionary = {
   ar: {
     nav: { login: "تسجيل الدخول", signUp: "إنشاء حساب", pricing: "الأسعار", about: "من نحن", aiPowered: "بالذكاء الاصطناعي" },
     hero: {
-      badge: "التحول الرقمي مب اختياري بعد الحين.",
-      title: "كل فجوة برقمنة شركتك هي لحظة عميلك يحس فيها.",
-      titleEmphasis: "عميلك يحس فيها",
-      subtitle: "شوفي فجواتك بالضبط — ما تاخذ أكثر من دقيقتين.",
+      badge: "التحول الرقمي لم يعد خيارًا بعد الآن.",
+      title: "كل فجوة في رقمنة شركتك هي لحظة يلاحظها عميلك.",
+      titleEmphasis: "يلاحظها عميلك",
+      subtitle: "اطّلع على فجواتك بالضبط — لا يستغرق الأمر أكثر من دقيقتين.",
       ctaPrimary: "ابدأ تشخيصك مجاناً",
       ctaSecondary: "كيف يعمل؟",
-      trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "سكيورتي"],
+      trust: ["بياناتك مشفّرة", "مصمم لسوق الخليج", "الأمان"],
     },
     how: {
       badge: "كيف يعمل",
@@ -165,19 +165,19 @@ export const entryDictionary = {
         { title: "الدفعة 12 من DIC", body: "GapLens انتُخبت ضمن الدفعة الثانية عشرة من مركز قطر لاحتضان الأعمال الرقمية." },
         { title: "بدعم وزاري", body: "نعمل تحت مظلة وزارة الاتصالات وتكنولوجيا المعلومات (MCIT)." },
         { title: "بُني في قطر", body: "بُني في قطر، لخدمة الشركات الصغيرة والمتوسطة بالخليج." },
-        { title: "بياناتك بأمان", body: "بياناتك تُعامل بأمان وما تنشارك مع أحد بدون إذنك." },
+        { title: "بياناتك بأمان", body: "بياناتك تُعامل بأمان ولا تُشارك مع أحد دون إذنك." },
       ],
       letterCta: "شاهد خطاب توصية DIC",
       letterNote: "قريباً",
     },
     companies: {
-      badge: "موثوق من شركات زي شركتك",
+      badge: "موثوق من شركات مثل شركتك",
     },
     pricing: {
       badge: "الأسعار",
       title: "أسعار بسيطة،",
       titleAccent: "قيمة واضحة.",
-      subtitle: "اختاري الباقة اللي تناسب شركتك بالمرحلة الحالية.",
+      subtitle: "اختر الباقة التي تناسب شركتك في مرحلتها الحالية.",
       recommendedBadge: "الأكثر طلباً",
       tiers: [
         {
@@ -187,7 +187,7 @@ export const entryDictionary = {
           recommended: false,
           freeNote: null as string | null,
           features: ["تشخيص رقمي سريع (تاستر + Gap Score)", "رودماب كامل واحد بالشهر", "توصيات أساسية"],
-          cta: "ابدئي مجاناً",
+          cta: "ابدأ مجانًا",
           href: "/signup",
         },
         {
@@ -202,7 +202,7 @@ export const entryDictionary = {
             "استشارة الهوية البصرية (موقع، إنستغرام، شعار)",
             "دعوة أعضاء الفريق",
           ],
-          cta: "احصلي على Growth مجاناً",
+          cta: "احصل على Growth مجانًا",
           href: "/signup",
         },
         {
@@ -212,14 +212,14 @@ export const entryDictionary = {
           recommended: false,
           freeNote: null as string | null,
           features: ["تنفيذ عملي لرودمابك من فريق GapLens", "السعر حسب حجم المشروع"],
-          cta: "تواصلي معنا",
+          cta: "تواصل معنا",
           href: "mailto:hello@gaplens.co",
         },
       ],
       customPriceLabel: "مخصص",
       currencyNote: "الريال القطري معروض بسعر الربط الرسمي (1 دولار = 3.64 ريال).",
-      comparisonTitle: "قارني بين الباقات",
-      comparisonSubtitle: "ملخص سريع لكل باقة تحتوي على وش.",
+      comparisonTitle: "قارن بين الباقات",
+      comparisonSubtitle: "ملخص سريع لما تتضمنه كل باقة.",
       comparisonHeaders: { feature: "الميزة", free: "مجانية", growth: "Growth", gapfix: "GapFix" },
       comparisonRows: [
         { label: "معدل توليد الرودماب", free: "مرة/شهر", growth: "بدون حد", gapfix: "بدون حد" },
@@ -232,7 +232,7 @@ export const entryDictionary = {
     about: {
       badge: "من نحن",
       title: "الفريق وراء GapLens",
-      subtitle: "بُني بالدوحة، لخدمة الشركات الصغيرة والمتوسطة بالخليج اللي تبي وضوح.",
+      subtitle: "بُني في الدوحة، لخدمة الشركات الصغيرة والمتوسطة في الخليج التي تسعى إلى الوضوح.",
       team: [
         { name: "يسرى منيب", role: "CEO & CTO" },
         { name: "سونيا شبيلي", role: "COO" },
@@ -249,7 +249,7 @@ export const entryDictionary = {
       email: "البريد الإلكتروني",
       password: "كلمة المرور",
       submit: "دخول",
-      switchPrompt: "ما عندك حساب؟",
+      switchPrompt: "ألا تملك حسابًا؟",
       switchCta: "أنشئ حساب شركتك",
     },
     signup: {
@@ -260,7 +260,7 @@ export const entryDictionary = {
       email: "البريد الإلكتروني",
       password: "كلمة المرور",
       submit: "إنشاء الحساب",
-      switchPrompt: "عندك حساب؟",
+      switchPrompt: "لديك حساب؟",
       switchCta: "تسجيل الدخول",
     },
     footer: "© 2026 GapLens. جميع الحقوق محفوظة. قطر.",

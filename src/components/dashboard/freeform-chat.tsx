@@ -14,6 +14,12 @@ function topicIcon(label: string) {
   return /tech|tool/i.test(label) ? <MonitorIcon size={14} /> : <InfoIcon size={14} />;
 }
 
+// Not parsed out of the AI's reply text (fragile) — a reliable client-side
+// signal instead: no Visual Identity data yet, plus either a real mention
+// of their online presence or the conversation running long enough that
+// it's worth surfacing on its own.
+const VISUAL_IDENTITY_KEYWORDS = /website|instagram|social media|انستقرام|انستغرام|موقع/i;
+
 type Message = { role: "user" | "assistant"; content: string };
 
 export function FreeformChat({
@@ -21,11 +27,15 @@ export function FreeformChat({
   lang,
   gaps,
   initialMessages,
+  hasVisualIdentityData,
+  onSwitchToVisualIdentity,
 }: {
   sessionId: string;
   lang: EntryLang;
   gaps: RoadmapGap[];
   initialMessages: FreeformChatMessage[];
+  hasVisualIdentityData: boolean;
+  onSwitchToVisualIdentity: () => void;
 }) {
   const t = appDictionary[lang].freeformChat;
   const [messages, setMessages] = useState<Message[]>(
@@ -35,6 +45,7 @@ export function FreeformChat({
   const [isPending, setIsPending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [topicOffset, setTopicOffset] = useState(0);
+  const [nudgeDismissed, setNudgeDismissed] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +54,11 @@ export function FreeformChat({
   }, [messages, isPending]);
 
   const topics = suggestedTopics(gaps, lang, topicOffset, 3);
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
+  const showVisualIdentityNudge =
+    !hasVisualIdentityData &&
+    !nudgeDismissed &&
+    (messages.length >= 4 || VISUAL_IDENTITY_KEYWORDS.test(lastUserMessage));
 
   function errorText(kind: "rate_limited" | "ai_failed") {
     return kind === "rate_limited" ? t.rateLimited : t.sendError;
@@ -163,6 +179,33 @@ export function FreeformChat({
                 <span className="max-w-40 truncate">{topic.label}</span>
               </button>
             ))}
+          </div>
+        )}
+
+        {showVisualIdentityNudge && (
+          <div
+            className="mt-3 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-xs"
+            style={{ borderColor: "var(--border-elevated)", background: "var(--glass-2)" }}
+          >
+            <span className="text-muted">{t.visualIdentityNudgeText}</span>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={onSwitchToVisualIdentity}
+                className="rounded-lg px-3 py-2 text-xs font-bold text-navy"
+                style={{ background: "var(--teal-2)" }}
+              >
+                {t.goToVisualIdentity}
+              </button>
+              <button
+                type="button"
+                onClick={() => setNudgeDismissed(true)}
+                aria-label={t.dismissNudge}
+                className="text-muted"
+              >
+                ×
+              </button>
+            </div>
           </div>
         )}
 

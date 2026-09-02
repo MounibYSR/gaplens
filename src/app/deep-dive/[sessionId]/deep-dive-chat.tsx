@@ -5,9 +5,14 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/assessment/departments";
 import type { DepartmentDef } from "@/lib/assessment/departments";
-import { buildDeepDiveQuestions, MANUAL_HOURS_QUESTION, MANUAL_HEADCOUNT_QUESTION, NONE_OPTION } from "@/lib/deep-dive/question-bank";
+import {
+  buildDeepDiveQuestions,
+  MANUAL_HOURS_QUESTION,
+  MANUAL_HEADCOUNT_QUESTION,
+  TOOL_COUNT_OPTIONS,
+  BUSINESS_CONTEXT_QUESTIONS,
+} from "@/lib/deep-dive/question-bank";
 import type { DeepDiveQuestion } from "@/lib/deep-dive/question-bank";
-import { ProgressDots } from "@/components/assessment/progress-dots";
 import { ConsoleLabel } from "@/components/ui/console-label";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
@@ -54,6 +59,31 @@ function FindingCard({ gap, label }: { gap: RoadmapGap; label: string }) {
 function firstUnansweredIndex(answered: Department[]) {
   const idx = DEPARTMENTS.findIndex((d) => !answered.includes(d.key));
   return idx === -1 ? DEPARTMENTS.length : idx;
+}
+
+const TOTAL_CORE_QUESTIONS = BUSINESS_CONTEXT_QUESTIONS.length + DEPARTMENTS.length;
+
+/** A clear numeric readout — "Question N of 10" plus a bar — replacing the
+ * small dot-only progress indicator, which didn't say how far along the
+ * user actually was. */
+function DeepDiveProgress({ current, total, label }: { current: number; total: number; label: string }) {
+  const pct = Math.round((current / total) * 100);
+  return (
+    <div className="mb-4 w-full">
+      <div className="flex items-center justify-between text-xs font-bold text-muted">
+        <span>{label}</span>
+        <span className="ltr-num" dir="ltr">
+          {pct}%
+        </span>
+      </div>
+      <div className="mt-2 h-2 w-full overflow-hidden rounded-full" style={{ background: "var(--glass-2)" }}>
+        <div
+          className="h-full rounded-full transition-[width] duration-500"
+          style={{ width: `${pct}%`, background: "var(--teal-2)" }}
+        />
+      </div>
+    </div>
+  );
 }
 
 function StartNewRoundButton({ label }: { label: string }) {
@@ -297,6 +327,9 @@ export function DeepDiveChat({
   answeredDepartments = [],
   companyTools,
   gaps = [],
+  businessContextAnswered = false,
+  onBusinessContextAnswered,
+  onSwitchToOpenDiscussion,
 }: {
   sessionId: string;
   lang: EntryLang;
@@ -305,8 +338,15 @@ export function DeepDiveChat({
   answeredDepartments?: Department[];
   companyTools: CompanyTool[];
   gaps?: RoadmapGap[];
+  businessContextAnswered?: boolean;
+  onBusinessContextAnswered?: () => void;
+  onSwitchToOpenDiscussion?: () => void;
 }) {
   const t = appDictionary[lang].deepDive;
+  const [phase, setPhase] = useState<"context" | "departments">(
+    () => (businessContextAnswered ? "departments" : "context"),
+  );
+  const [contextQIndex, setContextQIndex] = useState(0);
   const [deptIndex, setDeptIndex] = useState(() => firstUnansweredIndex(answeredDepartments));
   const [qIndex, setQIndex] = useState(0);
   // Only this department's already-answered questions — reset on every
@@ -350,11 +390,18 @@ export function DeepDiveChat({
         isFirstQuestionOfRound: qIndex === 0,
       });
 
-      // Manual-work follow-up: only asked when real manual tasks were
-      // flagged, so a department with nothing manual never gets asked
-      // "how many hours on nothing."
+      // Manual-work follow-up: the structured flow only asks the Tool-Map
+      // opener now, so this triggers off ITS answer instead of the removed
+      // manual_tasks question — "None — mostly manual" is the one opener
+      // answer that still directly signals manual work. The tool_overlap
+      // variant (2+ real tools already on record) never triggers this —
+      // having named tools already rules out "mostly manual."
+      const revealsManualWork =
+        (question.key === "tool_count" || question.key === "tool_count_single") &&
+        selectedLabels.length === 1 &&
+        selectedLabels[0] === TOOL_COUNT_OPTIONS[0].label[lang];
       let activeQuestions = questions;
-      if (question.key === "manual_tasks" && !(selectedLabels.length === 1 && selectedLabels[0] === NONE_OPTION.label[lang])) {
+      if (revealsManualWork) {
         const insertAt = qIndex + 1;
         activeQuestions = [
           ...questions.slice(0, insertAt),
@@ -418,6 +465,39 @@ export function DeepDiveChat({
     }
   }
 
+  async function handleContextAnswer(question: DeepDiveQuestion, selectedLabels: string[]) {
+    if (isPending) return;
+    const answerText = selectedLabels.join(", ");
+
+    setErrorMsg(null);
+    setIsPending(true);
+
+    try {
+      await submitDeepDiveAnswer({
+        sessionId,
+        department: "business_context",
+        questionKey: question.key,
+        answerText,
+        startedAt: questionStartedAt,
+        isFirstQuestionOfRound: contextQIndex === 0,
+      });
+
+      const next = contextQIndex + 1;
+      if (next < BUSINESS_CONTEXT_QUESTIONS.length) {
+        setContextQIndex(next);
+        setQuestionStartedAt(new Date().toISOString());
+      } else {
+        setPhase("departments");
+        setQuestionStartedAt(new Date().toISOString());
+        onBusinessContextAnswered?.();
+      }
+    } catch {
+      setErrorMsg(t.sendError);
+    } finally {
+      setIsPending(false);
+    }
+  }
+
   function startRedo(deptKey: Department) {
     const idx = DEPARTMENTS.findIndex((d) => d.key === deptKey);
     if (idx === -1) return;
@@ -431,10 +511,72 @@ export function DeepDiveChat({
     setDeptIndex(idx);
   }
 
+  if (phase === "context") {
+    const contextQuestion = BUSINESS_CONTEXT_QUESTIONS[contextQIndex];
+    return (
+      <div className="w-full max-w-md xl:max-w-3xl">
+        <DeepDiveProgress
+          current={contextQIndex + 1}
+          total={TOTAL_CORE_QUESTIONS}
+          label={t.questionProgress(contextQIndex + 1, TOTAL_CORE_QUESTIONS)}
+        />
+        <div
+          className="rounded-2xl border p-6 xl:p-8"
+          style={{
+            background: "var(--glass)",
+            borderRightColor: "var(--border-g)",
+            borderBottomColor: "var(--border-g)",
+            borderLeftColor: "var(--border-g)",
+            borderTopWidth: "3px",
+            borderTopStyle: "solid",
+            borderTopColor: "var(--gold)",
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <ConsoleLabel>{t.businessContextBadge}</ConsoleLabel>
+            <span className="text-xs font-extrabold" style={{ color: "var(--gold)" }}>
+              {t.businessContextLabel}
+            </span>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3">
+            <div className="flex max-w-[92%] items-start gap-2">
+              <AiAvatar />
+              <div className="rounded-xl px-3 py-2 text-sm" style={{ background: "var(--glass-2)", color: "var(--ink)" }}>
+                {contextQuestion.prompt[lang]}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2">
+            {errorMsg && (
+              <p className="text-xs font-bold" style={{ color: "var(--gap)" }}>
+                {errorMsg}
+              </p>
+            )}
+            <QuestionControls
+              key={`context-${contextQuestion.key}`}
+              question={contextQuestion}
+              lang={lang}
+              isPending={isPending}
+              continueLabel={t.continueCta}
+              onAnswer={(labels) => handleContextAnswer(contextQuestion, labels)}
+            />
+            <CustomAnswerInput
+              key={`custom-context-${contextQuestion.key}`}
+              isPending={isPending}
+              placeholder={t.customAnswerPlaceholder}
+              onAnswer={(text) => handleContextAnswer(contextQuestion, [text])}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (done) {
     return (
       <div className="w-full max-w-md text-center xl:max-w-3xl">
-        <ProgressDots currentIndex={DEPARTMENTS.length - 1} />
         <div
           className="glass-card rounded-2xl p-8"
           style={{ borderColor: "var(--border-g)" }}
@@ -447,6 +589,22 @@ export function DeepDiveChat({
               {t.redoSavedNote(justRedid.title[lang])}
             </p>
           )}
+
+          {onSwitchToOpenDiscussion && (
+            <div className="mt-5 rounded-2xl border p-5 text-start" style={{ borderColor: "var(--border-elevated)", background: "var(--glass-2)" }}>
+              <p className="text-sm font-extrabold text-ink">{t.openDiscussionHandoffTitle}</p>
+              <p className="mt-1 text-xs text-muted">{t.openDiscussionHandoffBody}</p>
+              <button
+                type="button"
+                onClick={onSwitchToOpenDiscussion}
+                className="mt-3 block w-full rounded-lg border py-3 text-center text-sm font-bold"
+                style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)" }}
+              >
+                {t.goToOpenDiscussion}
+              </button>
+            </div>
+          )}
+
           {onComplete ? (
             <button
               type="button"
@@ -518,7 +676,11 @@ export function DeepDiveChat({
 
     return (
       <div className="w-full max-w-md text-center xl:max-w-3xl">
-        <ProgressDots currentIndex={deptIndex} />
+        <DeepDiveProgress
+          current={BUSINESS_CONTEXT_QUESTIONS.length + deptIndex + 1}
+          total={TOTAL_CORE_QUESTIONS}
+          label={t.questionProgress(BUSINESS_CONTEXT_QUESTIONS.length + deptIndex + 1, TOTAL_CORE_QUESTIONS)}
+        />
         <div
           className="glass-card flex flex-col items-center gap-3 rounded-2xl p-10"
           style={{ borderColor: transitionDept.accent, borderWidth: 2 }}
@@ -539,7 +701,13 @@ export function DeepDiveChat({
 
   return (
     <div className="w-full max-w-md xl:max-w-3xl">
-      {!isRedo && <ProgressDots currentIndex={deptIndex} />}
+      {!isRedo && (
+        <DeepDiveProgress
+          current={BUSINESS_CONTEXT_QUESTIONS.length + deptIndex + 1}
+          total={TOTAL_CORE_QUESTIONS}
+          label={t.questionProgress(BUSINESS_CONTEXT_QUESTIONS.length + deptIndex + 1, TOTAL_CORE_QUESTIONS)}
+        />
+      )}
       <div
         className="rounded-2xl border p-6 xl:p-8"
         style={{

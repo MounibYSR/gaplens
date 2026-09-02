@@ -4,7 +4,7 @@ import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 export type VisualSourceTag = "website" | "instagram" | "logo" | "other";
 
 function languageName(lang: EntryLang): string {
-  return lang === "ar" ? "Gulf-friendly conversational Arabic" : "English";
+  return lang === "ar" ? "Modern Standard Arabic (الفصحى)" : "English";
 }
 
 const CHANNEL_LABEL: Record<VisualSourceTag, string> = {

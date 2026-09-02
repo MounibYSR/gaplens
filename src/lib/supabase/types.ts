@@ -5,6 +5,15 @@ export type Department =
   | "data_decision_making"
   | "team_readiness";
 
+/**
+ * deep_dive_responses.department accepts one value beyond the 5 real
+ * departments: the one-time "Business Context" question set, asked before
+ * any department. Deliberately not folded into Department itself — every
+ * other department-specific call site (DEPARTMENTS indexing, accent
+ * colors, invites, roadmap categories) assumes exactly the 5 real values.
+ */
+export type DeepDiveDepartmentKey = Department | "business_context";
+
 export type ResolutionPath = "diy" | "refer" | "auto";
 export type RoadmapStatus = "open" | "in_progress" | "done";
 export type InviteStatus = "pending" | "accepted" | "declined";
@@ -206,7 +215,7 @@ export interface Database {
           id: string;
           session_id: string;
           invite_id: string | null;
-          department: Department;
+          department: DeepDiveDepartmentKey;
           question_key: string;
           answer_text: string;
           source: DeepDiveSource;
@@ -220,7 +229,7 @@ export interface Database {
           id?: string;
           session_id: string;
           invite_id?: string | null;
-          department: Department;
+          department: DeepDiveDepartmentKey;
           question_key: string;
           answer_text: string;
           source?: DeepDiveSource;

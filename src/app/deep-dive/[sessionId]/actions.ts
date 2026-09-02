@@ -7,7 +7,7 @@ import { DEPARTMENTS } from "@/lib/assessment/departments";
 import { DEEP_DIVE_FALLBACK_FOLLOWUPS } from "@/lib/deep-dive/questions";
 import { CONFIDENT_TONE_DIRECTIVE } from "@/lib/ai/tone";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
-import type { Department, DeepDiveSource } from "@/lib/supabase/types";
+import type { Department, DeepDiveDepartmentKey, DeepDiveSource } from "@/lib/supabase/types";
 
 /**
  * A department can be redone without erasing the old answers — each redo's
@@ -19,7 +19,7 @@ import type { Department, DeepDiveSource } from "@/lib/supabase/types";
 async function currentMaxAttempt(
   supabase: Awaited<ReturnType<typeof createClient>>,
   sessionId: string,
-  department: Department,
+  department: DeepDiveDepartmentKey,
 ): Promise<number> {
   const { data } = await supabase
     .from("deep_dive_responses")
@@ -34,7 +34,7 @@ async function currentMaxAttempt(
 
 export async function submitDeepDiveAnswer(params: {
   sessionId: string;
-  department: Department;
+  department: DeepDiveDepartmentKey;
   questionKey: string;
   answerText: string;
   startedAt: string;
@@ -70,7 +70,7 @@ export async function getFollowUpQuestion(
   previousQuestions: string[] = [],
 ) {
   const dept = DEPARTMENTS.find((d) => d.key === department)!;
-  const languageName = lang === "ar" ? "Gulf-friendly conversational Arabic" : "English";
+  const languageName = lang === "ar" ? "Modern Standard Arabic (الفصحى)" : "English";
 
   const fallback = () => DEEP_DIVE_FALLBACK_FOLLOWUPS[department][lang];
 
