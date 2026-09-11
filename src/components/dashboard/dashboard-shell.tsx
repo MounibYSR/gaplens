@@ -486,6 +486,8 @@ function DashboardShellInner({
             <RoadmapSection
               lang={lang}
               sessionId={sessionId}
+              companyId={companyId}
+              companyTools={companyTools}
               confidence={confidence}
               answeredDepartments={answeredDepartments}
               version={roadmapGaps.version}

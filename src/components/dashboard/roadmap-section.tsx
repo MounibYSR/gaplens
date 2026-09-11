@@ -10,6 +10,9 @@ import { DepartmentIcon } from "@/components/ui/department-icon";
 import type { Department, GapFixPath, GapStatus } from "@/lib/supabase/types";
 import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
 import { setGapStatus, setGapfixPath } from "@/app/dashboard/actions";
+import { logProviderMatchInterest } from "@/app/dashboard/gapfix-actions";
+import { DiyGuideModal, ProviderComingSoonModal } from "@/components/dashboard/gapfix-modals";
+import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 import { TeamIcon, ClockIcon, MonitorIcon, IconBadge } from "@/components/ui/stat-icons";
 
 const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
@@ -34,12 +37,16 @@ function quickWinBadge(gap: RoadmapGap): "quick" | "big" | null {
 function GapCard({
   gap,
   sessionId,
+  companyId,
+  companyTools,
   lang,
   onStatusChange,
   onGapfixChange,
 }: {
   gap: RoadmapGap;
   sessionId: string;
+  companyId: string;
+  companyTools: CompanyTool[];
   lang: EntryLang;
   onStatusChange: (status: GapStatus) => void;
   onGapfixChange: (path: GapFixPath) => void;
@@ -48,17 +55,13 @@ function GapCard({
   const vt = appDictionary[lang].visualIdentity;
   const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [showDiyGuide, setShowDiyGuide] = useState(false);
+  const [showProviderComingSoon, setShowProviderComingSoon] = useState(false);
 
   const dept = departmentFor(gap.category);
   const badge = quickWinBadge(gap);
   const statusIndex = STATUS_ORDER.indexOf(gap.status);
   const isResolved = gap.status === "resolved";
-
-  const GAPFIX_OPTIONS: { value: GapFixPath; label: string }[] = [
-    { value: "diy", label: t.gapfixDoItMyself },
-    { value: "vetted_provider", label: t.gapfixGetMatched },
-    { value: "gaplens_executes", label: t.gapfixLetGaplensHandle },
-  ];
 
   function moveStatus(dir: -1 | 1) {
     const next = STATUS_ORDER[statusIndex + dir];
@@ -74,6 +77,27 @@ function GapCard({
     startTransition(async () => {
       await setGapfixPath(sessionId, gap.gap_title, path, gap.status);
     });
+  }
+
+  function handleDiyClick() {
+    pickGapfix("diy");
+    setShowDiyGuide(true);
+  }
+
+  function handleProviderClick() {
+    pickGapfix("vetted_provider");
+    setShowProviderComingSoon(true);
+    // Fire-and-forget interest signal — never let a logging failure surface
+    // to the user or the console; the "Coming Soon" UX must not depend on it.
+    logProviderMatchInterest(companyId, sessionId, gap.gap_title, gap.category).catch(() => {});
+  }
+
+  function gapfixButtonStyle(path: GapFixPath) {
+    return {
+      background: gap.gapfix_path === path ? "var(--teal-2)" : "var(--glass-2)",
+      borderColor: gap.gapfix_path === path ? "var(--teal-2)" : "var(--border-g)",
+      color: gap.gapfix_path === path ? "var(--navy)" : "var(--ink)",
+    };
   }
 
   return (
@@ -156,32 +180,67 @@ function GapCard({
           <p className="mt-2 text-ink">{gap.recommended_fix}</p>
 
           <div className="mt-3 flex flex-col gap-2">
-            {GAPFIX_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                disabled={isPending}
-                onClick={() => pickGapfix(opt.value)}
-                className="rounded-lg border py-2 text-xs font-bold transition-colors disabled:opacity-60"
-                style={{
-                  background: gap.gapfix_path === opt.value ? "var(--teal-2)" : "var(--glass-2)",
-                  borderColor: gap.gapfix_path === opt.value ? "var(--teal-2)" : "var(--border-g)",
-                  color: gap.gapfix_path === opt.value ? "var(--navy)" : "var(--ink)",
-                }}
-              >
-                {opt.label}
-              </button>
-            ))}
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={handleDiyClick}
+              className="rounded-lg border py-2 text-xs font-bold transition-colors disabled:opacity-60"
+              style={gapfixButtonStyle("diy")}
+            >
+              {t.gapfixDoItMyself}
+            </button>
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={handleProviderClick}
+              className="rounded-lg border py-2 text-xs font-bold transition-colors disabled:opacity-60"
+              style={gapfixButtonStyle("vetted_provider")}
+            >
+              {t.gapfixGetMatched}
+            </button>
+            <button
+              type="button"
+              disabled
+              className="rounded-lg border py-2 text-xs font-bold opacity-40"
+              style={{ background: "var(--glass-2)", borderColor: "var(--border-g)", color: "var(--ink)" }}
+            >
+              {t.gapfixLetGaplensHandle}
+              <span className="mt-0.5 block text-xs font-normal text-muted">{t.gapfixLetGaplensComingSoonLabel}</span>
+            </button>
           </div>
         </div>
       )}
+
+      {showDiyGuide && (
+        <DiyGuideModal
+          sessionId={sessionId}
+          gap={gap}
+          companyTools={companyTools}
+          lang={lang}
+          onClose={() => setShowDiyGuide(false)}
+          onResolved={() => onStatusChange("resolved")}
+        />
+      )}
+      {showProviderComingSoon && <ProviderComingSoonModal lang={lang} onClose={() => setShowProviderComingSoon(false)} />}
     </li>
   );
 }
 
 type BoardFilter = "all" | "quick_wins" | string;
 
-function GapBoard({ gaps: initialGaps, sessionId, lang }: { gaps: RoadmapGap[]; sessionId: string; lang: EntryLang }) {
+function GapBoard({
+  gaps: initialGaps,
+  sessionId,
+  companyId,
+  companyTools,
+  lang,
+}: {
+  gaps: RoadmapGap[];
+  sessionId: string;
+  companyId: string;
+  companyTools: CompanyTool[];
+  lang: EntryLang;
+}) {
   const t = appDictionary[lang].dashboard;
   const [gaps, setGaps] = useState(initialGaps);
   const [filter, setFilter] = useState<BoardFilter>("all");
@@ -277,6 +336,8 @@ function GapBoard({ gaps: initialGaps, sessionId, lang }: { gaps: RoadmapGap[]; 
                     key={gap.gap_title}
                     gap={gap}
                     sessionId={sessionId}
+                    companyId={companyId}
+                    companyTools={companyTools}
                     lang={lang}
                     onStatusChange={(status) => updateGap(gap.gap_title, { status })}
                     onGapfixChange={(path) => updateGap(gap.gap_title, { gapfix_path: path })}
@@ -323,6 +384,8 @@ function AccuracyActionRow({
 export function RoadmapSection({
   lang,
   sessionId,
+  companyId,
+  companyTools,
   confidence,
   answeredDepartments,
   version,
@@ -335,6 +398,8 @@ export function RoadmapSection({
 }: {
   lang: EntryLang;
   sessionId: string;
+  companyId: string;
+  companyTools: CompanyTool[];
   confidence: ReturnType<typeof computeConfidence>;
   answeredDepartments: Department[];
   version: number | null;
@@ -493,7 +558,7 @@ export function RoadmapSection({
           <p className="mt-3 text-xs text-muted">{t.roadmapNoGapsYet}</p>
         ) : (
           <div className="mt-3">
-            <GapBoard gaps={gaps} sessionId={sessionId} lang={lang} />
+            <GapBoard gaps={gaps} sessionId={sessionId} companyId={companyId} companyTools={companyTools} lang={lang} />
           </div>
         )}
       </div>

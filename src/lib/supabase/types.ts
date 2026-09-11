@@ -274,6 +274,8 @@ export interface Database {
           gap_title: string;
           status: GapStatus;
           gapfix_path: GapFixPath | null;
+          diy_guide: Record<string, unknown> | null;
+          diy_guide_source: string | null;
           updated_at: string;
         };
         Insert: {
@@ -282,6 +284,8 @@ export interface Database {
           gap_title: string;
           status: GapStatus;
           gapfix_path?: GapFixPath | null;
+          diy_guide?: Record<string, unknown> | null;
+          diy_guide_source?: string | null;
           updated_at?: string;
         };
         Update: Partial<
@@ -328,6 +332,28 @@ export interface Database {
         };
         Update: Partial<
           Database["public"]["Tables"]["feature_interest_signals"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      provider_match_interest: {
+        Row: {
+          id: string;
+          company_id: string;
+          session_id: string;
+          gap_title: string;
+          category: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          session_id: string;
+          gap_title: string;
+          category: string;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["provider_match_interest"]["Insert"]
         >;
         Relationships: [];
       };
