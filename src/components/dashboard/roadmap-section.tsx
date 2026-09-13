@@ -10,8 +10,7 @@ import { DepartmentIcon } from "@/components/ui/department-icon";
 import type { Department, GapFixPath, GapStatus } from "@/lib/supabase/types";
 import type { RoadmapGap, CostOfInaction } from "@/lib/roadmap/build-prompt";
 import { setGapStatus, setGapfixPath } from "@/app/dashboard/actions";
-import { logProviderMatchInterest } from "@/app/dashboard/gapfix-actions";
-import { DiyGuideModal, ProviderComingSoonModal } from "@/components/dashboard/gapfix-modals";
+import { DiyGuideModal, ProviderRequestModal } from "@/components/dashboard/gapfix-modals";
 import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 import { TeamIcon, ClockIcon, MonitorIcon, IconBadge } from "@/components/ui/stat-icons";
 
@@ -39,6 +38,8 @@ function GapCard({
   sessionId,
   companyId,
   companyTools,
+  userEmail,
+  userPhone,
   lang,
   onStatusChange,
   onGapfixChange,
@@ -47,6 +48,8 @@ function GapCard({
   sessionId: string;
   companyId: string;
   companyTools: CompanyTool[];
+  userEmail: string;
+  userPhone: string | null;
   lang: EntryLang;
   onStatusChange: (status: GapStatus) => void;
   onGapfixChange: (path: GapFixPath) => void;
@@ -56,7 +59,7 @@ function GapCard({
   const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [showDiyGuide, setShowDiyGuide] = useState(false);
-  const [showProviderComingSoon, setShowProviderComingSoon] = useState(false);
+  const [showProviderRequest, setShowProviderRequest] = useState(false);
 
   const dept = departmentFor(gap.category);
   const badge = quickWinBadge(gap);
@@ -86,10 +89,7 @@ function GapCard({
 
   function handleProviderClick() {
     pickGapfix("vetted_provider");
-    setShowProviderComingSoon(true);
-    // Fire-and-forget interest signal — never let a logging failure surface
-    // to the user or the console; the "Coming Soon" UX must not depend on it.
-    logProviderMatchInterest(companyId, sessionId, gap.gap_title, gap.category).catch(() => {});
+    setShowProviderRequest(true);
   }
 
   function gapfixButtonStyle(path: GapFixPath) {
@@ -221,7 +221,17 @@ function GapCard({
           onResolved={() => onStatusChange("resolved")}
         />
       )}
-      {showProviderComingSoon && <ProviderComingSoonModal lang={lang} onClose={() => setShowProviderComingSoon(false)} />}
+      {showProviderRequest && (
+        <ProviderRequestModal
+          sessionId={sessionId}
+          companyId={companyId}
+          gap={gap}
+          userEmail={userEmail}
+          userPhone={userPhone}
+          lang={lang}
+          onClose={() => setShowProviderRequest(false)}
+        />
+      )}
     </li>
   );
 }
@@ -233,12 +243,16 @@ function GapBoard({
   sessionId,
   companyId,
   companyTools,
+  userEmail,
+  userPhone,
   lang,
 }: {
   gaps: RoadmapGap[];
   sessionId: string;
   companyId: string;
   companyTools: CompanyTool[];
+  userEmail: string;
+  userPhone: string | null;
   lang: EntryLang;
 }) {
   const t = appDictionary[lang].dashboard;
@@ -338,6 +352,8 @@ function GapBoard({
                     sessionId={sessionId}
                     companyId={companyId}
                     companyTools={companyTools}
+                    userEmail={userEmail}
+                    userPhone={userPhone}
                     lang={lang}
                     onStatusChange={(status) => updateGap(gap.gap_title, { status })}
                     onGapfixChange={(path) => updateGap(gap.gap_title, { gapfix_path: path })}
@@ -386,6 +402,8 @@ export function RoadmapSection({
   sessionId,
   companyId,
   companyTools,
+  userEmail,
+  userPhone,
   confidence,
   answeredDepartments,
   version,
@@ -400,6 +418,8 @@ export function RoadmapSection({
   sessionId: string;
   companyId: string;
   companyTools: CompanyTool[];
+  userEmail: string;
+  userPhone: string | null;
   confidence: ReturnType<typeof computeConfidence>;
   answeredDepartments: Department[];
   version: number | null;
@@ -558,7 +578,15 @@ export function RoadmapSection({
           <p className="mt-3 text-xs text-muted">{t.roadmapNoGapsYet}</p>
         ) : (
           <div className="mt-3">
-            <GapBoard gaps={gaps} sessionId={sessionId} companyId={companyId} companyTools={companyTools} lang={lang} />
+            <GapBoard
+              gaps={gaps}
+              sessionId={sessionId}
+              companyId={companyId}
+              companyTools={companyTools}
+              userEmail={userEmail}
+              userPhone={userPhone}
+              lang={lang}
+            />
           </div>
         )}
       </div>

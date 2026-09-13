@@ -6,7 +6,8 @@ import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import type { CompanyTool } from "@/app/dashboard/tool-map-actions";
 import type { DiyGuide } from "@/lib/roadmap/diy-guide";
-import { getOrGenerateDiyGuide } from "@/app/dashboard/gapfix-actions";
+import type { ContactMethod } from "@/lib/supabase/types";
+import { getOrGenerateDiyGuide, submitProviderRequest } from "@/app/dashboard/gapfix-actions";
 import { setGapStatus } from "@/app/dashboard/actions";
 
 export function DiyGuideModal({
@@ -143,8 +144,58 @@ export function DiyGuideModal({
   );
 }
 
-export function ProviderComingSoonModal({ lang, onClose }: { lang: EntryLang; onClose: () => void }) {
-  const t = appDictionary[lang].dashboard;
+export function ProviderRequestModal({
+  sessionId,
+  companyId,
+  gap,
+  userEmail,
+  userPhone,
+  lang,
+  onClose,
+}: {
+  sessionId: string;
+  companyId: string;
+  gap: RoadmapGap;
+  userEmail: string;
+  userPhone: string | null;
+  lang: EntryLang;
+  onClose: () => void;
+}) {
+  const t = appDictionary[lang].providerRequest;
+  const [note, setNote] = useState("");
+  const [contactMethod, setContactMethod] = useState<ContactMethod>("email");
+  const [contactValue, setContactValue] = useState(userEmail);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  function pickContactMethod(method: ContactMethod) {
+    setContactMethod(method);
+    setContactValue(method === "whatsapp" ? (userPhone ?? "") : userEmail);
+  }
+
+  async function handleSubmit() {
+    if (submitting || !contactValue.trim()) return;
+    setSubmitting(true);
+    setError(false);
+    try {
+      await submitProviderRequest({
+        companyId,
+        sessionId,
+        gapTitle: gap.gap_title,
+        gapCategory: gap.category,
+        note,
+        contactMethod,
+        contactValue: contactValue.trim(),
+      });
+      setSubmitted(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -152,15 +203,98 @@ export function ProviderComingSoonModal({ lang, onClose }: { lang: EntryLang; on
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border p-6 text-center shadow-2xl"
+        className="w-full max-w-sm rounded-2xl border p-6 shadow-2xl"
         style={{ background: "var(--modal-bg)", borderColor: "var(--border-g)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-extrabold text-ink">{t.gapfixComingSoonProviderTitle}</h2>
-        <p className="mt-2 text-sm text-muted">{t.gapfixComingSoonProviderBody}</p>
-        <button type="button" onClick={onClose} className="mt-6 w-full rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy">
-          {t.gapfixClose}
-        </button>
+        {submitted ? (
+          <div className="text-center">
+            <h2 className="text-lg font-extrabold text-ink">{t.confirmationTitle}</h2>
+            <p className="mt-2 text-sm text-muted">{t.confirmationBody}</p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-6 w-full rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy"
+            >
+              {t.close}
+            </button>
+          </div>
+        ) : (
+          <>
+            <h2 className="text-lg font-extrabold text-ink">{t.modalTitle}</h2>
+
+            <p className="mt-4 text-xs font-bold text-muted">{t.gapLabel}</p>
+            <p className="mt-1 text-sm font-bold text-ink">{gap.gap_title}</p>
+
+            <label className="mt-4 block text-xs font-bold text-muted">
+              {t.noteLabel}
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder={t.notePlaceholder}
+                rows={3}
+                className="mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm text-ink outline-none"
+                style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+              />
+            </label>
+
+            <p className="mt-4 text-xs font-bold text-muted">{t.contactMethodLabel}</p>
+            <div className="mt-2 flex gap-2">
+              {(["whatsapp", "email"] as ContactMethod[]).map((method) => (
+                <button
+                  key={method}
+                  type="button"
+                  onClick={() => pickContactMethod(method)}
+                  className="flex-1 rounded-lg border px-3 py-2 text-sm font-bold transition-colors"
+                  style={{
+                    background: contactMethod === method ? "var(--teal-2)" : "var(--glass-2)",
+                    borderColor: contactMethod === method ? "var(--teal-2)" : "var(--border-g)",
+                    color: contactMethod === method ? "var(--navy)" : "var(--ink)",
+                  }}
+                >
+                  {method === "whatsapp" ? t.contactWhatsapp : t.contactEmail}
+                </button>
+              ))}
+            </div>
+
+            <label className="mt-3 block text-xs font-bold text-muted">
+              {t.contactValueLabel}
+              <input
+                type="text"
+                value={contactValue}
+                onChange={(e) => setContactValue(e.target.value)}
+                placeholder={t.contactValuePlaceholder}
+                className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
+                style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
+              />
+            </label>
+
+            {error && (
+              <p className="mt-3 text-xs font-bold" style={{ color: "var(--gap)" }}>
+                {t.submitError}
+              </p>
+            )}
+
+            <div className="mt-6 flex gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 rounded-lg border py-3 text-sm font-bold text-ink"
+                style={{ borderColor: "var(--border-g)" }}
+              >
+                {t.cancel}
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={submitting || !contactValue.trim()}
+                className="flex-1 rounded-lg bg-teal-2 py-3 text-sm font-bold text-navy disabled:opacity-60"
+              >
+                {submitting ? "…" : t.submit}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

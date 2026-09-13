@@ -22,7 +22,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("company_id, name")
+    .select("company_id, name, phone")
     .eq("id", user.id)
     .single();
 
@@ -195,6 +195,7 @@ export default async function DashboardPage() {
       avgHourlyCost={company?.avg_hourly_cost ?? null}
       userName={profile.name}
       userEmail={user.email ?? ""}
+      userPhone={profile.phone}
       avatarUrl={(user.user_metadata?.avatar_url as string | undefined) ?? null}
       overview={{
         overallGap: session.overall_gap,

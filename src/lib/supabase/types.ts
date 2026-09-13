@@ -28,6 +28,9 @@ export type FreeformChatRole = "user" | "assistant";
 export type VisualConsultationType = "visual_identity";
 export type FeatureInterestEventType = "click" | "submit";
 export type PriceBand = "none" | "low" | "mid" | "high";
+export type ContactMethod = "whatsapp" | "email";
+export type ProviderRequestStatus = "new" | "contacted" | "resolved";
+export type SupportRequestStatus = "new" | "in_progress" | "resolved";
 
 export interface Database {
   public: {
@@ -354,6 +357,58 @@ export interface Database {
         };
         Update: Partial<
           Database["public"]["Tables"]["provider_match_interest"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      provider_requests: {
+        Row: {
+          id: string;
+          company_id: string;
+          session_id: string;
+          gap_title: string;
+          gap_category: string;
+          note: string | null;
+          contact_method: ContactMethod;
+          contact_value: string;
+          status: ProviderRequestStatus;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          session_id: string;
+          gap_title: string;
+          gap_category: string;
+          note?: string | null;
+          contact_method: ContactMethod;
+          contact_value: string;
+          status?: ProviderRequestStatus;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["provider_requests"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      support_requests: {
+        Row: {
+          id: string;
+          company_id: string;
+          topic: string;
+          message: string;
+          status: SupportRequestStatus;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          topic: string;
+          message: string;
+          status?: SupportRequestStatus;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["support_requests"]["Insert"]
         >;
         Relationships: [];
       };

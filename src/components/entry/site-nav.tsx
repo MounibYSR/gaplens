@@ -47,8 +47,7 @@ export function SiteNav({
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 text-lg font-extrabold text-ink">
-            <Image src="/gaplens-icon.png" alt="" width={28} height={28} className="h-7 w-7" />
-            GapLens
+            <Image src="/logo.svg" alt="GapLens" width={36} height={36} className="h-9 w-9" />
           </Link>
           <span
             className="hidden shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-xs font-bold md:flex"

@@ -12,6 +12,7 @@ import { TeamSection } from "@/components/dashboard/team-section";
 import { GapFixSection } from "@/components/dashboard/gapfix-section";
 import { ToolMapSection } from "@/components/dashboard/tool-map-section";
 import { AccountSettingsModal } from "@/components/dashboard/account-settings-modal";
+import { ContactSupportModal } from "@/components/dashboard/contact-support-modal";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import type { Department, ResolutionPath } from "@/lib/supabase/types";
@@ -122,16 +123,20 @@ function AccountMenu({
   name,
   subtitle,
   accountSettingsLabel,
+  contactSupportLabel,
   logOutLabel,
   onOpenSettings,
+  onOpenContactSupport,
 }: {
   imageUrl: string | null;
   initial: string;
   name: string;
   subtitle: string;
   accountSettingsLabel: string;
+  contactSupportLabel: string;
   logOutLabel: string;
   onOpenSettings: () => void;
+  onOpenContactSupport: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [loggingOut, startLogOut] = useTransition();
@@ -181,6 +186,17 @@ function AccountMenu({
             </button>
             <button
               type="button"
+              onClick={() => {
+                setOpen(false);
+                onOpenContactSupport();
+              }}
+              className="block w-full border-t px-4 py-3 text-start text-sm font-bold text-ink hover:opacity-80"
+              style={{ borderColor: "var(--border-g)" }}
+            >
+              {contactSupportLabel}
+            </button>
+            <button
+              type="button"
               onClick={() => startLogOut(() => logOut())}
               disabled={loggingOut}
               className="block w-full border-t px-4 py-3 text-start text-sm font-bold disabled:opacity-60"
@@ -205,6 +221,7 @@ type DashboardShellProps = {
   avgHourlyCost: number | null;
   userName: string | null;
   userEmail: string;
+  userPhone: string | null;
   avatarUrl: string | null;
   overview: {
     overallGap: number;
@@ -245,6 +262,7 @@ function DashboardShellInner({
   avgHourlyCost,
   userName,
   userEmail,
+  userPhone,
   avatarUrl,
   overview,
   confidence,
@@ -285,6 +303,7 @@ function DashboardShellInner({
   const [accountName, setAccountName] = useState(companyName);
   const [accountLogoUrl, setAccountLogoUrl] = useState(logoUrl);
   const [showSettings, setShowSettings] = useState(false);
+  const [showContactSupport, setShowContactSupport] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const nav = appDictionary[lang].dashboardNav;
 
@@ -312,8 +331,7 @@ function DashboardShellInner({
         style={{ borderColor: "var(--border-g)", background: "var(--glass)" }}
       >
         <Link href="/" className="mb-6 flex items-center gap-2 px-1 text-base font-extrabold text-ink transition-opacity hover:opacity-80">
-          <Image src="/gaplens-icon.png" alt="" width={24} height={24} className="h-6 w-6" />
-          GapLens<span style={{ color: "var(--teal-2)" }}> AI</span>
+          <Image src="/logo.svg" alt="GapLens" width={32} height={32} className="h-8 w-8" />
         </Link>
 
         <AccountMenu
@@ -322,8 +340,10 @@ function DashboardShellInner({
           name={accountName}
           subtitle={displayName}
           accountSettingsLabel={appDictionary[lang].accountSettings.title}
+          contactSupportLabel={appDictionary[lang].accountSettings.contactSupportLabel}
           logOutLabel={appDictionary[lang].accountSettings.logOut}
           onOpenSettings={() => setShowSettings(true)}
+          onOpenContactSupport={() => setShowContactSupport(true)}
         />
 
         <nav className="flex flex-1 flex-col gap-1">
@@ -367,8 +387,7 @@ function DashboardShellInner({
           style={{ borderColor: "var(--border-g)" }}
         >
           <Link href="/" className="flex shrink-0 items-center gap-2 text-sm font-extrabold text-ink">
-            <Image src="/gaplens-icon.png" alt="" width={20} height={20} className="h-5 w-5" />
-            GapLens<span style={{ color: "var(--teal-2)" }}> AI</span>
+            <Image src="/logo.svg" alt="GapLens" width={28} height={28} className="h-7 w-7" />
           </Link>
           <div className="flex min-w-0 items-center gap-3">
             <span className="min-w-0 truncate text-end text-xs text-muted">{accountName}</span>
@@ -401,9 +420,14 @@ function DashboardShellInner({
                 name={accountName}
                 subtitle={displayName}
                 accountSettingsLabel={appDictionary[lang].accountSettings.title}
+                contactSupportLabel={appDictionary[lang].accountSettings.contactSupportLabel}
                 logOutLabel={appDictionary[lang].accountSettings.logOut}
                 onOpenSettings={() => {
                   setShowSettings(true);
+                  setShowMobileNav(false);
+                }}
+                onOpenContactSupport={() => {
+                  setShowContactSupport(true);
                   setShowMobileNav(false);
                 }}
               />
@@ -488,6 +512,8 @@ function DashboardShellInner({
               sessionId={sessionId}
               companyId={companyId}
               companyTools={companyTools}
+              userEmail={userEmail}
+              userPhone={userPhone}
               confidence={confidence}
               answeredDepartments={answeredDepartments}
               version={roadmapGaps.version}
@@ -531,6 +557,15 @@ function DashboardShellInner({
             setAccountName(name);
             setAccountLogoUrl(newLogoUrl);
           }}
+        />
+      )}
+
+      {showContactSupport && (
+        <ContactSupportModal
+          lang={lang}
+          companyId={companyId}
+          userEmail={userEmail}
+          onClose={() => setShowContactSupport(false)}
         />
       )}
     </div>
