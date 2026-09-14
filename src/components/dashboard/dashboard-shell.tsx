@@ -109,6 +109,14 @@ function CloseIcon() {
   );
 }
 
+function SupportIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" />
+    </svg>
+  );
+}
+
 function ChevronDownIcon() {
   return (
     <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-muted">
@@ -543,6 +551,16 @@ function DashboardShellInner({
           )}
         </main>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowContactSupport(true)}
+        aria-label={appDictionary[lang].contactSupport.modalTitle}
+        className="fixed bottom-5 z-40 flex h-12 w-12 items-center justify-center rounded-full shadow-2xl transition-opacity hover:opacity-90"
+        style={{ right: "1.25rem", background: "var(--teal-2)", color: "var(--navy)" }}
+      >
+        <SupportIcon />
+      </button>
 
       {showSettings && (
         <AccountSettingsModal
