@@ -4,6 +4,7 @@ import { useState } from "react";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import { submitSupportRequest } from "@/app/dashboard/support-actions";
+import { GAPLENS_WHATSAPP_LINK, GAPLENS_WHATSAPP_NUMBER } from "@/lib/contact-info";
 
 const TOPICS = ["billing", "technical", "feedback", "other"] as const;
 type Topic = (typeof TOPICS)[number];
@@ -77,7 +78,23 @@ export function ContactSupportModal({
             <h2 className="text-lg font-extrabold text-ink">{t.modalTitle}</h2>
             <p className="mt-1 text-xs text-muted">{t.replyHint(userEmail)}</p>
 
-            <label className="mt-4 block text-xs font-bold text-muted">
+            <a
+              href={GAPLENS_WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-bold text-ink transition-opacity hover:opacity-80"
+              style={{ borderColor: "var(--teal-2)" }}
+            >
+              {t.whatsappCta} <span className="ltr-num" dir="ltr">{GAPLENS_WHATSAPP_NUMBER}</span>
+            </a>
+
+            <div className="my-4 flex items-center gap-3">
+              <div className="h-px flex-1" style={{ background: "var(--border-g)" }} />
+              <span className="text-xs text-muted">{t.orDivider}</span>
+              <div className="h-px flex-1" style={{ background: "var(--border-g)" }} />
+            </div>
+
+            <label className="block text-xs font-bold text-muted">
               {t.topicLabel}
               <select
                 value={topic}

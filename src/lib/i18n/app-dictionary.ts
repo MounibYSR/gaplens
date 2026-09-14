@@ -299,6 +299,8 @@ export const appDictionary = {
     },
     contactSupport: {
       modalTitle: "Contact GapLens",
+      whatsappCta: "Message us on WhatsApp",
+      orDivider: "or",
       topicLabel: "Topic",
       topicPlaceholder: "Select a topic",
       topicBilling: "Billing",
@@ -662,6 +664,8 @@ export const appDictionary = {
     },
     contactSupport: {
       modalTitle: "تواصل مع GapLens",
+      whatsappCta: "راسلنا عبر واتساب",
+      orDivider: "أو",
       topicLabel: "الموضوع",
       topicPlaceholder: "اختر موضوعًا",
       topicBilling: "الفوترة",

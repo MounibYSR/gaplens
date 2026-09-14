@@ -100,6 +100,7 @@ export function PricingPage() {
 
               <a
                 href={tier.href}
+                {...(tier.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className="block w-full rounded-lg py-3 text-center text-sm font-bold"
                 style={
                   tier.recommended
