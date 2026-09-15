@@ -25,7 +25,7 @@ export async function sendTeamNotification(params: { subject: string; html: stri
   }
   try {
     await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL ?? "noreply@gaplens.co",
+      from: process.env.RESEND_FROM_EMAIL ?? '"GapLens" <yousra@gaplens.co>',
       to: GAPLENS_TEAM_EMAILS,
       subject: params.subject,
       html: params.html,

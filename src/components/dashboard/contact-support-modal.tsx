@@ -4,7 +4,7 @@ import { useState } from "react";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
 import { submitSupportRequest } from "@/app/dashboard/support-actions";
-import { GAPLENS_WHATSAPP_LINK, GAPLENS_WHATSAPP_NUMBER } from "@/lib/contact-info";
+import { GAPLENS_WHATSAPP_LINK } from "@/lib/contact-info";
 
 const TOPICS = ["billing", "technical", "feedback", "other"] as const;
 type Topic = (typeof TOPICS)[number];
@@ -85,7 +85,7 @@ export function ContactSupportModal({
               className="mt-4 flex items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-bold text-ink transition-opacity hover:opacity-80"
               style={{ borderColor: "var(--teal-2)" }}
             >
-              {t.whatsappCta} <span className="ltr-num" dir="ltr">{GAPLENS_WHATSAPP_NUMBER}</span>
+              {t.whatsappCta}
             </a>
 
             <div className="my-4 flex items-center gap-3">
