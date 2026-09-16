@@ -17,16 +17,23 @@ type AmbientParticle = {
 
 export function AmbientBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Purely decorative and tuned for a dark background — rather than retuning
-  // every particle/line alpha to also read well on white, it's simplest to
-  // just not render it in light mode. A clean white background is a
-  // legitimate, simpler light-mode look on its own.
   const theme = useCurrentTheme();
 
   useEffect(() => {
-    if (theme === "light") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    const isLight = theme === "light";
+    // Dark mode reads as bright teal glow on navy; the same hex at the same
+    // alpha washes out to near-invisible on white, so light mode gets its
+    // own deeper, more opaque palette rather than a recolored dark one.
+    const dotColors = isLight ? ["15,118,90", "13,133,104"] : ["29,158,117", "21,201,154"];
+    const amberColor = isLight ? "168,110,15" : "232,160,32";
+    const lineColor = isLight ? "90,140,125" : "21,201,154";
+    const dotAlphaBase = isLight ? 0.3 : 0.18;
+    const dotAlphaDepth = isLight ? 0.55 : 0.45;
+    const lineAlphaBase = isLight ? 0.22 : 0.16;
+    const lineAlphaDepth = isLight ? 0.4 : 0.32;
 
     let ctx: CanvasRenderingContext2D | null = null;
     let w = 0;
@@ -127,11 +134,11 @@ export function AmbientBackground() {
             if (dist < linkDist) {
               const proximityT = 1 - dist / linkDist;
               const depthT = Math.max(0, Math.min(1, ((a.z2 + b.z2) / 2 + 1.3) / 2.6));
-              const alpha = proximityT * (0.16 + depthT * 0.32);
+              const alpha = proximityT * (lineAlphaBase + depthT * lineAlphaDepth);
               ctx.beginPath();
               ctx.moveTo(a.px, a.py);
               ctx.lineTo(b.px, b.py);
-              ctx.strokeStyle = `rgba(21,201,154,${alpha})`;
+              ctx.strokeStyle = `rgba(${lineColor},${alpha})`;
               ctx.lineWidth = 0.6 + depthT * 0.7;
               ctx.stroke();
             }
@@ -141,8 +148,8 @@ export function AmbientBackground() {
         for (const d of drawList) {
           const depthT = Math.max(0, Math.min(1, (d.z2 + 1.3) / 2.6));
           const size = (1.1 + depthT * 2.4) * d.scale * 1.5;
-          const alpha = 0.18 + depthT * 0.45;
-          const col = d.isAmber ? "232,160,32" : Math.random() < 0.5 ? "29,158,117" : "21,201,154";
+          const alpha = dotAlphaBase + depthT * dotAlphaDepth;
+          const col = d.isAmber ? amberColor : Math.random() < 0.5 ? dotColors[0] : dotColors[1];
           ctx.beginPath();
           ctx.arc(d.px, d.py, size, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${col},${d.isAmber ? alpha * 0.6 : alpha})`;
@@ -161,8 +168,6 @@ export function AmbientBackground() {
       window.removeEventListener("resize", resize);
     };
   }, [theme]);
-
-  if (theme === "light") return null;
 
   return (
     <canvas
