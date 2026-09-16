@@ -29,7 +29,10 @@ export async function submitSupportRequest(params: SupportRequestParams) {
 
   const { data: company } = await supabase.from("companies").select("name").eq("id", params.companyId).single();
 
+  // Contact Support notifications go to Yousra specifically, regardless of
+  // who else is on the general GAPLENS_TEAM_EMAILS list used elsewhere.
   await sendTeamNotification({
+    to: ["Yousra@gaplens.co"],
     subject: `New support message: ${params.topic}`,
     html: `
       <p><strong>Company:</strong> ${escapeHtml(company?.name ?? "Unknown")}</p>
