@@ -14,7 +14,7 @@ export function TeamSection({ lang }: { lang: EntryLang }) {
 
   return (
     <section className="mx-auto w-full max-w-3xl px-6 py-14 text-center">
-      <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--gold)" }}>
+      <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--text-gold-light-mode)" }}>
         {t.badge}
       </span>
       <h2 className="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">{t.title}</h2>
@@ -35,7 +35,7 @@ export function TeamSection({ lang }: { lang: EntryLang }) {
             </span>
             <div>
               <p className="text-sm font-extrabold text-ink">{member.name}</p>
-              <p className="mt-1 text-xs font-bold" style={{ color: "var(--gold)" }}>
+              <p className="mt-1 text-xs font-bold" style={{ color: "var(--text-gold-light-mode)" }}>
                 {member.role}
               </p>
             </div>

@@ -73,6 +73,7 @@ export interface Database {
           role: UserRole;
           email: string;
           phone: string | null;
+          theme_preference: "light" | "dark" | null;
           created_at: string;
         };
         Insert: {
@@ -82,6 +83,7 @@ export interface Database {
           role?: UserRole;
           email: string;
           phone?: string | null;
+          theme_preference?: "light" | "dark" | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["users"]["Insert"]>;

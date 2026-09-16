@@ -58,7 +58,7 @@ export function FeatureInterestModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(6,10,20,0.6)" }}
+      style={{ background: "var(--overlay)" }}
       onClick={onClose}
     >
       <div
@@ -109,16 +109,16 @@ export function FeatureInterestModal({
                   value={platform1}
                   onChange={(e) => setPlatform1(e.target.value)}
                   className="w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
-                  style={{ background: "var(--navy)", borderColor: "var(--border-g)" }}
+                  style={{ background: "var(--bg-surface)", borderColor: "var(--border-g)" }}
                 >
-                  <option value="" style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                  <option value="" style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                     {t.platformPlaceholder}
                   </option>
                   {PLATFORM_OPTIONS.filter((p) => p.catalogId !== platform2).map((p) => (
                     <option
                       key={p.catalogId}
                       value={p.catalogId}
-                      style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}
+                      style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}
                     >
                       {p.label[lang]}
                     </option>
@@ -131,16 +131,16 @@ export function FeatureInterestModal({
                   value={platform2}
                   onChange={(e) => setPlatform2(e.target.value)}
                   className="w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
-                  style={{ background: "var(--navy)", borderColor: "var(--border-g)" }}
+                  style={{ background: "var(--bg-surface)", borderColor: "var(--border-g)" }}
                 >
-                  <option value="" style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                  <option value="" style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                     {t.platformPlaceholder}
                   </option>
                   {PLATFORM_OPTIONS.filter((p) => p.catalogId !== platform1).map((p) => (
                     <option
                       key={p.catalogId}
                       value={p.catalogId}
-                      style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}
+                      style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}
                     >
                       {p.label[lang]}
                     </option>

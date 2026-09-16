@@ -53,7 +53,7 @@ export function ContactSupportModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(6,10,20,0.6)" }}
+      style={{ background: "var(--overlay)" }}
       onClick={onClose}
     >
       <div
@@ -100,13 +100,13 @@ export function ContactSupportModal({
                 value={topic}
                 onChange={(e) => setTopic(e.target.value as Topic)}
                 className="mt-1 w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
-                style={{ background: "var(--navy)", borderColor: "var(--border-g)" }}
+                style={{ background: "var(--bg-surface)", borderColor: "var(--border-g)" }}
               >
-                <option value="" style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                <option value="" style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                   {t.topicPlaceholder}
                 </option>
                 {TOPICS.map((key) => (
-                  <option key={key} value={key} style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                  <option key={key} value={key} style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                     {topicLabel[key]}
                   </option>
                 ))}

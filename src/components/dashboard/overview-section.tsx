@@ -12,9 +12,12 @@ import type { RoadmapGap } from "@/lib/roadmap/build-prompt";
 import { computeSharpenFlags, type TeaserAnswers } from "@/lib/scan/scoring";
 
 const PRIORITY_RANK: Record<RoadmapGap["priority"], number> = { high: 0, medium: 1, low: 2 };
+// Text-only usage in this file (a callout label's color) — medium uses the
+// light-mode-safe gold variant since there's no border/badge use to keep
+// pixel-identical here.
 const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
   high: "var(--gap)",
-  medium: "var(--gold)",
+  medium: "var(--text-gold-light-mode)",
   low: "var(--healthy)",
 };
 
@@ -83,7 +86,7 @@ export function OverviewSection({
           {roundProgressText && (
             <p
               className="text-center text-xs font-bold"
-              style={{ color: roundProgressDelta && roundProgressDelta > 0 ? "var(--teal-2)" : "var(--muted)" }}
+              style={{ color: roundProgressDelta && roundProgressDelta > 0 ? "var(--text-teal-light-mode)" : "var(--muted)" }}
             >
               {roundProgressText}
             </p>
@@ -95,7 +98,7 @@ export function OverviewSection({
         </div>
 
         <div className="hidden xl:flex xl:flex-col xl:gap-3">
-          <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+          <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
             {tt.costsTitle}
           </p>
           <CostRow icon={<ClockIcon />} text={sharpen.money ? tt.costMoneySharp : tt.costMoneyBase} />
@@ -124,7 +127,7 @@ export function OverviewSection({
         {trendText && (
           <p
             className="mt-2 text-xs font-bold"
-            style={{ color: trendDelta && trendDelta > 0 ? "var(--teal-2)" : "var(--muted)" }}
+            style={{ color: trendDelta && trendDelta > 0 ? "var(--text-teal-light-mode)" : "var(--muted)" }}
           >
             {trendText}
           </p>
@@ -139,7 +142,7 @@ export function OverviewSection({
       </div>
 
       <div className="mt-6 hidden xl:block">
-        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
           {d.vectorAnalysisTitle}
         </p>
         <div className="glass-card rounded-2xl p-6" style={{ borderColor: "var(--border-g)" }}>
@@ -149,7 +152,7 @@ export function OverviewSection({
       </div>
 
       <div className="mt-6">
-        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+        <p className="mb-3 text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
           {d.departmentBreakdownTitle}
         </p>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">

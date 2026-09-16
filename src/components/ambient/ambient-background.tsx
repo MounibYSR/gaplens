@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useCurrentTheme } from "@/hooks/use-current-theme";
 
 type AmbientParticle = {
   x: number;
@@ -16,8 +17,14 @@ type AmbientParticle = {
 
 export function AmbientBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Purely decorative and tuned for a dark background — rather than retuning
+  // every particle/line alpha to also read well on white, it's simplest to
+  // just not render it in light mode. A clean white background is a
+  // legitimate, simpler light-mode look on its own.
+  const theme = useCurrentTheme();
 
   useEffect(() => {
+    if (theme === "light") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -153,7 +160,9 @@ export function AmbientBackground() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [theme]);
+
+  if (theme === "light") return null;
 
   return (
     <canvas

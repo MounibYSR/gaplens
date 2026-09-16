@@ -20,7 +20,7 @@ export function CredibilitySection({ lang }: { lang: EntryLang }) {
   return (
     <section className="mx-auto w-full max-w-4xl px-6 py-14">
       <div className="mb-8 text-center">
-        <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--gold)" }}>
+        <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--text-gold-light-mode)" }}>
           {t.badge}
         </span>
         <h2 className="mt-2 text-2xl font-extrabold text-ink sm:text-3xl">{t.title}</h2>

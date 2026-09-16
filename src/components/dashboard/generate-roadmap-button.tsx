@@ -58,7 +58,7 @@ export function GenerateRoadmapButton({ sessionId, lang }: { sessionId: string; 
     return (
       <div className="flex flex-col items-center gap-3 rounded-lg border py-6 text-center" style={{ borderColor: "var(--border-g)" }}>
         <p className="text-sm font-bold text-ink">{t.roadmapReadyMessage}</p>
-        <a href={pdfUrl} className="text-sm font-bold" style={{ color: "var(--teal-2)" }}>
+        <a href={pdfUrl} className="text-sm font-bold" style={{ color: "var(--text-teal-light-mode)" }}>
           {t.downloadRoadmapPdf}
         </a>
       </div>

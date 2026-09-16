@@ -68,7 +68,7 @@ export function AccountSettingsModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(6,10,20,0.6)" }}
+      style={{ background: "var(--overlay)" }}
       onClick={onClose}
     >
       <div

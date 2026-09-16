@@ -82,7 +82,7 @@ function GapPill({ gap, lang }: { gap: number; lang: EntryLang }) {
       className="inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-bold"
       style={{
         borderColor: isNeedsWork ? "var(--gold)" : "var(--teal-2)",
-        color: isNeedsWork ? "var(--gold)" : "var(--teal-2)",
+        color: isNeedsWork ? "var(--text-gold-light-mode)" : "var(--text-teal-light-mode)",
       }}
     >
       {isNeedsWork ? t.needsWork : t.strong}
@@ -97,7 +97,7 @@ function ConfidenceLine({ lang }: { lang: EntryLang }) {
   return (
     <p className="text-xs text-muted">
       {t.confidencePrefix}{" "}
-      <span className="ltr-num font-bold" dir="ltr" style={{ color: "var(--gold)" }}>
+      <span className="ltr-num font-bold" dir="ltr" style={{ color: "var(--text-gold-light-mode)" }}>
         {bucketLabel} ({BASELINE_CONFIDENCE}%)
       </span>{" "}
       {t.confidenceSuffix}
@@ -195,7 +195,7 @@ export function ScanResultCard({
 
       <div className="my-6 h-px w-full" style={{ background: "var(--border-g)" }} />
 
-      <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+      <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
         {t.costsLabel}
       </p>
       <div className="mt-3 flex flex-col gap-2">

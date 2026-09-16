@@ -7,16 +7,20 @@ import { ConsoleLabel } from "@/components/ui/console-label";
 import { Field } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { LanguageToggle } from "@/components/entry/language-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { GoogleSignInButton } from "@/components/entry/google-signin-button";
 import { useEntryLang } from "@/hooks/use-entry-lang";
+import { useEntryTheme } from "@/hooks/use-entry-theme";
 
 export default function SignupPage() {
   const [state, formAction] = useActionState(signUp, undefined);
   const { lang, toggle, t } = useEntryLang();
+  const { theme, toggle: toggleTheme } = useEntryTheme();
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
-      <div className="mb-4 flex w-full max-w-sm justify-end">
+      <div className="mb-4 flex w-full max-w-sm items-center justify-end gap-2">
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
         <LanguageToggle lang={lang} onToggle={toggle} />
       </div>
       <div
@@ -59,7 +63,7 @@ export default function SignupPage() {
 
         <p className="mt-4 text-center text-sm text-muted">
           {t.signup.switchPrompt}{" "}
-          <Link href="/login" className="text-teal-2">
+          <Link href="/login" className="text-teal-light-mode">
             {t.signup.switchCta}
           </Link>
         </p>

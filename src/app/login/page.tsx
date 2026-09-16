@@ -9,18 +9,22 @@ import { ConsoleLabel } from "@/components/ui/console-label";
 import { Field } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { LanguageToggle } from "@/components/entry/language-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { GoogleSignInButton } from "@/components/entry/google-signin-button";
 import { useEntryLang } from "@/hooks/use-entry-lang";
+import { useEntryTheme } from "@/hooks/use-entry-theme";
 
 function LoginForm() {
   const [state, formAction] = useActionState(logIn, undefined);
   const { lang, toggle, t } = useEntryLang();
+  const { theme, toggle: toggleTheme } = useEntryTheme();
   const searchParams = useSearchParams();
   const oauthError = searchParams.get("error");
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
-      <div className="mb-4 flex w-full max-w-sm justify-end">
+      <div className="mb-4 flex w-full max-w-sm items-center justify-end gap-2">
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
         <LanguageToggle lang={lang} onToggle={toggle} />
       </div>
       <div
@@ -66,7 +70,7 @@ function LoginForm() {
 
         <p className="mt-4 text-center text-sm text-muted">
           {t.login.switchPrompt}{" "}
-          <Link href="/signup" className="text-teal-2">
+          <Link href="/signup" className="text-teal-light-mode">
             {t.login.switchCta}
           </Link>
         </p>

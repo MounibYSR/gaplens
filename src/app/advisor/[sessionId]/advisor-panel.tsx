@@ -97,7 +97,7 @@ export function AdvisorPanel({
           </button>
           {showStub && <p className="text-center text-xs text-muted">{t.comingSoon}</p>}
 
-          <Link href="/dashboard" className="mt-2 text-center text-xs text-teal-2">
+          <Link href="/dashboard" className="mt-2 text-center text-xs text-teal-light-mode">
             {appDictionary[lang].dashboard.title}
           </Link>
         </div>

@@ -1,20 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  /* GapLens brand — carried over verbatim from the original gaplens (26).html */
+  /* GapLens brand — carried over verbatim from the original gaplens (26).html.
+     These stay pixel-identical in both themes: they're the source of truth
+     for backgrounds, badges, borders, icons, and large text/headings.
+     --navy in particular is NOT a "background that flips with theme" despite
+     its name — it's overwhelmingly used as dark text sitting on top of a
+     bright teal/gold button or badge (see submit-button.tsx, active pills in
+     roadmap-section.tsx, etc.), so it must stay dark in both themes or that
+     text becomes invisible on its own button. Actual page/surface
+     backgrounds use --bg-primary/--bg-surface below instead. */
   --navy: #0d1220;
   --teal: #1d9e75;
   --teal-2: #15c99a;
   --gold: #e8a020;
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-2: rgba(255, 255, 255, 0.08);
-  --border-g: rgba(255, 255, 255, 0.1);
-  /* Opaque (not translucent) surface for modals/popups — the glass
-     tokens above are too transparent for content that sits over other
-     page content and needs to stay legible regardless of what's behind it. */
-  --modal-bg: #161d33;
-  --ink: #e8eaf2;
-  --muted: #8892a4;
 
   /* Resolution-path semantics (new, added for the Diagnostic Console rebuild) */
   --healthy: #22c55e;
@@ -23,12 +22,58 @@
   --refer: #ff7a59;
   --auto: #9b6bff;
 
-  --background: var(--navy);
-  --foreground: var(--ink);
-
   /* Elevated-card border — named so it's a token, not a bare rgba literal
      at the call site (see .glass-card-elevated below). */
   --border-elevated: rgba(21, 201, 154, 0.35);
+
+  /* Small-text-only variants of teal/gold: --teal-2/--gold above fail 4.5:1
+     contrast as TEXT on a white page background (~2.1:1) despite reading
+     fine on navy (~8.8:1) — these two exist only so light mode can deepen
+     teal/gold specifically where it's used as small text (labels, links),
+     without touching a single teal/gold background/badge/border/icon
+     anywhere. Dark mode simply aliases them to the unchanged base color. */
+  --text-teal-light-mode: var(--teal-2);
+  --text-gold-light-mode: var(--gold);
+}
+
+/* Theme-aware tokens: page/surface backgrounds, text, borders, glass overlays.
+   Plain attribute selectors (not :root[data-theme=...]) so the same rule also
+   matches when data-theme sits on a nested element instead of <html> — the
+   dashboard sets it on its own root wrapper to apply a per-user Supabase
+   preference independently of the page-level cookie default. */
+[data-theme="dark"] {
+  --bg-primary: #0d1220;
+  --bg-surface: #131826;
+  --ink: #e8eaf2;
+  --muted: #8892a4;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-2: rgba(255, 255, 255, 0.08);
+  --border-g: rgba(255, 255, 255, 0.1);
+  --modal-bg: #161d33;
+  --overlay: rgba(6, 10, 20, 0.6);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-surface: #f7f8fa;
+  --ink: #1a1a1a;
+  --muted: #6b7280;
+  --glass: rgba(13, 18, 32, 0.04);
+  --glass-2: rgba(13, 18, 32, 0.06);
+  --border-g: #e5e7eb;
+  --modal-bg: #ffffff;
+  --overlay: rgba(15, 23, 42, 0.4);
+  /* Only place --text-teal-light-mode/--text-gold-light-mode actually
+     diverge from their dark-mode alias — see the :root comment above. */
+  --text-teal-light-mode: #0d7a5c;
+  --text-gold-light-mode: #91620f;
+  color-scheme: light;
+}
+
+:root {
+  --background: var(--bg-primary);
+  --foreground: var(--ink);
 }
 
 @theme inline {
@@ -47,6 +92,11 @@
   --color-diy: var(--diy);
   --color-refer: var(--refer);
   --color-auto: var(--auto);
+
+  --color-page: var(--bg-primary);
+  --color-surface: var(--bg-surface);
+  --color-teal-light-mode: var(--text-teal-light-mode);
+  --color-gold-light-mode: var(--text-gold-light-mode);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -82,7 +132,7 @@ html {
 }
 
 body {
-  background: var(--navy);
+  background: var(--bg-primary);
   color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;

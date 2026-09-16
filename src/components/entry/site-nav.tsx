@@ -4,8 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/entry/language-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ConstellationIcon } from "@/components/ui/constellation-icon";
 import type { entryDictionary, EntryLang } from "@/lib/i18n/entry-dictionary";
+import type { Theme } from "@/lib/theme/get-session-theme";
 
 type NavKey = "about" | "pricing";
 
@@ -28,11 +30,15 @@ function CloseIcon() {
 export function SiteNav({
   lang,
   toggle,
+  theme,
+  onToggleTheme,
   t,
   active,
 }: {
   lang: EntryLang;
   toggle: () => void;
+  theme: Theme;
+  onToggleTheme: () => void;
   t: (typeof entryDictionary)[EntryLang];
   active?: NavKey;
 }) {
@@ -51,7 +57,7 @@ export function SiteNav({
           </Link>
           <span
             className="hidden shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-xs font-bold md:flex"
-            style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
+            style={{ borderColor: "var(--teal-2)", color: "var(--text-teal-light-mode)", background: "rgba(21, 201, 154, 0.1)" }}
           >
             <ConstellationIcon size={10} />
             {t.nav.aiPowered}
@@ -67,7 +73,7 @@ export function SiteNav({
                 href={link.href}
                 className="border-b-2 pb-1 text-sm font-bold transition-colors"
                 style={{
-                  color: isActive ? "var(--teal-2)" : "var(--ink)",
+                  color: isActive ? "var(--text-teal-light-mode)" : "var(--ink)",
                   borderColor: isActive ? "var(--teal-2)" : "transparent",
                 }}
               >
@@ -78,6 +84,7 @@ export function SiteNav({
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           <LanguageToggle lang={lang} onToggle={toggle} />
           <Link href="/login" className="text-sm font-bold text-ink">
             {t.nav.login}
@@ -117,7 +124,7 @@ export function SiteNav({
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
                 className="rounded-lg px-3 py-3 text-sm font-bold"
-                style={{ color: isActive ? "var(--teal-2)" : "var(--ink)" }}
+                style={{ color: isActive ? "var(--text-teal-light-mode)" : "var(--ink)" }}
               >
                 {link.label}
               </Link>
@@ -134,12 +141,15 @@ export function SiteNav({
           <div className="mt-1 flex items-center justify-between border-t px-3 pt-3" style={{ borderColor: "var(--border-g)" }}>
             <span
               className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-xs font-bold"
-              style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
+              style={{ borderColor: "var(--teal-2)", color: "var(--text-teal-light-mode)", background: "rgba(21, 201, 154, 0.1)" }}
             >
               <ConstellationIcon size={10} />
               {t.nav.aiPowered}
             </span>
-            <LanguageToggle lang={lang} onToggle={toggle} />
+            <div className="flex items-center gap-2">
+              <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+              <LanguageToggle lang={lang} onToggle={toggle} />
+            </div>
           </div>
         </div>
       )}

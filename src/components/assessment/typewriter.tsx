@@ -17,7 +17,7 @@ export function Typewriter({ text }: { text: string }) {
   }, [text]);
 
   return (
-    <p className="font-mono-console text-sm text-teal-2">
+    <p className="font-mono-console text-sm text-teal-light-mode">
       {shown}
       <span className="animate-pulse">▍</span>
     </p>

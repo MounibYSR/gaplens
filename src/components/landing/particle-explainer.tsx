@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
+import { useCurrentTheme } from "@/hooks/use-current-theme";
 
 type Point3D = { x: number; y: number; z: number };
 
@@ -290,10 +291,20 @@ export function ParticleExplainer({ lang }: { lang: EntryLang }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
   const stepRef = useRef(0);
+  // Canvas draw calls can't read CSS variables directly, so the live theme
+  // is mirrored into a ref the animation loop reads every frame — needed for
+  // the two colors below that are unsafe on white (guide-line stroke,
+  // inactive progress dot) and must flip without a page reload.
+  const theme = useCurrentTheme();
+  const themeRef = useRef(theme);
 
   useEffect(() => {
     stepRef.current = step;
   }, [step]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -405,7 +416,7 @@ export function ParticleExplainer({ lang }: { lang: EntryLang }) {
             if (i === 0) ctx?.moveTo(proj.px, proj.py);
             else ctx?.lineTo(proj.px, proj.py);
           });
-          ctx.strokeStyle = "rgba(232,236,245,.38)";
+          ctx.strokeStyle = themeRef.current === "light" ? "rgba(13,18,32,.38)" : "rgba(232,236,245,.38)";
           ctx.lineWidth = 1.4;
           ctx.stroke();
         }
@@ -512,7 +523,7 @@ export function ParticleExplainer({ lang }: { lang: EntryLang }) {
                 <div className="flex-1">
                   <div
                     className="mb-1 text-sm font-extrabold"
-                    style={{ color: active ? "var(--ink)" : "#c3c8d6" }}
+                    style={{ color: active ? "var(--ink)" : "var(--muted)" }}
                   >
                     {s.title[lang]}
                   </div>
@@ -536,7 +547,8 @@ export function ParticleExplainer({ lang }: { lang: EntryLang }) {
             className="h-2 cursor-pointer rounded-full transition-all duration-300"
             style={{
               width: i === step ? "22px" : "8px",
-              background: i === step ? "linear-gradient(90deg,#1D9E75,#E8A020)" : "rgba(255,255,255,.15)",
+              background:
+                i === step ? "linear-gradient(90deg,#1D9E75,#E8A020)" : theme === "light" ? "rgba(13,18,32,.15)" : "rgba(255,255,255,.15)",
             }}
           />
         ))}

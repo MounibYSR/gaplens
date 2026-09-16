@@ -2,21 +2,23 @@
 
 import Link from "next/link";
 import { useEntryLang } from "@/hooks/use-entry-lang";
+import { useEntryTheme } from "@/hooks/use-entry-theme";
 import { SiteNav } from "@/components/entry/site-nav";
 import { ParticleExplainer } from "@/components/landing/particle-explainer";
 import { CompanyLogosStrip } from "@/components/landing/company-logos-strip";
 
 export function LandingPage() {
   const { lang, toggle, t } = useEntryLang();
+  const { theme, toggle: toggleTheme } = useEntryTheme();
 
   return (
     <div className="flex flex-1 flex-col">
-      <SiteNav lang={lang} toggle={toggle} t={t} />
+      <SiteNav lang={lang} toggle={toggle} theme={theme} onToggleTheme={toggleTheme} t={t} />
 
       <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <span
           className="mb-6 text-xs font-bold"
-          style={{ color: "var(--gold)" }}
+          style={{ color: "var(--text-gold-light-mode)" }}
         >
           {t.hero.badge}
         </span>
@@ -76,7 +78,7 @@ export function LandingPage() {
         <div className="mb-12 text-center">
           <span
             className="text-xs font-bold tracking-widest"
-            style={{ color: "var(--teal-2)" }}
+            style={{ color: "var(--text-teal-light-mode)" }}
           >
             {t.how.badge}
           </span>

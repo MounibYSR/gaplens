@@ -113,7 +113,7 @@ export function FreeformChat({
       <div className="rounded-2xl border p-6 xl:p-8" style={{ background: "var(--glass)", borderColor: "var(--border-g)" }}>
         <div className="flex items-center justify-between">
           <ConsoleLabel>{t.badge}</ConsoleLabel>
-          <span className="text-xs font-extrabold" style={{ color: "var(--teal-2)" }}>
+          <span className="text-xs font-extrabold" style={{ color: "var(--text-teal-light-mode)" }}>
             {t.title}
           </span>
         </div>

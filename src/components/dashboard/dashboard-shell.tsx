@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useTransition } from "react";
+import { Suspense, useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,8 +13,11 @@ import { GapFixSection } from "@/components/dashboard/gapfix-section";
 import { ToolMapSection } from "@/components/dashboard/tool-map-section";
 import { AccountSettingsModal } from "@/components/dashboard/account-settings-modal";
 import { ContactSupportModal } from "@/components/dashboard/contact-support-modal";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { updateThemePreference } from "@/app/dashboard/theme-actions";
 import { appDictionary } from "@/lib/i18n/app-dictionary";
 import type { EntryLang } from "@/lib/i18n/entry-dictionary";
+import type { Theme } from "@/lib/theme/get-session-theme";
 import type { Department, ResolutionPath } from "@/lib/supabase/types";
 import type { computeConfidence } from "@/lib/deep-dive/confidence";
 import type { TeaserAnswers } from "@/lib/scan/scoring";
@@ -135,6 +138,7 @@ function AccountMenu({
   logOutLabel,
   onOpenSettings,
   onOpenContactSupport,
+  noMargin,
 }: {
   imageUrl: string | null;
   initial: string;
@@ -145,12 +149,13 @@ function AccountMenu({
   logOutLabel: string;
   onOpenSettings: () => void;
   onOpenContactSupport: () => void;
+  noMargin?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [loggingOut, startLogOut] = useTransition();
 
   return (
-    <div className="relative mb-6">
+    <div className={`relative ${noMargin ? "" : "mb-6"}`}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -231,6 +236,7 @@ type DashboardShellProps = {
   userEmail: string;
   userPhone: string | null;
   avatarUrl: string | null;
+  initialTheme: Theme | null;
   overview: {
     overallGap: number;
     answers: TeaserAnswers;
@@ -272,6 +278,7 @@ function DashboardShellInner({
   userEmail,
   userPhone,
   avatarUrl,
+  initialTheme,
   overview,
   confidence,
   invites,
@@ -313,7 +320,26 @@ function DashboardShellInner({
   const [showSettings, setShowSettings] = useState(false);
   const [showContactSupport, setShowContactSupport] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
+  const [theme, setTheme] = useState<Theme>(initialTheme ?? "dark");
   const nav = appDictionary[lang].dashboardNav;
+
+  // AmbientBackground lives outside this wrapper (a sibling in the root
+  // layout, mounted before {children}), so it can only see the document-level
+  // data-theme — sync it here on mount and on every toggle so it stays
+  // correct even when this wrapper's own value overrides the html-level
+  // cookie default (e.g. first login on a new device with a Supabase-stored
+  // preference that differs from this browser's gl_theme cookie).
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    document.cookie = `gl_theme=${theme}; path=/; max-age=31536000`;
+  }, [theme]);
+
+  function handleThemeToggle() {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    updateThemePreference(next).catch(() => {});
+  }
 
   const NAV_ITEMS: { key: Section; label: string; icon: () => React.JSX.Element }[] = [
     { key: "overview", label: nav.overview, icon: OverviewIcon },
@@ -332,7 +358,7 @@ function DashboardShellInner({
   ).length;
 
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1" data-theme={theme}>
       {/* Sidebar — md+ only */}
       <aside
         className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-e px-4 py-6 md:flex"
@@ -342,17 +368,23 @@ function DashboardShellInner({
           <Image src="/logo.svg" alt="GapLens" width={32} height={32} className="h-8 w-8" />
         </Link>
 
-        <AccountMenu
-          imageUrl={sidebarImageUrl}
-          initial={initial}
-          name={accountName}
-          subtitle={displayName}
-          accountSettingsLabel={appDictionary[lang].accountSettings.title}
-          contactSupportLabel={appDictionary[lang].accountSettings.contactSupportLabel}
-          logOutLabel={appDictionary[lang].accountSettings.logOut}
-          onOpenSettings={() => setShowSettings(true)}
-          onOpenContactSupport={() => setShowContactSupport(true)}
-        />
+        <div className="mb-6 flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <AccountMenu
+              imageUrl={sidebarImageUrl}
+              initial={initial}
+              name={accountName}
+              subtitle={displayName}
+              accountSettingsLabel={appDictionary[lang].accountSettings.title}
+              contactSupportLabel={appDictionary[lang].accountSettings.contactSupportLabel}
+              logOutLabel={appDictionary[lang].accountSettings.logOut}
+              onOpenSettings={() => setShowSettings(true)}
+              onOpenContactSupport={() => setShowContactSupport(true)}
+              noMargin
+            />
+          </div>
+          <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
+        </div>
 
         <nav className="flex flex-1 flex-col gap-1">
           {NAV_ITEMS.map((item) => {
@@ -422,23 +454,29 @@ function DashboardShellInner({
               className="relative z-50 flex flex-col gap-1 border-b px-4 py-3 md:hidden"
               style={{ borderColor: "var(--border-g)", background: "var(--modal-bg)" }}
             >
-              <AccountMenu
-                imageUrl={sidebarImageUrl}
-                initial={initial}
-                name={accountName}
-                subtitle={displayName}
-                accountSettingsLabel={appDictionary[lang].accountSettings.title}
-                contactSupportLabel={appDictionary[lang].accountSettings.contactSupportLabel}
-                logOutLabel={appDictionary[lang].accountSettings.logOut}
-                onOpenSettings={() => {
-                  setShowSettings(true);
-                  setShowMobileNav(false);
-                }}
-                onOpenContactSupport={() => {
-                  setShowContactSupport(true);
-                  setShowMobileNav(false);
-                }}
-              />
+              <div className="mb-2 flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <AccountMenu
+                    imageUrl={sidebarImageUrl}
+                    initial={initial}
+                    name={accountName}
+                    subtitle={displayName}
+                    accountSettingsLabel={appDictionary[lang].accountSettings.title}
+                    contactSupportLabel={appDictionary[lang].accountSettings.contactSupportLabel}
+                    logOutLabel={appDictionary[lang].accountSettings.logOut}
+                    onOpenSettings={() => {
+                      setShowSettings(true);
+                      setShowMobileNav(false);
+                    }}
+                    onOpenContactSupport={() => {
+                      setShowContactSupport(true);
+                      setShowMobileNav(false);
+                    }}
+                    noMargin
+                  />
+                </div>
+                <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
+              </div>
 
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;

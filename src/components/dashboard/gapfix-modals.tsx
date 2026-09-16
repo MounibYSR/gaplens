@@ -64,7 +64,7 @@ export function DiyGuideModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(6,10,20,0.6)" }}
+      style={{ background: "var(--overlay)" }}
       onClick={onClose}
     >
       <div
@@ -113,7 +113,7 @@ export function DiyGuideModal({
             </ol>
 
             <div className="mt-4 rounded-lg border p-3 text-sm" style={{ borderColor: "var(--gold)", background: "var(--glass-2)" }}>
-              <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--gold)" }}>
+              <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-gold-light-mode)" }}>
                 {t.gapfixConfirmationCheckLabel}
               </p>
               <p className="mt-1 text-ink">{guide.confirmation_check}</p>
@@ -199,7 +199,7 @@ export function ProviderRequestModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(6,10,20,0.6)" }}
+      style={{ background: "var(--overlay)" }}
       onClick={onClose}
     >
       <div

@@ -32,6 +32,15 @@ const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
   low: "var(--healthy)",
 };
 
+// Same colors, except medium's gold is swapped for its light-mode-safe text
+// variant — this map is for small TEXT only; border/icon fills keep the
+// exact brand gold via PRIORITY_COLOR above.
+const PRIORITY_TEXT_COLOR: Record<RoadmapGap["priority"], string> = {
+  high: "var(--gap)",
+  medium: "var(--text-gold-light-mode)",
+  low: "var(--healthy)",
+};
+
 function FindingCard({ gap, label }: { gap: RoadmapGap; label: string }) {
   const accent = PRIORITY_COLOR[gap.priority];
   return (
@@ -42,7 +51,7 @@ function FindingCard({ gap, label }: { gap: RoadmapGap; label: string }) {
       <div className="flex items-start gap-3">
         <IconBadge icon={<InfoIcon />} color={accent} />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: accent }}>
+          <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: PRIORITY_TEXT_COLOR[gap.priority] }}>
             {label}
           </p>
           <p className="mt-1 text-sm font-extrabold text-ink">{gap.gap_title}</p>
@@ -110,7 +119,7 @@ function HistoryRow({ question, answer }: AnsweredTurn) {
       style={{ background: "var(--glass-2)", borderColor: "var(--border-g)" }}
     >
       <p className={expanded ? "text-muted" : "truncate text-muted"}>{question}</p>
-      <p className={`font-bold ${expanded ? "" : "truncate"}`} style={{ color: "var(--teal-2)" }}>
+      <p className={`font-bold ${expanded ? "" : "truncate"}`} style={{ color: "var(--text-teal-light-mode)" }}>
         {answer}
       </p>
     </button>
@@ -534,7 +543,7 @@ export function DeepDiveChat({
         >
           <div className="flex items-center justify-between">
             <ConsoleLabel>{t.businessContextBadge}</ConsoleLabel>
-            <span className="text-xs font-extrabold" style={{ color: "var(--gold)" }}>
+            <span className="text-xs font-extrabold" style={{ color: "var(--text-gold-light-mode)" }}>
               {t.businessContextLabel}
             </span>
           </div>
@@ -585,7 +594,7 @@ export function DeepDiveChat({
           <h1 className="mt-3 mb-2 text-xl font-extrabold text-ink">{t.doneTitle}</h1>
           <p className="text-sm text-muted">{t.doneBody}</p>
           {justRedid && (
-            <p className="mt-2 text-xs font-bold" style={{ color: "var(--teal-2)" }}>
+            <p className="mt-2 text-xs font-bold" style={{ color: "var(--text-teal-light-mode)" }}>
               {t.redoSavedNote(justRedid.title[lang])}
             </p>
           )}
@@ -598,7 +607,7 @@ export function DeepDiveChat({
                 type="button"
                 onClick={onSwitchToOpenDiscussion}
                 className="mt-3 block w-full rounded-lg border py-3 text-center text-sm font-bold"
-                style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)" }}
+                style={{ borderColor: "var(--teal-2)", color: "var(--text-teal-light-mode)" }}
               >
                 {t.goToOpenDiscussion}
               </button>

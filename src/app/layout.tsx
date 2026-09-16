@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cairo, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { getSessionLang } from "@/lib/i18n/get-lang";
+import { getSessionTheme } from "@/lib/theme/get-session-theme";
 import { AmbientBackground } from "@/components/ambient/ambient-background";
 
 const cairo = Cairo({
@@ -33,14 +34,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const lang = await getSessionLang();
+  const theme = await getSessionTheme();
 
   return (
     <html
       lang={lang}
       dir={lang === "ar" ? "rtl" : "ltr"}
+      data-theme={theme}
       className={`${cairo.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-navy text-ink">
+      <body className="min-h-full flex flex-col bg-page text-ink">
         <AmbientBackground />
         {children}
       </body>

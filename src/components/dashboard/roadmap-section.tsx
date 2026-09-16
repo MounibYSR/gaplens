@@ -20,6 +20,15 @@ const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
   low: "var(--healthy)",
 };
 
+// Same colors, except medium's gold is swapped for its light-mode-safe text
+// variant — this map is for the priority chip's TEXT only; its border keeps
+// the exact brand gold via PRIORITY_COLOR above.
+const PRIORITY_TEXT_COLOR: Record<RoadmapGap["priority"], string> = {
+  high: "var(--gap)",
+  medium: "var(--text-gold-light-mode)",
+  low: "var(--healthy)",
+};
+
 const STATUS_ORDER: GapStatus[] = ["open", "in_progress", "resolved"];
 
 function departmentFor(category: string): DepartmentDef | undefined {
@@ -127,7 +136,7 @@ function GapCard({
               <span
                 className="ltr-num rounded-full border px-2 py-1 text-xs font-bold"
                 dir="ltr"
-                style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_COLOR[gap.priority] }}
+                style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_TEXT_COLOR[gap.priority] }}
               >
                 {gap.priority.toUpperCase()}
               </span>
@@ -471,7 +480,7 @@ export function RoadmapSection({
           </div>
 
           <div className="hidden xl:block">
-            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
               {t.accuracyTitle}
             </p>
             <div className="mt-3 flex flex-col gap-2">
@@ -522,12 +531,12 @@ export function RoadmapSection({
                 </ul>
               </div>
             ) : (
-              <p className="mt-3 text-xs text-teal-2">{t.roadmapAllCovered}</p>
+              <p className="mt-3 text-xs text-teal-light-mode">{t.roadmapAllCovered}</p>
             )}
           </div>
 
           <div className="hidden xl:flex xl:flex-col xl:gap-3">
-            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
               {t.roadmapCompleteness}
             </p>
             <div className="flex flex-col gap-3">
@@ -568,7 +577,7 @@ export function RoadmapSection({
         {trendText && (
           <p
             className="mt-1 text-xs font-bold"
-            style={{ color: trendDelta && trendDelta > 0 ? "var(--teal-2)" : "var(--muted)" }}
+            style={{ color: trendDelta && trendDelta > 0 ? "var(--text-teal-light-mode)" : "var(--muted)" }}
           >
             {trendText}
           </p>
@@ -603,7 +612,7 @@ export function RoadmapSection({
                   <p className="text-ink">{item.area}</p>
                   {item.note && <p className="mt-1 text-xs text-muted">{item.note}</p>}
                 </div>
-                <span className="ltr-num shrink-0 text-end font-bold" dir="ltr" style={{ color: "var(--teal-2)" }}>
+                <span className="ltr-num shrink-0 text-end font-bold" dir="ltr" style={{ color: "var(--text-teal-light-mode)" }}>
                   {item.estimated_monthly_amount != null ? `~${item.estimated_monthly_amount} ${item.currency}` : "—"}
                   <span className="ms-1 rounded-full px-2 py-1 text-xs font-bold" style={{ background: "var(--glass-2)", color: "var(--muted)" }}>
                     {t.costOfInactionEstimatedTag}
@@ -616,7 +625,7 @@ export function RoadmapSection({
           {costOfInaction.total_estimated_recoverable != null && (
             <div className="mt-4 flex items-center justify-between border-t pt-3" style={{ borderColor: "var(--border-g)" }}>
               <span className="text-xs font-extrabold text-ink">{t.costOfInactionTotalLabel}</span>
-              <span className="ltr-num text-sm font-extrabold" dir="ltr" style={{ color: "var(--teal-2)" }}>
+              <span className="ltr-num text-sm font-extrabold" dir="ltr" style={{ color: "var(--text-teal-light-mode)" }}>
                 ~{costOfInaction.total_estimated_recoverable} {costOfInaction.currency}/mo
               </span>
             </div>
@@ -633,7 +642,7 @@ export function RoadmapSection({
           </p>
         )}
 
-        <p className="mt-2 text-xs text-teal-2">{t.roadmapUnlocked}</p>
+        <p className="mt-2 text-xs text-teal-light-mode">{t.roadmapUnlocked}</p>
         <Link
           href={`/roadmap/${sessionId}`}
           className="mt-4 block w-full rounded-lg bg-teal-2 py-3 text-center text-sm font-bold text-navy xl:inline-block xl:w-auto xl:px-8"

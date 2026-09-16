@@ -15,6 +15,15 @@ const PRIORITY_COLOR: Record<RoadmapGap["priority"], string> = {
   low: "var(--healthy)",
 };
 
+// Same colors, except medium's gold is swapped for its light-mode-safe text
+// variant — this map is for the priority chip's TEXT only; its border keeps
+// the exact brand gold via PRIORITY_COLOR above.
+const PRIORITY_TEXT_COLOR: Record<RoadmapGap["priority"], string> = {
+  high: "var(--gap)",
+  medium: "var(--text-gold-light-mode)",
+  low: "var(--healthy)",
+};
+
 type StagedImage = {
   id: string;
   file: File;
@@ -127,7 +136,7 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
       <div className="rounded-2xl border p-6 xl:p-8" style={{ background: "var(--glass)", borderColor: "var(--border-g)" }}>
         <div className="flex items-center justify-between">
           <ConsoleLabel>{t.badge}</ConsoleLabel>
-          <span className="text-xs font-extrabold" style={{ color: "var(--teal-2)" }}>
+          <span className="text-xs font-extrabold" style={{ color: "var(--text-teal-light-mode)" }}>
             {t.title}
           </span>
         </div>
@@ -157,15 +166,15 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
                 required
                 className="flex-1 rounded-lg border px-2 py-2 text-xs text-ink outline-none"
                 style={{
-                  background: "var(--navy)",
+                  background: "var(--bg-surface)",
                   borderColor: img.source ? "var(--border-g)" : "var(--gap)",
                 }}
               >
-                <option value="" style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                <option value="" style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                   {t.sourcePlaceholder}
                 </option>
                 {SOURCE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value} style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                  <option key={opt.value} value={opt.value} style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                     {opt.label}
                   </option>
                 ))}
@@ -227,7 +236,7 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
 
         {gaps && (
           <div className="mt-6">
-            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+            <p className="text-xs font-extrabold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
               {t.resultsLabel}
             </p>
             <ul className="mt-3 flex flex-col gap-2">
@@ -254,7 +263,7 @@ export function VisualIdentityPanel({ sessionId, lang }: { sessionId: string; la
                     <span
                       className="ltr-num shrink-0 rounded-full border px-2 py-1 text-xs font-bold"
                       dir="ltr"
-                      style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_COLOR[gap.priority] }}
+                      style={{ borderColor: PRIORITY_COLOR[gap.priority], color: PRIORITY_TEXT_COLOR[gap.priority] }}
                     >
                       {gap.priority.toUpperCase()}
                     </span>

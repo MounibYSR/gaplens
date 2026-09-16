@@ -241,7 +241,7 @@ export function ToolRelationshipMap({
         className="rounded-2xl border p-6 lg:p-8"
         style={{ background: "var(--glass)", borderColor: "var(--border-g)" }}
       >
-        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--teal-2)" }}>
+        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
           {t.badge}
         </p>
         <h1 className="mt-2 mb-1 text-lg font-extrabold text-ink">{t.title}</h1>
@@ -317,7 +317,7 @@ export function ToolRelationshipMap({
                           type="button"
                           onClick={() => void toggleConnected(tool.id)}
                           className="ms-1 text-xs font-bold underline"
-                          style={{ color: tool.isConnected ? "var(--teal-2)" : "var(--gold)" }}
+                          style={{ color: tool.isConnected ? "var(--text-teal-light-mode)" : "var(--text-gold-light-mode)" }}
                         >
                           {tool.isConnected ? t.connected : t.disconnected}
                         </button>
@@ -386,8 +386,8 @@ export function ToolRelationshipMap({
                 );
               })}
 
-              <circle cx={CENTER} cy={CENTER} r={HUB_R} style={{ fill: "var(--navy)" }} stroke="var(--teal-2)" strokeWidth="2" />
-              <text x={CENTER} y={CENTER + 4} textAnchor="middle" style={{ fill: "#fff", fontSize: "11px", fontWeight: 800 }}>
+              <circle cx={CENTER} cy={CENTER} r={HUB_R} style={{ fill: "var(--bg-surface)" }} stroke="var(--teal-2)" strokeWidth="2" />
+              <text x={CENTER} y={CENTER + 4} textAnchor="middle" style={{ fill: "var(--ink)", fontSize: "11px", fontWeight: 800 }}>
                 {t.businessNode}
               </text>
             </svg>
@@ -415,21 +415,21 @@ export function ToolRelationshipMap({
                 value={selectedId}
                 onChange={(e) => setSelectedId(e.target.value)}
                 className="w-full rounded-lg border px-3 py-2 text-sm text-ink outline-none"
-                style={{ background: "var(--navy)", borderColor: "var(--border-g)" }}
+                style={{ background: "var(--bg-surface)", borderColor: "var(--border-g)" }}
               >
-                <option value="" style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                <option value="" style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                   {t.selectPlaceholder}
                 </option>
                 {TOOL_CATALOG.map((tool) => (
                   <option
                     key={tool.id}
                     value={tool.id}
-                    style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}
+                    style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}
                   >
                     {tool.label[lang]}
                   </option>
                 ))}
-                <option value={OTHER_TOOL_ID} style={{ backgroundColor: "var(--navy)", color: "var(--ink)" }}>
+                <option value={OTHER_TOOL_ID} style={{ backgroundColor: "var(--bg-surface)", color: "var(--ink)" }}>
                   {t.otherOption}
                 </option>
               </select>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useEntryLang } from "@/hooks/use-entry-lang";
+import { useEntryTheme } from "@/hooks/use-entry-theme";
 import { SiteNav } from "@/components/entry/site-nav";
 
 type Currency = "USD" | "QAR";
@@ -15,16 +16,17 @@ function formatPrice(priceUsd: number | null, currency: Currency, customLabel: s
 
 export function PricingPage() {
   const { lang, toggle, t } = useEntryLang();
+  const { theme, toggle: toggleTheme } = useEntryTheme();
   const p = t.pricing;
   const [currency, setCurrency] = useState<Currency>("USD");
 
   return (
     <div className="flex flex-1 flex-col">
-      <SiteNav lang={lang} toggle={toggle} t={t} active="pricing" />
+      <SiteNav lang={lang} toggle={toggle} theme={theme} onToggleTheme={toggleTheme} t={t} active="pricing" />
 
       <section className="mx-auto w-full max-w-5xl px-6 py-16">
         <div className="mb-12 text-center">
-          <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--gold)" }}>
+          <span className="text-xs font-extrabold tracking-widest" style={{ color: "var(--text-gold-light-mode)" }}>
             {p.badge}
           </span>
           <h1 className="mt-2 text-3xl font-extrabold text-ink">
@@ -80,7 +82,7 @@ export function PricingPage() {
                 {tier.freeNote && (
                   <span
                     className="mt-2 inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-bold"
-                    style={{ borderColor: "var(--teal-2)", color: "var(--teal-2)", background: "rgba(21, 201, 154, 0.1)" }}
+                    style={{ borderColor: "var(--teal-2)", color: "var(--text-teal-light-mode)", background: "rgba(21, 201, 154, 0.1)" }}
                   >
                     {tier.freeNote}
                   </span>
@@ -130,7 +132,7 @@ export function PricingPage() {
                   <th className="px-4 py-3 text-start text-xs font-extrabold tracking-widest text-muted">
                     {p.comparisonHeaders.free}
                   </th>
-                  <th className="px-4 py-3 text-start text-xs font-extrabold tracking-widest" style={{ color: "var(--teal-2)" }}>
+                  <th className="px-4 py-3 text-start text-xs font-extrabold tracking-widest" style={{ color: "var(--text-teal-light-mode)" }}>
                     {p.comparisonHeaders.growth}
                   </th>
                   <th className="px-4 py-3 text-start text-xs font-extrabold tracking-widest text-muted">
@@ -143,7 +145,7 @@ export function PricingPage() {
                   <tr key={row.label} style={{ background: i % 2 === 0 ? "transparent" : "var(--glass)" }}>
                     <td className="px-4 py-3 font-bold text-ink">{row.label}</td>
                     <td className="px-4 py-3 text-muted">{row.free}</td>
-                    <td className="px-4 py-3 font-bold" style={{ color: "var(--teal-2)" }}>
+                    <td className="px-4 py-3 font-bold" style={{ color: "var(--text-teal-light-mode)" }}>
                       {row.growth}
                     </td>
                     <td className="px-4 py-3 text-muted">{row.gapfix}</td>
