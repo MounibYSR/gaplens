@@ -15,7 +15,7 @@ export function LandingPage() {
     <div className="flex flex-1 flex-col">
       <SiteNav lang={lang} toggle={toggle} theme={theme} onToggleTheme={toggleTheme} t={t} />
 
-      <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
+      <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <span
           className="mb-6 text-xs font-bold"
           style={{ color: "var(--text-gold-light-mode)" }}
@@ -23,20 +23,9 @@ export function LandingPage() {
           {t.hero.badge}
         </span>
 
-        <h1 className="max-w-2xl text-3xl font-extrabold leading-tight text-ink lg:text-5xl">
-          {(() => {
-            const idx = t.hero.title.indexOf(t.hero.titleEmphasis);
-            if (idx === -1) return t.hero.title;
-            const before = t.hero.title.slice(0, idx);
-            const after = t.hero.title.slice(idx + t.hero.titleEmphasis.length);
-            return (
-              <>
-                {before}
-                <span className="grad-text">{t.hero.titleEmphasis}</span>
-                {after}
-              </>
-            );
-          })()}
+        <h1 className="max-w-3xl text-[28px] font-extrabold leading-tight sm:text-4xl lg:text-[42px]" style={{ color: "var(--teal)" }}>
+          <span className="block">{t.hero.titleLine1}</span>
+          <span className="block">{t.hero.titleLine2}</span>
         </h1>
 
         <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">
