@@ -23,12 +23,19 @@ export function LandingPage() {
           {t.hero.badge}
         </span>
 
-        <h1 className="max-w-3xl text-[28px] font-extrabold leading-tight sm:text-4xl lg:text-[42px]" style={{ color: "var(--teal)" }}>
-          <span className="block">{t.hero.titleLine1}</span>
-          <span className="block">{t.hero.titleLine2}</span>
+        <h1 className="max-w-3xl text-[28px] font-extrabold leading-tight text-ink sm:text-4xl lg:text-[42px]">
+          {t.hero.titleLine1Before}
+          <span className="whitespace-nowrap" style={{ color: "var(--gold)" }}>{t.hero.titleLine1Highlight}</span>
+          {t.hero.titleLine1After}
         </h1>
 
-        <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">
+        <p className="mt-3 max-w-2xl text-lg font-bold leading-snug text-ink sm:text-xl lg:text-2xl">
+          {t.hero.titleLine2Before}
+          <span className="whitespace-nowrap" style={{ color: "var(--gold)" }}>{t.hero.titleLine2Highlight}</span>
+          {t.hero.titleLine2After}
+        </p>
+
+        <p className="mt-5 max-w-xl text-base text-muted sm:text-lg">
           {t.hero.subtitle}
         </p>
 
