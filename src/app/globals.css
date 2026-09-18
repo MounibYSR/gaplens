@@ -71,6 +71,19 @@
   color-scheme: light;
 }
 
+/* Dashboard-only override: elsewhere (pricing tiers, login/signup, landing
+   credibility cards) --glass/--glass-2 stay translucent by design, but the
+   dashboard sits on top of the ambient particle canvas and its "glass"
+   cards/pills were letting particle lines show through the card body in
+   light mode — solid, opaque surfaces here instead. Scoped to the
+   dashboard's own root (which carries its own data-theme, independent of
+   <html>'s) rather than the shared :root token, so nothing outside the
+   dashboard is affected. Dark theme is untouched. */
+.dashboard-root[data-theme="light"] {
+  --glass: #f7f8fa;
+  --glass-2: #eef0f3;
+}
+
 :root {
   --background: var(--bg-primary);
   --foreground: var(--ink);

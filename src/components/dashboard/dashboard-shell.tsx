@@ -358,7 +358,7 @@ function DashboardShellInner({
   ).length;
 
   return (
-    <div className="flex flex-1" data-theme={theme}>
+    <div className="dashboard-root flex flex-1" data-theme={theme}>
       {/* Sidebar — md+ only */}
       <aside
         className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-e px-4 py-6 md:flex"
